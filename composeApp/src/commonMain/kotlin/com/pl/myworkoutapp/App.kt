@@ -14,6 +14,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.pl.myworkoutapp.core.Log
+import com.pl.myworkoutapp.domain.WorkoutRepository
 import org.jetbrains.compose.resources.painterResource
 
 import myworkoutapplication.composeapp.generated.resources.Res
@@ -22,6 +24,14 @@ import myworkoutapplication.composeapp.generated.resources.compose_multiplatform
 @Composable
 @Preview
 fun App() {
+    val repo = org.koin.compose.koinInject<WorkoutRepository>()
+    Log.d("x", "mam repo")
+    val exercises by repo.observeExercises()
+        .collectAsState(initial = emptyList())
+    exercises.forEach {
+        println("Ex: $it")
+    }
+
     MaterialTheme {
         var showContent by remember { mutableStateOf(false) }
         Column(
