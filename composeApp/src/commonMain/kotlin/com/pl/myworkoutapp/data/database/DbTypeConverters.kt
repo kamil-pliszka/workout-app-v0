@@ -1,9 +1,8 @@
 package com.pl.myworkoutapp.data.database
 
 import androidx.room.TypeConverter
-import com.pl.myworkoutapp.domain.model.Category
+import com.pl.myworkoutapp.domain.model.user.Gender
 import com.pl.myworkoutapp.domain.model.Difficulty
-import com.pl.myworkoutapp.domain.model.Gender
 import kotlinx.serialization.json.Json
 import kotlin.time.Instant
 
@@ -42,10 +41,10 @@ object DbTypeConverters {
     @TypeConverter
     fun toGender(value: String?): Gender? = value?.let { Gender.valueOf(it) }
 
-    @TypeConverter
-    fun fromCategory(value: Category?): String? = value?.name
-    @TypeConverter
-    fun toCategory(value: String?): Category? = value?.let { Category.valueOf(it) }
+//    @TypeConverter
+//    fun fromCategory(value: Category?): String? = value?.name
+//    @TypeConverter
+//    fun toCategory(value: String?): Category? = value?.let { Category.valueOf(it) }
 
     @TypeConverter
     fun fromDifficulty(value: Difficulty?): String? = value?.name

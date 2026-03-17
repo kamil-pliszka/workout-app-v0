@@ -4,8 +4,6 @@ import android.content.Context
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.pl.myworkoutapp.core.Constants
-import com.pl.myworkoutapp.core.Log
-import java.util.concurrent.Executors
 
 actual class DatabaseFactory(
     private val context: Context
@@ -24,15 +22,6 @@ actual class DatabaseFactory(
         return Room.databaseBuilder<WorkoutDatabase>(
             context = appContext,
             name = dbFile.absolutePath
-        ).apply {
-            if (Constants.LOG_SQL) {
-                setQueryCallback(
-                    { sqlQuery, bindArgs ->
-                        Log.d("ROOM_SQL", "Query: $sqlQuery, args: $bindArgs")
-                    },
-                    Executors.newSingleThreadExecutor()
-                )
-            }
-        }
+        )
     }
 }

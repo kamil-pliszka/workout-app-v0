@@ -1,0 +1,33 @@
+package com.pl.myworkoutapp.domain.model.exercise
+
+
+enum class BuiltInExerciseId {
+    JUMPING_JACKS,
+    PUSH_UP,
+    TRICEPS_DIPS_ON_CHAIR,
+    PLANK,
+    SIDE_PLANK_LEFT,
+    SIDE_PLANK_RIGHT,
+    SQUATS,
+    BENT_LEG_TWIST,
+    COBRA_STRETCH,
+    RUSSIAN_TWIST,
+    FLUTTER_KICKS,
+    REVERSE_CRUNCHES,
+    HEEL_TOUCH,
+    DEAD_BUG,
+    SUPERMAN,
+    V_HOLD,
+    BUTT_BRIDGE,
+    SIDE_CRUNCHES_LEFT,
+    SIDE_CRUNCHES_RIGHT,
+    CHILD_POSE,
+    PUSH_UP_HOLD_DOWN,
+    HOLLOW_BODY,
+    RUN,
+    RUN_ON_TIME,
+    WALK,
+    DUMBELL_BICEPS_CURLS,
+    PUSH_UP_HOLD,
+    TABATA,
+}

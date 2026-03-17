@@ -10,16 +10,22 @@ import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.pl.myworkoutapp.core.Log
 import com.pl.myworkoutapp.domain.WorkoutRepository
-import org.jetbrains.compose.resources.painterResource
-
+import com.pl.myworkoutapp.domain.model.exercise.BuiltInExerciseRegistry
+import com.pl.myworkoutapp.domain.model.workout.BuiltInWorkoutRegistry
 import myworkoutapplication.composeapp.generated.resources.Res
 import myworkoutapplication.composeapp.generated.resources.compose_multiplatform
+import org.jetbrains.compose.resources.painterResource
 
 @Composable
 @Preview
@@ -31,6 +37,12 @@ fun App() {
     exercises.forEach {
         println("Ex: $it")
     }
+
+    println("Exercises: ")
+    BuiltInExerciseRegistry.getAllId().map { it.name }.sorted().forEach { println(it) }
+
+    println("Workouts: ")
+    BuiltInWorkoutRegistry.getAllId().map { it.name }.sorted().forEach { println(it) }
 
     MaterialTheme {
         var showContent by remember { mutableStateOf(false) }

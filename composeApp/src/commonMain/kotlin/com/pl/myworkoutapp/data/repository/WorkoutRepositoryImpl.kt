@@ -3,9 +3,9 @@ package com.pl.myworkoutapp.data.repository
 import com.pl.myworkoutapp.data.database.WorkoutDao
 import com.pl.myworkoutapp.data.mappers.toDomain
 import com.pl.myworkoutapp.domain.WorkoutRepository
-import com.pl.myworkoutapp.domain.model.Exercise
-import com.pl.myworkoutapp.domain.model.WorkoutPlan
-import com.pl.myworkoutapp.domain.model.WorkoutSession
+import com.pl.myworkoutapp.domain.model.exercise.Exercise
+import com.pl.myworkoutapp.domain.model.TrainingPlan
+import com.pl.myworkoutapp.domain.model.workout.WorkoutSession
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
@@ -26,11 +26,11 @@ class WorkoutRepositoryImpl(
         }
     }
 
-    override suspend fun getPlans(): List<WorkoutPlan> {
+    override suspend fun getPlans(): List<TrainingPlan> {
         TODO("Not yet implemented")
     }
 
-    override suspend fun savePlan(plan: WorkoutPlan) {
+    override suspend fun savePlan(plan: TrainingPlan) {
         TODO("Not yet implemented")
     }
 

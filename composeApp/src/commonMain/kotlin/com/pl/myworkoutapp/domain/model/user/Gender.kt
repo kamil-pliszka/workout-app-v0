@@ -1,4 +1,4 @@
-package com.pl.myworkoutapp.domain.model
+package com.pl.myworkoutapp.domain.model.user
 
 enum class Gender {
     MALE,
