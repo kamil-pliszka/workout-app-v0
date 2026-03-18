@@ -10,15 +10,6 @@ import com.pl.myworkoutapp.domain.model.exercise.asExerciseId
 
 
 val BACK_EXERCISES = listOf(
-    BuiltInExercise(
-        id =  BuiltInExerciseId.DUMBELL_BICEPS_CURLS.asExerciseId(),
-        muscle = MuscleGroup.ARMS,
-        exerciseType = ExerciseType.STRENGTH,
-        equipment = Equipment.DUMBBELLS,
-        met = 3.5,
-        quantityType = QuantityType.REPS,
-    ),
-
     BuiltInExercise (
         id =  BuiltInExerciseId.COBRA_STRETCH.asExerciseId(),
         muscle = MuscleGroup.BACK,

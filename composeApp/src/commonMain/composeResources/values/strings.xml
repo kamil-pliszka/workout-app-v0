@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<resources>
+    <string name="navigation_plans">Plans</string>
+    <string name="navigation_workouts">Workouts</string>
+    <string name="navigation_reports">Reports</string>
+    <string name="navigation_settings">Settings</string>
+</resources>

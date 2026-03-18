@@ -15,6 +15,9 @@ data class WorkoutExercise(
         require(quantity.type == exercise.quantityType) {
             "Exercise: ${exercise.id} requires quantityType: ${exercise.quantityType}, got: ${quantity.type}"
         }
+        require(quantity.value > 0) {
+            "quantity must be > 0"
+        }
     }
 }
 
@@ -47,4 +50,13 @@ data class Circuit(
     val rounds: Int,
     val structure: CircuitStructure = CircuitStructure.Standard,
     val items: List<WorkoutItem>,
-) : WorkoutItem
+) : WorkoutItem {
+    init {
+        require(rounds > 0) {
+            "rounds must be > 0"
+        }
+        require(items.isNotEmpty()) {
+            "items must be not empty"
+        }
+    }
+}

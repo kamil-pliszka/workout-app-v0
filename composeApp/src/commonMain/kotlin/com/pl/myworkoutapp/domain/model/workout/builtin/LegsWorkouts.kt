@@ -10,9 +10,8 @@ object LegsWorkouts {
     val LEGS_AND_GLUTES_10_MIN = BuiltInWorkout(
         id = BuiltInWorkoutId.LEGS_AND_GLUTES_10_MIN.asWorkoutId(),
         difficulty = Difficulty.INTERMEDIATE,
-        estimatedDuration = 12,//TODO - to powinno zostać jakoś wyznaczone
         exercises = listOf(
-            BuiltInExerciseId.TABATA.withDuration(20),
+            BuiltInExerciseId.JUMPING_JACKS.withDuration(20),
         ),
     )
 

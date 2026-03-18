@@ -61,6 +61,8 @@ kotlin {
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.androidx.room.runtime)
             implementation(libs.sqlite.bundled)
+            implementation(libs.jetbrains.compose.navigation)
+            implementation(libs.compose.material.icons.extended)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

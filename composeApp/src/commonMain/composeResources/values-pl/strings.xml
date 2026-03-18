@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<resources>
+    <string name="navigation_plans">Zestawy</string>
+    <string name="navigation_workouts">Treningi</string>
+    <string name="navigation_reports">Raporty</string>
+    <string name="navigation_settings">Ustawienia</string>
+</resources>

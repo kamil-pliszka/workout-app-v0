@@ -8,6 +8,6 @@ object StatsCalculator {
     fun totalCalories(sessions: List<WorkoutSession>): Double {
 
         //return sessions.sumOf { it.calories ?: 0.0 }
-        return 0.0
+        error("Not implemented")
     }
 }

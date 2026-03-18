@@ -13,7 +13,6 @@ object TabataWorkouts {
     val TABATA_WORKOUT_1 = BuiltInWorkout(
         id = BuiltInWorkoutId.TABATA_1.asWorkoutId(),
         difficulty = Difficulty.INTERMEDIATE,
-        estimatedDuration = 12,//TODO - to powinno zostać jakoś wyznaczone
         exercises = listOf(
             Circuit(
                 phase = Phase.MAIN,
@@ -24,7 +23,7 @@ object TabataWorkouts {
                 ),
                 rounds = 8,
                 items = listOf(
-                    BuiltInExerciseId.TABATA.withDuration(20),
+                    BuiltInExerciseId.PLANK.withDuration(20),
                 )
             ),
         )

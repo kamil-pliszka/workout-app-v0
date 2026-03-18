@@ -1,5 +1,6 @@
 package com.pl.myworkoutapp.domain.model.exercise
 
+import com.pl.myworkoutapp.core.associateByUnique
 import com.pl.myworkoutapp.domain.model.exercise.builtin.ABS_EXERCISES
 import com.pl.myworkoutapp.domain.model.exercise.builtin.ARM_EXERCISES
 import com.pl.myworkoutapp.domain.model.exercise.builtin.BACK_EXERCISES
@@ -15,7 +16,7 @@ object BuiltInExerciseRegistry {
                     + CHEST_EXERCISES
                     + CORE_EXERCISES
                     + LEGS_EXERCISES
-            ).associateBy { it.id.toBuiltInExerciseId() }
+            ).associateByUnique { it.id.toBuiltInExerciseId() }
 
     //private val CUSTOM_EXERCISES = mutableMapOf<Int, CustomExercise>()
 

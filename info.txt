@@ -1,0 +1,13 @@
+1. Struktura nawigacji (kluczowa decyzja)
+    2 grafy nawigacyjne:
+Root
+├── MainGraph (z bottom bar)
+│   ├── PlansScreen
+│   ├── WorkoutsScreen
+│   ├── ReportsScreen
+│   └── SettingsScreen
+│
+└── WorkoutExecutionGraph (FULLSCREEN, bez bottom bar)
+    └── WorkoutExecutionScreen
+
+WorkoutExecutionScreen jest poza bottom navigation

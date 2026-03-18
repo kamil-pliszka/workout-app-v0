@@ -29,5 +29,4 @@ enum class BuiltInExerciseId {
     WALK,
     DUMBELL_BICEPS_CURLS,
     PUSH_UP_HOLD,
-    TABATA,
 }

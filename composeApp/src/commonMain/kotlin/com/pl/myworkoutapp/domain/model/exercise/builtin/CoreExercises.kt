@@ -81,16 +81,6 @@ val CORE_EXERCISES = listOf(
         quantityType = QuantityType.DURATION,
     ),
 
-    BuiltInExercise (//czy to rzeczywiście będzie potrzebne?
-        id =  BuiltInExerciseId.TABATA.asExerciseId(),
-        muscle = MuscleGroup.CORE,
-        exerciseType = ExerciseType.MOBILITY,
-        equipment = Equipment.BODYWEIGHT,
-        met = 2.5,
-        quantityType = QuantityType.DURATION,
-    ),
-
-
     BuiltInExercise (
         id =  BuiltInExerciseId.PUSH_UP_HOLD_DOWN.asExerciseId(),
         muscle = MuscleGroup.CORE,

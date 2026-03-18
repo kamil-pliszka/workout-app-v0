@@ -5,8 +5,12 @@ import com.pl.myworkoutapp.data.database.DatabaseFactory
 import com.pl.myworkoutapp.data.database.WorkoutDatabase
 import com.pl.myworkoutapp.data.repository.WorkoutRepositoryImpl
 import com.pl.myworkoutapp.domain.WorkoutRepository
+import com.pl.myworkoutapp.ui.execution.WorkoutExecutionViewModel
+import com.pl.myworkoutapp.ui.plans.PlansViewModel
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.singleOf
+import org.koin.core.module.dsl.viewModel
+import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
@@ -22,6 +26,14 @@ val sharedModule = module {
             .build()
     }
     single { get<WorkoutDatabase>().workoutDao }
-//
-//    viewModelOf(::XXXViewModel)
+
+    viewModelOf(::WorkoutExecutionViewModel)
+    viewModelOf(::PlansViewModel)
+
+//    viewModelOf {
+//        WorkoutExecutionViewModel(
+//            effects = get(),
+//            savedStateHandle = get()
+//        )
+//    }
 }

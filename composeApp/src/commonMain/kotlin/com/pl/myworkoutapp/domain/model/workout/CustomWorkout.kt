@@ -11,6 +11,6 @@ data class CustomWorkout(
     val imageUri: String?,// np. "file://...", "content://...", lub URL do zasobu
 
     override val difficulty: Difficulty,
-    override val estimatedDuration: Int, //in seconds
+    //override val estimatedDuration: Int, //in seconds
     override val exercises: List<WorkoutItem>,
 ) : Workout

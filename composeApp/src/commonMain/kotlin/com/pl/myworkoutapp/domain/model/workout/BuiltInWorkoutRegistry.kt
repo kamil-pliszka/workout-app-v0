@@ -1,5 +1,6 @@
 package com.pl.myworkoutapp.domain.model.workout
 
+import com.pl.myworkoutapp.core.associateByUnique
 import com.pl.myworkoutapp.domain.model.workout.builtin.AbsWorkouts
 import com.pl.myworkoutapp.domain.model.workout.builtin.LegsWorkouts
 import com.pl.myworkoutapp.domain.model.workout.builtin.TabataWorkouts
@@ -9,7 +10,7 @@ object BuiltInWorkoutRegistry {
         AbsWorkouts.ALL(),
         TabataWorkouts.ALL(),
         LegsWorkouts.ALL(),
-    ).flatten().associateBy { it.id.toBuiltInWorkoutId() }
+    ).flatten().associateByUnique { it.id.toBuiltInWorkoutId() }
 
     fun get(id: BuiltInWorkoutId) = BUILT_INS[id] ?: error("Missing built-in workout: $id")
 

@@ -13,7 +13,6 @@ object AbsWorkouts {
     val MY_WORKOUT_NO_SET = BuiltInWorkout(
         id = BuiltInWorkoutId.MY_ABS_WORKOUT_NO_SET.asWorkoutId(),
         difficulty = Difficulty.ADVANCED,
-        estimatedDuration = 12,//TODO - to powinno zostać jakoś wyznaczone
         exercises = listOf(
             //WARMUP
             BuiltInExerciseId.JUMPING_JACKS.withDuration(30),
@@ -61,7 +60,6 @@ object AbsWorkouts {
     val MY_ABS_WORKOUT_WITH_SET = BuiltInWorkout(
         id = BuiltInWorkoutId.MY_ABS_WORKOUT_WITH_SET.asWorkoutId(),
         difficulty = Difficulty.ADVANCED,
-        estimatedDuration = 12,//TODO - to powinno zostać jakoś wyznaczone
         exercises = listOf(
             //WARMUP
             Circuit(
@@ -107,10 +105,9 @@ object AbsWorkouts {
         ),
     )
 
-    val MY_ABS_WOROUT_SUPERSET = BuiltInWorkout(
-        id = BuiltInWorkoutId.MY_ABS_WOROUT_SUPERSET.asWorkoutId(),
+    val MY_ABS_WORKOUT_SUPERSET = BuiltInWorkout(
+        id = BuiltInWorkoutId.MY_ABS_WORKOUT_SUPERSET.asWorkoutId(),
         difficulty = Difficulty.ADVANCED,
-        estimatedDuration = 12,//TODO - to powinno zostać jakoś wyznaczone
         exercises = listOf(
             //WARMUP
             Circuit(
@@ -173,18 +170,16 @@ object AbsWorkouts {
     val SIX_PACK_10_MIN = BuiltInWorkout(
         id = BuiltInWorkoutId.SIX_PACK_10_MIN.asWorkoutId(),
         difficulty = Difficulty.INTERMEDIATE,
-        estimatedDuration = 12,//TODO - to powinno zostać jakoś wyznaczone
         exercises = listOf(
-            BuiltInExerciseId.TABATA.withDuration(20),
+            BuiltInExerciseId.PLANK.withDuration(20),
         ),
     )
 
     val SIX_PACK_20_MIN = BuiltInWorkout(
         id = BuiltInWorkoutId.SIX_PACK_20_MIN.asWorkoutId(),
         difficulty = Difficulty.INTERMEDIATE,
-        estimatedDuration = 12,//TODO - to powinno zostać jakoś wyznaczone
         exercises = listOf(
-            BuiltInExerciseId.TABATA.withDuration(20),
+            BuiltInExerciseId.PLANK.withDuration(40),
         ),
     )
 
@@ -194,7 +189,7 @@ object AbsWorkouts {
     fun ALL() = listOf(
         MY_WORKOUT_NO_SET,
         MY_ABS_WORKOUT_WITH_SET,
-        MY_ABS_WOROUT_SUPERSET,
+        MY_ABS_WORKOUT_SUPERSET,
         SIX_PACK_10_MIN,
         SIX_PACK_20_MIN,
     )
