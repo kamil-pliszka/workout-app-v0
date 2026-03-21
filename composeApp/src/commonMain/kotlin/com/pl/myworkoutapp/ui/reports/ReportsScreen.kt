@@ -8,7 +8,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
 @Composable
-fun ReportsScreen() {
+fun ReportsScreen(
+    state: ReportsUiState,
+    onAction: (ReportsAction) -> Unit,
+) {
     Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.primaryContainer) {
         Text("Reports")
     }

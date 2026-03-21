@@ -9,14 +9,18 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.pl.myworkoutapp.ui.common.asString
 import com.pl.myworkoutapp.ui.execution.WorkoutExecutionScreen
 import com.pl.myworkoutapp.ui.execution.WorkoutExecutionViewModel
 import com.pl.myworkoutapp.ui.plans.PlansAction
 import com.pl.myworkoutapp.ui.plans.PlansScreen
 import com.pl.myworkoutapp.ui.plans.PlansViewModel
 import com.pl.myworkoutapp.ui.reports.ReportsScreen
+import com.pl.myworkoutapp.ui.reports.ReportsViewModel
 import com.pl.myworkoutapp.ui.settings.SettingsScreen
+import com.pl.myworkoutapp.ui.settings.SettingsViewModel
 import com.pl.myworkoutapp.ui.workouts.WorkoutsScreen
+import com.pl.myworkoutapp.ui.workouts.WorkoutsViewModel
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -41,14 +45,38 @@ fun Navigation(
                 onAction = { action ->
                     viewModel.onAction(action)
                     if (action is PlansAction.NavToWorkout) {
-                        navController.navigate(ScreenRoutes.WorkoutExecution.create(action.workoutId))
+                        navController.navigate(ScreenRoutes.WorkoutExecution.create(action.workoutId.asString()))
                     }
                 }
             )
         }
-        composable(ScreenRoutes.Workouts.route) { WorkoutsScreen(/*navController*/) }
-        composable(ScreenRoutes.Reports.route) { ReportsScreen() }
-        composable(ScreenRoutes.Settings.route) { SettingsScreen() }
+        composable(ScreenRoutes.Workouts.route) {
+            val viewModel : WorkoutsViewModel = koinViewModel()
+            //UiEventConsumer(snackbarHostState, viewModel.events)
+            val state by viewModel.state.collectAsStateWithLifecycle()
+            WorkoutsScreen(
+                state = state,
+                onAction = viewModel::onAction
+            )
+        }
+        composable(ScreenRoutes.Reports.route) {
+            val viewModel : ReportsViewModel = koinViewModel()
+            //UiEventConsumer(snackbarHostState, viewModel.events)
+            val state by viewModel.state.collectAsStateWithLifecycle()
+            ReportsScreen(
+                state = state,
+                onAction = viewModel::onAction
+            )
+        }
+        composable(ScreenRoutes.Settings.route) {
+            val viewModel : SettingsViewModel = koinViewModel()
+            //UiEventConsumer(snackbarHostState, viewModel.events)
+            val state by viewModel.state.collectAsStateWithLifecycle()
+            SettingsScreen(
+                state = state,
+                onAction = viewModel::onAction
+            )
+        }
 
         // EXECUTION GRAPH
         composable(

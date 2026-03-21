@@ -4,4 +4,18 @@
     <string name="navigation_workouts">Workouts</string>
     <string name="navigation_reports">Reports</string>
     <string name="navigation_settings">Settings</string>
+
+    <string name="difficulty_beginner">Beginner</string>
+    <string name="difficulty_intermediate">Intermediate</string>
+    <string name="difficulty_advanced">Advanced</string>
+
+    <string name="plans_belly_fat_burn">Belly fat burn</string>
+    <string name="plans_six_pack_abs">Six-pack abs</string>
+    <string name="plans_rock_solid_abs">Rock solid abs</string>
+    <string name="plans_day_number">Day %1$s</string>
+    <string name="plans_rest_day">Rest day</string>
+    <string name="plans_day_start">Start</string>
+    <string name="plans_day_resume">Resume</string>
+
+
 </resources>

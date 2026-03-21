@@ -1,9 +1,9 @@
 package com.pl.myworkoutapp.ui.navigation
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.pl.myworkoutapp.ui.common.UiText
@@ -37,7 +37,7 @@ val NAV_ITEMS = listOf(
     NavItem(
         nameResource = Res.string.navigation_reports.asUiText(),
         route = ScreenRoutes.Reports.route,
-        icon = Icons.Default.List,
+        icon = Icons.AutoMirrored.Filled.List,
     ),
 
     NavItem(

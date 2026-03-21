@@ -11,9 +11,7 @@ import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -21,8 +19,8 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 @Composable
 fun AppBottomNavigationBar(navController: NavController) {
     NavigationBar {
+        val currentDestination = navController.currentBackStackEntryAsState().value?.destination
         NAV_ITEMS.forEach { navItem ->
-            val currentDestination = navController.currentBackStackEntryAsState().value?.destination
             val selected = currentDestination?.hierarchy?.any {
                 it.route == navItem.route
             } == true
@@ -67,8 +65,8 @@ fun AppNavigationRail(navController: NavController) {
             verticalArrangement = Arrangement.Center,
             //horizontalAlignment = CenterHorizontally
         ) {
+            val currentDestination = navController.currentBackStackEntryAsState().value?.destination
             NAV_ITEMS.forEach { navItem ->
-                val currentDestination = navController.currentBackStackEntryAsState().value?.destination
                 val selected = currentDestination?.hierarchy?.any {
                     it.route == navItem.route
                 } == true

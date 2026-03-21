@@ -1,7 +1,7 @@
 package com.pl.myworkoutapp.domain
 
 import com.pl.myworkoutapp.domain.model.exercise.Exercise
-import com.pl.myworkoutapp.domain.model.TrainingPlan
+import com.pl.myworkoutapp.domain.model.plan.TrainingPlan
 import com.pl.myworkoutapp.domain.model.workout.WorkoutSession
 import kotlinx.coroutines.flow.Flow
 

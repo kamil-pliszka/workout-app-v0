@@ -3,14 +3,13 @@ package com.pl.myworkoutapp.ui.effects
 import android.Manifest
 import android.app.Activity
 import android.content.Context
-import android.media.MediaPlayer
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
+import android.os.VibratorManager
 import android.speech.tts.TextToSpeech
 import android.view.WindowManager
 import androidx.annotation.RequiresPermission
-import com.pl.myworkoutapp.R
 
 class AndroidPlatformEffects(private val activityProvider: () -> Activity?) : PlatformEffects {
 
@@ -26,7 +25,15 @@ class AndroidPlatformEffects(private val activityProvider: () -> Activity?) : Pl
     @RequiresPermission(Manifest.permission.VIBRATE)
     override fun vibrate(durationMs: Long) {
         val activity = activityProvider() ?: return
-        val vibrator = activity.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        //val vibrator = activity.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        val vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val vibratorManager =
+                activity.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
+            vibratorManager.defaultVibrator
+        } else {
+            @Suppress("DEPRECATION")
+            activity.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        }
         vibrator.vibrate(VibrationEffect.createOneShot(durationMs, VibrationEffect.DEFAULT_AMPLITUDE))
     }
 

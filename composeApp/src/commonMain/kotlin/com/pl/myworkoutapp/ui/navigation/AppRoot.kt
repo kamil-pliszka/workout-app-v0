@@ -22,7 +22,7 @@ import com.pl.myworkoutapp.getPlatform
 fun AppRoot() {
     val navController = rememberNavController()
     val snackBarState = remember { SnackbarHostState() }
-    val currentRoute = currentRoute(navController)
+    //val currentRoute = currentRoute(navController)
 
     //val isInWorkout = currentRoute?.startsWith(WORKOUT_EXECUTION_ROUTE_PREFIX) == true
     //val isInWorkout = currentRoute?.contains(WORKOUT_EXECUTION_ROUTE_PREFIX) == true
@@ -31,12 +31,16 @@ fun AppRoot() {
         it.route?.startsWith(WORKOUT_EXECUTION_ROUTE_PREFIX) == true
     } == true
 
-    val isMobileLandscape = getPlatform().isMobile()
-            && LocalWindowInfo.current.containerSize.run { width > height }
+    val isMobile = getPlatform().isMobile()
+    val size = LocalWindowInfo.current.containerSize
+    //nawigacja boczna jest przeznaczona tylko na wersje mobilne
+    //w wersji desktop nie występuje RailNavigation
+    val useRailNavigation = isMobile && size.width > size.height
+    val showBottomBar = !isInWorkout && !useRailNavigation
 
     Scaffold(
         bottomBar = {
-            if (!isInWorkout && !isMobileLandscape) {
+            if (showBottomBar) {
                 AppBottomNavigationBar(navController)
             }
         },
@@ -46,7 +50,7 @@ fun AppRoot() {
             )
         },
     ) { innerPadding ->
-        if (isMobileLandscape) {
+        if (useRailNavigation) {
             Row(
                 modifier = Modifier
                     .fillMaxSize()

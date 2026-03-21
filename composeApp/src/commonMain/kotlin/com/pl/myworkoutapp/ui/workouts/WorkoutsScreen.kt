@@ -11,7 +11,10 @@ import com.pl.myworkoutapp.domain.model.workout.WorkoutId
 import com.pl.myworkoutapp.ui.navigation.ScreenRoutes
 
 @Composable
-fun WorkoutsScreen() {
+fun WorkoutsScreen(
+    state: WorkoutsUiState,
+    onAction: (WorkoutsAction) -> Unit,
+    ) {
     Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.primaryContainer) {
         Text("Workouts")
     }

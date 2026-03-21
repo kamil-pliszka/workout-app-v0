@@ -7,9 +7,11 @@ import com.pl.myworkoutapp.data.repository.WorkoutRepositoryImpl
 import com.pl.myworkoutapp.domain.WorkoutRepository
 import com.pl.myworkoutapp.ui.execution.WorkoutExecutionViewModel
 import com.pl.myworkoutapp.ui.plans.PlansViewModel
+import com.pl.myworkoutapp.ui.reports.ReportsViewModel
+import com.pl.myworkoutapp.ui.settings.SettingsViewModel
+import com.pl.myworkoutapp.ui.workouts.WorkoutsViewModel
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.singleOf
-import org.koin.core.module.dsl.viewModel
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
@@ -27,13 +29,9 @@ val sharedModule = module {
     }
     single { get<WorkoutDatabase>().workoutDao }
 
-    viewModelOf(::WorkoutExecutionViewModel)
     viewModelOf(::PlansViewModel)
-
-//    viewModelOf {
-//        WorkoutExecutionViewModel(
-//            effects = get(),
-//            savedStateHandle = get()
-//        )
-//    }
+    viewModelOf(::ReportsViewModel)
+    viewModelOf(::SettingsViewModel)
+    viewModelOf(::WorkoutExecutionViewModel)
+    viewModelOf(::WorkoutsViewModel)
 }

@@ -4,4 +4,17 @@
     <string name="navigation_workouts">Treningi</string>
     <string name="navigation_reports">Raporty</string>
     <string name="navigation_settings">Ustawienia</string>
+
+    <string name="difficulty_beginner">Początkujący</string>
+    <string name="difficulty_intermediate">Średniozaawansowany</string>
+    <string name="difficulty_advanced">Zaawansowany</string>
+
+    <string name="plans_belly_fat_burn">Spalanie tłuszczu z brzucha</string>
+    <string name="plans_six_pack_abs">Twój brzuch jak kaloryfer</string>
+    <string name="plans_rock_solid_abs">Mięśnie brzucha twarde jak skała</string>
+    <string name="plans_day_number">Dzień %1$s</string>
+    <string name="plans_rest_day">Dzień odpoczynku</string>
+    <string name="plans_day_start">Uruchom</string>
+    <string name="plans_day_resume">Wznów</string>
+
 </resources>

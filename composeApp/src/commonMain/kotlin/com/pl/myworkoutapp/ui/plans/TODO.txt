@@ -1,0 +1,70 @@
+Co dokładnie robisz?
+
+Opis:
+
+pobiera z repo plan
+pobiera status usera
+scala dane
+mapuje na UI model
+
+To jest:
+
+👉 UseCase (logika aplikacyjna)
+a nie UI.
+
+🧱 Gdzie to powinno siedzieć?
+✔️ poprawna struktura
+domain/
+    GetPlanWithProgressUseCase
+
+data/
+    PlanRepository
+    ProgressRepository
+
+ui/
+    DayUiState
+    mapper (opcjonalnie lekki)
+
+
+Przykład – jak to powinno wyglądać
+1. UseCase (domain / application layer)
+class GetPlanWithProgressUseCase(
+    private val planRepository: PlanRepository,
+    private val progressRepository: ProgressRepository
+) {
+    suspend operator fun invoke(): List<DayDomainModel> {
+        val plan = planRepository.getPlan()
+        val progress = progressRepository.getProgress()
+
+        return plan.days.map { day ->
+            val dayProgress = progress[day.id]
+            DayDomainModel(
+                id = day.id,
+                type = if (day.isRest) DayType.Rest else DayType.Workout,
+                progress = mapProgress(dayProgress)
+            )
+        }
+    }
+}
+
+👉 tu jest:
+
+agregacja danych ✔️
+
+logika ✔️
+
+2. Mapper do UI (UI layer)
+fun DayDomainModel.toUi(): PlanDayUiModel {
+    return PlanDayUiModel(
+        dayIndex = id,
+        dayType = type,
+        dayProgress = progress,
+        desc = ...
+    )
+}
+
+👉 UI dostaje już „czysty” model
+
+3. ViewModel
+val days = useCase()
+    .map { list -> list.map { it.toUi() } }

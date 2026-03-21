@@ -1,7 +1,9 @@
 package com.pl.myworkoutapp.ui.plans
 
+import com.pl.myworkoutapp.domain.model.workout.WorkoutId
+
 sealed interface PlansAction {
-    object OnShowDateDialogAction : PlansAction
-    object OnDialogConfirmAction : PlansAction
-    data class NavToWorkout(val workoutId: String) : PlansAction
+    data class OnStartPlan(val planId: String) : PlansAction
+    data class OnPageChanged(val index: Int) : PlansAction
+    data class NavToWorkout(val workoutId: WorkoutId) : PlansAction
 }

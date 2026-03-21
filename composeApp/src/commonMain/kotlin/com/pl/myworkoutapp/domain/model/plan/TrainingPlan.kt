@@ -1,13 +1,12 @@
-package com.pl.myworkoutapp.domain.model
+package com.pl.myworkoutapp.domain.model.plan
 
 import com.pl.myworkoutapp.domain.model.Difficulty
-import com.pl.myworkoutapp.domain.model.workout.Workout
 
 //Training Plan / Program – plan na wiele dni (np. 30-dniowy)
 data class TrainingPlan(
-    val id: Int,
-    val name: String,
+    val id: BuiltInTrainingPlanId,
     //val category: Category,
     val difficulty: Difficulty,
-    val workouts: List<Workout>,
+    val days: List<TrainingDay>,
+    val durationDays: Int = days.size,
 )

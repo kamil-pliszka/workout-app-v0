@@ -9,19 +9,19 @@ sealed interface UiText {
     data class DynamicString(val value: String): UiText
     class StringResourceId(
         val id: StringResource,
-        val args: Array<Any> = arrayOf()
+        val args: List<Any> = emptyList()
     ): UiText
 
     @Composable
     fun asString(): String {
         return when(this) {
             is DynamicString -> value
-            is StringResourceId -> stringResource(resource = id, formatArgs = args)
+            is StringResourceId -> stringResource(resource = id, formatArgs = args.toTypedArray())
         }
     }
 }
 
-fun StringResource.asUiText(vararg args: Any) = UiText.StringResourceId(this, arrayOf(args))
+fun StringResource.asUiText(vararg args: Any) = UiText.StringResourceId(this, listOf(args))
 
 
 // funkcja raczej nie powinna normalnie być użyta,
