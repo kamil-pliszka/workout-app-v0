@@ -13,7 +13,7 @@ object AbsWorkouts {
     val MY_WORKOUT_NO_SET = BuiltInWorkout(
         id = BuiltInWorkoutId.MY_ABS_WORKOUT_NO_SET.asWorkoutId(),
         difficulty = Difficulty.ADVANCED,
-        exercises = listOf(
+        items = listOf(
             //WARMUP
             BuiltInExerciseId.JUMPING_JACKS.withDuration(30),
             BuiltInExerciseId.BENT_LEG_TWIST.withRepsPerSide(10),
@@ -60,7 +60,7 @@ object AbsWorkouts {
     val MY_ABS_WORKOUT_WITH_SET = BuiltInWorkout(
         id = BuiltInWorkoutId.MY_ABS_WORKOUT_WITH_SET.asWorkoutId(),
         difficulty = Difficulty.ADVANCED,
-        exercises = listOf(
+        items = listOf(
             //WARMUP
             Circuit(
                 phase = Phase.WARMUP,
@@ -108,7 +108,7 @@ object AbsWorkouts {
     val MY_ABS_WORKOUT_SUPERSET = BuiltInWorkout(
         id = BuiltInWorkoutId.MY_ABS_WORKOUT_SUPERSET.asWorkoutId(),
         difficulty = Difficulty.ADVANCED,
-        exercises = listOf(
+        items = listOf(
             //WARMUP
             Circuit(
                 phase = Phase.WARMUP,
@@ -170,7 +170,7 @@ object AbsWorkouts {
     val SIX_PACK_10_MIN = BuiltInWorkout(
         id = BuiltInWorkoutId.SIX_PACK_10_MIN.asWorkoutId(),
         difficulty = Difficulty.INTERMEDIATE,
-        exercises = listOf(
+        items = listOf(
             BuiltInExerciseId.PLANK.withDuration(20),
         ),
     )
@@ -178,7 +178,7 @@ object AbsWorkouts {
     val SIX_PACK_20_MIN = BuiltInWorkout(
         id = BuiltInWorkoutId.SIX_PACK_20_MIN.asWorkoutId(),
         difficulty = Difficulty.INTERMEDIATE,
-        exercises = listOf(
+        items = listOf(
             BuiltInExerciseId.PLANK.withDuration(40),
         ),
     )

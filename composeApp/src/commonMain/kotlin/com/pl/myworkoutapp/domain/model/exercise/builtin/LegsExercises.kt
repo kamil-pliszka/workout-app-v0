@@ -28,7 +28,7 @@ val LEGS_EXERCISES = listOf(
     ),
 
     BuiltInExercise (
-        id =  BuiltInExerciseId.RUN.asExerciseId(),
+        id =  BuiltInExerciseId.RUNNING.asExerciseId(),
         muscle = MuscleGroup.LEGS,
         exerciseType = ExerciseType.MOBILITY,
         equipment = Equipment.BODYWEIGHT,
@@ -37,7 +37,7 @@ val LEGS_EXERCISES = listOf(
     ),
 
     BuiltInExercise (
-        id =  BuiltInExerciseId.RUN_ON_TIME.asExerciseId(),
+        id =  BuiltInExerciseId.RUNNING_ON_TIME.asExerciseId(),
         muscle = MuscleGroup.LEGS,
         exerciseType = ExerciseType.MOBILITY,
         equipment = Equipment.BODYWEIGHT,
@@ -46,7 +46,7 @@ val LEGS_EXERCISES = listOf(
     ),
 
     BuiltInExercise (
-        id =  BuiltInExerciseId.WALK.asExerciseId(), //"Chód/Spacer",
+        id =  BuiltInExerciseId.WALKING.asExerciseId(), //"Chód/Spacer",
         muscle = MuscleGroup.LEGS,
         exerciseType = ExerciseType.CARDIO,
         equipment = Equipment.BODYWEIGHT,

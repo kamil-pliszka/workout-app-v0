@@ -6,5 +6,5 @@ data class BuiltInWorkout(
     override val id: WorkoutId.BuiltIn,
     override val difficulty: Difficulty,
     //override val estimatedDuration: Int, //in seconds
-    override val exercises: List<WorkoutItem>,
+    override val items: List<WorkoutItem>,
 ) : Workout

@@ -13,7 +13,7 @@ object TabataWorkouts {
     val TABATA_WORKOUT_1 = BuiltInWorkout(
         id = BuiltInWorkoutId.TABATA_1.asWorkoutId(),
         difficulty = Difficulty.INTERMEDIATE,
-        exercises = listOf(
+        items = listOf(
             Circuit(
                 phase = Phase.MAIN,
                 name = "tabata set",

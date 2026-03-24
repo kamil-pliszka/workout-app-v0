@@ -11,9 +11,9 @@ data class CustomWorkout(
     val imageUri: String?,// np. "file://...", "content://...", lub URL do zasobu
     //bazowy workout na którym jest wzorowane ten zestaw ćwiczeń
     //w takim przypadku na UI będzie można używać tych samych tłumaczeń/zasobów które ma workout bazowy
-    val basedOn: WorkoutId.BuiltIn,
+    val basedOn: WorkoutId.BuiltIn?,
 
     override val difficulty: Difficulty,
     //override val estimatedDuration: Int, //in seconds
-    override val exercises: List<WorkoutItem>,
+    override val items: List<WorkoutItem>,
 ) : Workout

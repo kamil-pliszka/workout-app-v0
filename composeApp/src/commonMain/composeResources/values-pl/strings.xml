@@ -17,4 +17,10 @@
     <string name="plans_day_start">Uruchom</string>
     <string name="plans_day_resume">Wznów</string>
 
+    <string name="workouts_qty_reps_per_side">x %1$s na stronę</string>
+
+    <string name="workouts_phase_warmup">Rozgrzewka</string>
+    <string name="workouts_phase_training">Trening</string>
+    <string name="workouts_phase_coldown">Ochłodzenie</string>
+
 </resources>

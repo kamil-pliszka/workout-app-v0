@@ -1,9 +1,7 @@
-package com.pl.myworkoutapp.ui.plans
+package com.pl.myworkoutapp.ui.common
 
 import androidx.compose.ui.graphics.Color
 import com.pl.myworkoutapp.domain.model.plan.BuiltInTrainingPlanId
-import com.pl.myworkoutapp.ui.common.UiText
-import com.pl.myworkoutapp.ui.common.asUiText
 import com.pl.myworkoutapp.ui.theme.Blue
 import com.pl.myworkoutapp.ui.theme.LightBlue
 import com.pl.myworkoutapp.ui.theme.holoGreen

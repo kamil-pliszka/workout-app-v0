@@ -10,7 +10,7 @@ object LegsWorkouts {
     val LEGS_AND_GLUTES_10_MIN = BuiltInWorkout(
         id = BuiltInWorkoutId.LEGS_AND_GLUTES_10_MIN.asWorkoutId(),
         difficulty = Difficulty.INTERMEDIATE,
-        exercises = listOf(
+        items = listOf(
             BuiltInExerciseId.JUMPING_JACKS.withDuration(20),
         ),
     )

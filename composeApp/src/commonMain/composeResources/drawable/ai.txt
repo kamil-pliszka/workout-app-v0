@@ -1,0 +1,14 @@
+
+
+generate fitness app icon: material design style fitness icon, outline icon, monochrome, transparent background, vector style, with dimensions: 450x300px, png format
+for exercise: HOLLOW_BODY
+
+
+
+DEAD_BUG,
+V-HOLD,
+SIDE_CRUNCHES_RIGHT
+HOLLOW_BODY
+
+
+

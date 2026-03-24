@@ -9,7 +9,7 @@ data class CustomExercise(
     val imageUri: String?,// np. "file://...", "content://...", lub URL do zasobu
     //bazowe ćwiczenie na którym jest wzorowane te ćwiczenie
     //w takim przypadku na UI będzie można używać tych samych tłumaczeń/zasobów które ma ćwiczenie bazowe
-    val basedOn: ExerciseId.BuiltIn,
+    val basedOn: ExerciseId.BuiltIn?,
 
     override val muscle: MuscleGroup,
     override val exerciseType: ExerciseType,

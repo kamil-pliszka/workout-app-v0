@@ -7,5 +7,5 @@ sealed interface Workout {
     val id: WorkoutId
     val difficulty: Difficulty
     //val estimatedDuration: Int //in seconds
-    val exercises: List<WorkoutItem>
+    val items: List<WorkoutItem>
 }

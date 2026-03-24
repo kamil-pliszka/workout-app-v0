@@ -21,7 +21,7 @@ sealed interface UiText {
     }
 }
 
-fun StringResource.asUiText(vararg args: Any) = UiText.StringResourceId(this, listOf(args))
+fun StringResource.asUiText(vararg args: Any) = UiText.StringResourceId(this, listOf(*args))
 
 
 // funkcja raczej nie powinna normalnie być użyta,
@@ -29,3 +29,5 @@ fun StringResource.asUiText(vararg args: Any) = UiText.StringResourceId(this, li
 // jakiś tekst "z zewnątrz", np z wyjątku lub z wywołania api
 // normalnie powinny być prezentowane teksty podlegające tlumaczeniom czyli z użyciem StringResourceId
 fun String.asUiText() = UiText.DynamicString(this)
+
+val EmptyUiText = "".asUiText()

@@ -21,4 +21,11 @@ for /r "ui/navigation" %%f in (*.kt) do (
     echo. >> navi.txt
 )
 
+echo. > workouts.txt
+for /r "ui/workouts" %%f in (*.kt) do (
+    echo ==== %%f ==== >> workouts.txt
+    type "%%f" >> workouts.txt
+    echo. >> workouts.txt
+)
+
 dir /S/B > dir.txt

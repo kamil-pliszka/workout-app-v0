@@ -24,9 +24,9 @@ enum class BuiltInExerciseId {
     CHILD_POSE,
     PUSH_UP_HOLD_DOWN,
     HOLLOW_BODY,
-    RUN,
-    RUN_ON_TIME,
-    WALK,
+    RUNNING,
+    RUNNING_ON_TIME,
+    WALKING,
     DUMBELL_BICEPS_CURLS,
     PUSH_UP_HOLD,
 }

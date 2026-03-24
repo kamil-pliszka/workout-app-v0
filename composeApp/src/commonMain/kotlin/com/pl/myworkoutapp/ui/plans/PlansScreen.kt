@@ -18,13 +18,6 @@ fun PlansScreen(
     state: PlansUiState,
     onAction: (PlansAction) -> Unit,
 ) {
-//    Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.primaryContainer) {
-//        Text("Plans")
-//        TextButton(onClick = { onAction(PlansAction.NavToWorkout(BuiltInWorkoutId.MY_ABS_WORKOUT_WITH_SET.asWorkoutId())) }) {
-//            Text("Navigate TO workout exec")
-//        }
-//    }
-
     if (state.isLoading) {
         CircularProgressIndicator()
         return

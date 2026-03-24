@@ -47,7 +47,7 @@ data class Circuit(
     //override val order: Int = 0,
     val phase: Phase,
     val name: String? = null,              // np "warm-up", "cool-down", "Core finisher", "AMRAP 10 min"
-    val rounds: Int,
+    val rounds: Int = 1,
     val structure: CircuitStructure = CircuitStructure.Standard,
     val items: List<WorkoutItem>,
 ) : WorkoutItem {

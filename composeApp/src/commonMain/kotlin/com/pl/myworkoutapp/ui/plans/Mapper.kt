@@ -3,6 +3,7 @@ package com.pl.myworkoutapp.ui.plans
 import com.pl.myworkoutapp.domain.model.plan.RestDayItem
 import com.pl.myworkoutapp.domain.model.plan.TrainingPlan
 import com.pl.myworkoutapp.ui.common.asUiText
+import com.pl.myworkoutapp.ui.common.toUiConfig
 
 fun TrainingPlan.toUi(): PlanUiModel {
     val config = id.toUiConfig()

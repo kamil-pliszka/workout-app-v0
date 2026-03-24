@@ -17,5 +17,90 @@
     <string name="plans_day_start">Start</string>
     <string name="plans_day_resume">Resume</string>
 
+    <string name="test_string_2_param">From %1$s to %2$s</string>
+
+    <!--WORKOUTS-->
+    <string name="workouts_six_pack_10_minutes">Six-pack in 10 minutes</string>
+    <string name="workouts_six_pack_10_minutes_desc">Six-pack in 10 minutes daily workout, and another description...</string>
+    <string name="workouts_six_pack_20_minutes">Six-pack in 20 minutes</string>
+    <string name="workouts_six_pack_20_minutes_desc">Six-pack in 20 minutes daily workout, and another description...</string>
+
+    <string name="workouts_legs_and_glutes_10_min">Legs and glutes in 10 minutes</string>
+    <string name="workouts_legs_and_glutes_10_min_desc">Legs and glutes in 10 minutes daily workout, and another description...</string>
+    <string name="workouts_legs_and_glutes_20_min">Legs and glutes in 20 minutes</string>
+    <string name="workouts_legs_and_glutes_20_min_desc">Legs and glutes in 20 minutes daily workout, and another description...</string>
+
+    <string name="workouts_my_abs_workout_no_set">ABS workout, no set</string>
+    <string name="workouts_my_abs_workout_no_set_desc">ABS workout, no set, and another description...</string>
+
+    <string name="workouts_my_abs_workout_with_set">ABS workout, with set</string>
+    <string name="workouts_my_abs_workout_with_set_desc">ABS workout, with set, and another description...</string>
+
+    <string name="workouts_my_abs_workout_with_superset">ABS workout, with superset</string>
+    <string name="workouts_my_abs_workout_with_superset_desc">ABS workout, with superset, and another description...</string>
+
+    <string name="workouts_tabata_1">Tabata 1 workout</string>
+    <string name="workouts_tabata_1_desc">Tabata 1 workout, and another description...</string>
+
+    <string name="workouts_qty_reps">x %1$s</string>
+    <string name="workouts_qty_reps_per_side">x %1$s per side</string>
+
+    <string name="workouts_phase_warmup">Warmup</string>
+    <string name="workouts_phase_training">Training</string>
+    <string name="workouts_phase_coldown">Coldown</string>
+
+    <string name="exercise_jumping_jacks">exercise_jumping_jacks</string>
+    <string name="exercise_jumping_jacks_desc">exercise_jumping_jacks_desc</string>
+
+    <string name="exercise_push_up">exercise_push_up</string>
+    <string name="exercise_push_up_desc">exercise_push_up_desc</string>
+    <string name="exercise_triceps_dips_on_chair">exercise_triceps_dips_on_chair</string>
+    <string name="exercise_triceps_dips_on_chair_desc">exercise_triceps_dips_on_chair_desc</string>
+    <string name="exercise_plank">exercise_plank</string>
+    <string name="exercise_plank_desc">exercise_plank_desc</string>
+    <string name="exercise_side_plank_left">exercise_side_plank_left</string>
+    <string name="exercise_side_plank_desc">exercise_side_plank_desc</string>
+    <string name="exercise_side_plank_right">exercise_side_plank_right</string>
+    <string name="exercise_squats">exercise_squats</string>
+    <string name="exercise_squats_desc">exercise_squats_desc</string>
+    <string name="exercise_bent_leg_twist">exercise_bent_leg_twist</string>
+    <string name="exercise_bent_leg_twist_desc">exercise_bent_leg_twist_desc</string>
+    <string name="exercise_cobra_stretch">exercise_cobra_stretch</string>
+    <string name="exercise_cobra_stretch_desc">exercise_cobra_stretch_desc</string>
+    <string name="exercise_russian_twist">exercise_russian_twist</string>
+    <string name="exercise_russian_twist_desc">exercise_russian_twist_desc</string>
+    <string name="exercise_flutter_kicks">exercise_flutter_kicks</string>
+    <string name="exercise_flutter_kicks_desc">exercise_flutter_kicks_desc</string>
+    <string name="exercise_reverse_crunches">exercise_reverse_crunches</string>
+    <string name="exercise_reverse_crunches_desc">exercise_reverse_crunches_desc</string>
+    <string name="exercise_heel_touch">exercise_heel_touch</string>
+    <string name="exercise_heel_touch_desc">exercise_heel_touch_desc</string>
+    <string name="exercise_dead_bug">exercise_dead_bug</string>
+    <string name="exercise_dead_bug_desc">exercise_dead_bug_desc</string>
+    <string name="exercise_superman">exercise_superman</string>
+    <string name="exercise_superman_desc">exercise_superman_desc</string>
+    <string name="exercise_v_hold">exercise_v_hold</string>
+    <string name="exercise_v_hold_desc">exercise_v_hold_desc</string>
+    <string name="exercise_butt_bridge">exercise_butt_bridge</string>
+    <string name="exercise_butt_bridge_desc">exercise_butt_bridge_desc</string>
+    <string name="exercise_side_crunches_left">exercise_side_crunches_left</string>
+    <string name="exercise_side_crunches_desc">exercise_side_crunches_desc</string>
+    <string name="exercise_side_crunches_right">exercise_side_crunches_right</string>
+    <string name="exercise_child_pose">exercise_child_pose</string>
+    <string name="exercise_child_pose_desc">exercise_child_pose_desc</string>
+    <string name="exercise_push_up_hold_down">exercise_push_up_hold_down</string>
+    <string name="exercise_push_up_hold_down_desc">exercise_push_up_hold_down_desc</string>
+    <string name="exercise_hollow_body">exercise_hollow_body</string>
+    <string name="exercise_hollow_body_desc">exercise_hollow_body_desc</string>
+    <string name="exercise_run">exercise_run</string>
+    <string name="exercise_run_desc">exercise_run_desc</string>
+    <string name="exercise_run_on_time">exercise_run_on_time</string>
+    <string name="exercise_run_on_time_desc">exercise_run_on_time_desc</string>
+    <string name="exercise_walk">exercise_walk</string>
+    <string name="exercise_walk_desc">exercise_walk_desc</string>
+    <string name="exercise_dumbell_biceps_curls">exercise_dumbell_biceps_curls</string>
+    <string name="exercise_dumbell_biceps_curls_desc">exercise_dumbell_biceps_curls_desc</string>
+    <string name="exercise_push_up_hold">exercise_push_up_hold</string>
+    <string name="exercise_push_up_hold_desc">exercise_push_up_hold_desc</string>
 
 </resources>
