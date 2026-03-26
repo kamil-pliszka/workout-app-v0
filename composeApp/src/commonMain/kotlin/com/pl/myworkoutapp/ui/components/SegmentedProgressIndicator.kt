@@ -19,8 +19,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import com.pl.myworkoutapp.ui.plans.components.PREVIEW_CARD_PLAN
-import com.pl.myworkoutapp.ui.plans.components.PlanCard
 
 
 //https://www.francescvilarino.com/segmented-progress-bar

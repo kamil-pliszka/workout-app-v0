@@ -4,7 +4,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.pl.myworkoutapp.ui.common.asString
-import com.pl.myworkoutapp.ui.common.asUiText
 import com.pl.myworkoutapp.ui.workouts.WorkoutUiModel
 
 @Composable

@@ -63,6 +63,8 @@ kotlin {
             implementation(libs.sqlite.bundled)
             implementation(libs.jetbrains.compose.navigation)
             implementation(libs.compose.material.icons.extended)
+            implementation(libs.compose.markdown)
+            implementation(libs.compose.markdown.material3)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -85,6 +87,10 @@ compose.desktop {
         }
     }
 }
+
+//compose.resources {
+//    publicResClass = true
+//}
 
 room {
     schemaDirectory("$projectDir/schemas")

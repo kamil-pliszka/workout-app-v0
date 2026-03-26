@@ -1,8 +1,8 @@
 package com.pl.myworkoutapp
 
 import androidx.compose.runtime.Composable
-import com.pl.myworkoutapp.ui.effects.PlatformEffects
 import com.pl.myworkoutapp.ui.navigation.AppRoot
+import com.pl.myworkoutapp.ui.theme.AppTheme
 
 //@Composable
 //@Preview
@@ -54,5 +54,7 @@ fun App() {
 //    ) {
 //        AppRoot()
 //    }
-    AppRoot()
+    AppTheme {
+        AppRoot()
+    }
 }

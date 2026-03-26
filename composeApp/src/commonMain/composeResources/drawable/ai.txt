@@ -1,14 +1,11 @@
 
 
 generate fitness app icon: material design style fitness icon, outline icon, monochrome, transparent background, vector style, with dimensions: 450x300px, png format
-for exercise: HOLLOW_BODY
+for exercise: WALKING
+
+WALKING
 
 
-
-DEAD_BUG,
-V-HOLD,
-SIDE_CRUNCHES_RIGHT
-HOLLOW_BODY
-
-
-
+Wygeneruj opis( w formacie prosty markdown) ćwiczenia dla aplikacji workout/fitness na androida w wersje jęęzykowej: polska i angielska.
+Opis powinien zawierać sekcje: ogólny opis ćwiczenia, wskazówki, błędy.
+Ćwiczenie: WALKING

@@ -1,8 +1,8 @@
 package com.pl.myworkoutapp.data.database
 
 import androidx.room.TypeConverter
-import com.pl.myworkoutapp.domain.model.user.Gender
 import com.pl.myworkoutapp.domain.model.Difficulty
+import com.pl.myworkoutapp.domain.model.user.Gender
 import kotlinx.serialization.json.Json
 import kotlin.time.Instant
 

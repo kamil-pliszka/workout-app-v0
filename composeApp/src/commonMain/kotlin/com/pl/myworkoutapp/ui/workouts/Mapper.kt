@@ -1,7 +1,10 @@
 package com.pl.myworkoutapp.ui.workouts
 
+import com.pl.myworkoutapp.domain.model.exercise.BuiltInExercise
+import com.pl.myworkoutapp.domain.model.exercise.CustomExercise
 import com.pl.myworkoutapp.domain.model.exercise.Quantity
 import com.pl.myworkoutapp.domain.model.exercise.QuantityType
+import com.pl.myworkoutapp.domain.model.exercise.toBuiltInExerciseId
 import com.pl.myworkoutapp.domain.model.workout.BuiltInWorkout
 import com.pl.myworkoutapp.domain.model.workout.Circuit
 import com.pl.myworkoutapp.domain.model.workout.CustomWorkout
@@ -14,13 +17,14 @@ import com.pl.myworkoutapp.ui.common.EmptyUiText
 import com.pl.myworkoutapp.ui.common.UiText
 import com.pl.myworkoutapp.ui.common.asUiText
 import com.pl.myworkoutapp.ui.common.toUiConfig
+import com.pl.myworkoutapp.ui.exercises.distanceAsText
+import com.pl.myworkoutapp.ui.exercises.secondsAsText
 import com.pl.myworkoutapp.ui.theme.StrawberryRed
 import com.pl.myworkoutapp.ui.theme.TrafficPurple
 import com.pl.myworkoutapp.ui.theme.holoRed
 import myworkoutapplication.composeapp.generated.resources.Res
 import myworkoutapplication.composeapp.generated.resources.compose_multiplatform
 import myworkoutapplication.composeapp.generated.resources.ic_flying_witch1
-import myworkoutapplication.composeapp.generated.resources.ic_rest_day1
 import myworkoutapplication.composeapp.generated.resources.workouts_phase_coldown
 import myworkoutapplication.composeapp.generated.resources.workouts_phase_training
 import myworkoutapplication.composeapp.generated.resources.workouts_phase_warmup
@@ -48,23 +52,23 @@ fun Workout.toUi(): WorkoutUiModel = when(this) {
         )
     }
     is CustomWorkout -> {
-        val config = basedOn?.toBuiltInWorkoutId()?.toUiConfig()
+        val configBase = basedOn?.toBuiltInWorkoutId()?.toUiConfig()
         return WorkoutUiModel(
             workoutId = id,
             difficulty = difficulty,
             name = when {
                 name.isNotBlank() -> name.asUiText()
-                config != null -> config.name
+                configBase != null -> configBase.name
                 else -> EmptyUiText
             },
             desc = when {
                 !description.isNullOrBlank() -> description.asUiText()
-                config != null -> config.desc
+                configBase != null -> configBase.desc
                 else -> EmptyUiText
             },
             imageUrl = when {
                 !imageUri.isNullOrEmpty() -> Res.drawable.ic_flying_witch1 //TODO
-                config != null -> config.image
+                configBase != null -> configBase.image
                 else -> Res.drawable.compose_multiplatform //TODO
             },
             items = emptyList(), // items są budowane w WorkoutUiTransformer (flatten + timeline)
@@ -74,34 +78,7 @@ fun Workout.toUi(): WorkoutUiModel = when(this) {
     }
 }
 
-private fun Int.pad2(): String = this.toString().padStart(2, '0')
-private fun Int.pad3(): String = this.toString().padStart(3, '0')
 
-fun Int.secondsAsText(): String {
-    return when {
-        this < 0 -> "?"
-        this == 0 -> "0"
-        this < 60 -> this.toString() + "s"
-        else -> {
-            val minutes = this / 60
-            val seconds = this % 60
-            "${minutes.pad2()}:${seconds.pad2()}"
-        }
-    }
-}
-
-fun Int.distanceAsText(): String {
-    return when {
-        this < 0 -> "?"
-        this == 0 -> "0"
-        this < 1000 -> this.toString() + "m"
-        else -> {
-            val km = this / 1000
-            val m = this % 1000
-            "${km}.${m.pad3()} km"
-        }
-    }
-}
 
 fun Quantity.asUiText(): UiText {
     return when (type) {
@@ -112,16 +89,39 @@ fun Quantity.asUiText(): UiText {
     }
 }
 
-fun WorkoutExercise.toUiBase(): ExerciseUiItem {
-    return ExerciseUiItem(
-        isCurrent = false, //na tym poziomie nie mamy wiedzy
-        isDone = false, //na tym poziomie nie mamy wiedzy
-        timeline = emptyList(), //na tym poziomie nie mamy wiedzy
-        exerciseId = this.exercise.id,
-        quantityText = this.quantity.asUiText(),
-        name = this.exercise.id.toString().asUiText(), //TODO - item.exercise.name,
-        icon = Res.drawable.ic_rest_day1 //TODO item.exercise.icon
-    )
+fun WorkoutExercise.toUiBase(): ExerciseUiItem = when(exercise) {
+    is BuiltInExercise -> {
+        val config = exercise.id.toBuiltInExerciseId().toUiConfig()
+        ExerciseUiItem(
+            isCurrent = false, //na tym poziomie nie mamy wiedzy
+            isDone = false, //na tym poziomie nie mamy wiedzy
+            timeline = emptyList(), //na tym poziomie nie mamy wiedzy
+            exerciseId = this.exercise.id,
+            quantityText = this.quantity.asUiText(),
+            name = config.name,
+            icon = config.image,
+        )
+    }
+    is CustomExercise -> {
+        val configBase = exercise.basedOn?.toBuiltInExerciseId()?.toUiConfig()
+        ExerciseUiItem(
+            isCurrent = false, //na tym poziomie nie mamy wiedzy
+            isDone = false, //na tym poziomie nie mamy wiedzy
+            timeline = emptyList(), //na tym poziomie nie mamy wiedzy
+            exerciseId = this.exercise.id,
+            quantityText = this.quantity.asUiText(),
+            name = when {
+                exercise.name.isNotBlank() -> exercise.name.asUiText()
+                configBase != null -> configBase.name
+                else -> EmptyUiText
+            },
+            icon = when {
+                !exercise.imageUri.isNullOrEmpty() -> Res.drawable.ic_flying_witch1 //TODO
+                configBase != null -> configBase.image
+                else -> Res.drawable.compose_multiplatform //TODO
+            }
+        )
+    }
 }
 
 fun Phase.asUiText() : UiText =

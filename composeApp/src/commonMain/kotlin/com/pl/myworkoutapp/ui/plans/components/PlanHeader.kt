@@ -24,7 +24,6 @@ import com.pl.myworkoutapp.domain.model.Difficulty
 import com.pl.myworkoutapp.ui.common.asUiText
 import com.pl.myworkoutapp.ui.components.DifficultyBadge
 import com.pl.myworkoutapp.ui.plans.PlanUiModel
-import com.pl.myworkoutapp.ui.theme.DarkBlue
 import com.pl.myworkoutapp.ui.theme.holoRed
 import myworkoutapplication.composeapp.generated.resources.Res
 import myworkoutapplication.composeapp.generated.resources.ic_plank1

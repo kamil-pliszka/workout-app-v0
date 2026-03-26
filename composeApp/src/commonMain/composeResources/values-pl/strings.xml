@@ -23,4 +23,10 @@
     <string name="workouts_phase_training">Trening</string>
     <string name="workouts_phase_coldown">Ochłodzenie</string>
 
+    <string name="exercise_description_label">Opis ćwiczenia</string>
+    <string name="exercise_qty_reps">Powtórzenia</string>
+    <string name="exercise_qty_reps_per_side">Powtórzenia (każda strona)</string>
+    <string name="exercise_qty_duration">Czas trwania</string>
+    <string name="exercise_qty_distance">Dystans</string>
+
 </resources>

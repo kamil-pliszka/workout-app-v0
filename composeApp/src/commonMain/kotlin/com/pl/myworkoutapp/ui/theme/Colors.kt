@@ -35,3 +35,5 @@ val PureGreen = Color(0xFF008F39)
 val StrawberryRed = Color(0xFFD53032)
 
 val PearlOpalGreen = Color(0xFF193737)
+
+val LuminousGreen = Color(0xFF00BB2D)
