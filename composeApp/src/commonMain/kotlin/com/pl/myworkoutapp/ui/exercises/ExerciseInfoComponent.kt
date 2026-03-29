@@ -1,5 +1,6 @@
 package com.pl.myworkoutapp.ui.exercises
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,6 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.intl.Locale
@@ -37,6 +39,7 @@ import com.pl.myworkoutapp.domain.model.exercise.MuscleGroup
 import com.pl.myworkoutapp.domain.model.exercise.QuantityType
 import com.pl.myworkoutapp.domain.model.exercise.asExerciseId
 import com.pl.myworkoutapp.ui.common.loadExerciseDescription
+import com.pl.myworkoutapp.ui.common.loadImageBitmap
 import com.pl.myworkoutapp.ui.theme.AppTheme
 import com.pl.myworkoutapp.ui.theme.EurostileExt
 import com.pl.myworkoutapp.ui.theme.LuminousGreen
@@ -69,14 +72,30 @@ fun ExerciseInfoComponent(
                 fontFamily = EurostileExt
             )
 
-            Icon(
-                painter = painterResource(exerciseInfo.icon),
-                contentDescription = null,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .heightIn(max = 180.dp),
-                tint = LuminousGreen.copy(alpha = 0.5f),
-            )
+            exerciseInfo.icon?.let { icon ->
+                Icon(
+                    painter = painterResource(icon),
+                    contentDescription = "exercise icon",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(max = 160.dp),
+                    tint = LuminousGreen.copy(alpha = 0.5f),
+                )
+            }
+            exerciseInfo.imagePath?.let { imagePath ->
+                val bitmap = remember(imagePath) {
+                    loadImageBitmap(imagePath)
+                }
+                bitmap?.let {
+                    Image(
+                        bitmap = it,
+                        contentDescription = "exercise image",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .heightIn(max = 180.dp),
+                    )
+                }
+            }
 
             if (exerciseInfo.quantityValue != null) {
                 QuantityPicker(

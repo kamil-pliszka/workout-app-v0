@@ -9,7 +9,7 @@ actual object Log {
         logger.level = Level.FINE
     }
 
-    actual fun e(tag: String, message: String, throwable: Throwable?) {
+    actual fun e(tag: String?, message: String, throwable: Throwable?) {
         if (throwable != null) {
             logger.log(Level.SEVERE, "ERROR: [$tag] $message", throwable)
         } else {
@@ -17,11 +17,11 @@ actual object Log {
         }
     }
 
-    actual fun d(tag: String, message: String) {
+    actual fun d(tag: String?, message: String) {
         logger.info("DEBUG: [$tag] $message")
     }
 
-    actual fun i(tag: String, message: String) {
+    actual fun i(tag: String?, message: String) {
         logger.info("INFO: [$tag] $message")
     }
 }

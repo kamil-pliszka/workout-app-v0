@@ -1,9 +1,13 @@
 package com.pl.myworkoutapp.di
 
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
+import com.pl.myworkoutapp.AppViewModel
 import com.pl.myworkoutapp.data.database.DatabaseFactory
 import com.pl.myworkoutapp.data.database.WorkoutDatabase
+import com.pl.myworkoutapp.data.prefs.DataStoreProvider
+import com.pl.myworkoutapp.data.repository.AppSettingRepositoryImpl
 import com.pl.myworkoutapp.data.repository.WorkoutRepositoryImpl
+import com.pl.myworkoutapp.domain.AppSettingRepository
 import com.pl.myworkoutapp.domain.WorkoutRepository
 import com.pl.myworkoutapp.ui.execution.WorkoutExecutionViewModel
 import com.pl.myworkoutapp.ui.plans.PlansViewModel
@@ -27,8 +31,13 @@ val sharedModule = module {
             .setDriver(BundledSQLiteDriver())
             .build()
     }
+    single {
+        get<DataStoreProvider>().createDataStore()
+    }
     single { get<WorkoutDatabase>().workoutDao }
+    singleOf(::AppSettingRepositoryImpl).bind<AppSettingRepository>()
 
+    viewModelOf(::AppViewModel)
     viewModelOf(::PlansViewModel)
     viewModelOf(::ReportsViewModel)
     viewModelOf(::SettingsViewModel)

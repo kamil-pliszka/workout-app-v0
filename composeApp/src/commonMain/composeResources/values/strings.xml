@@ -1,9 +1,37 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <resources>
+    <string name="lang_pl">Polish</string>
+    <string name="lang_en">English</string>
+    <string name="choose_lang">Choose language</string>
+
     <string name="navigation_plans">Plans</string>
     <string name="navigation_workouts">Workouts</string>
     <string name="navigation_reports">Reports</string>
     <string name="navigation_settings">Settings</string>
+
+    <string name="settings_profile">Profile</string>
+    <string name="settings_general">General</string>
+    <string name="settings_language">Language</string>
+    <string name="settings_backup_and_recovery">Backup and recovery</string>
+    <string name="settings_csv_export">CSV export</string>
+    <string name="settings_csv_import">CSV import</string>
+    <string name="settings_reset">Reset</string>
+    <string name="settings_reset_backup">Reset/Backup</string>
+    <string name="settings_delete_all_data">Delete data</string>
+    <string name="settings_processing_csv_please_be_patient">Processing csv…, please be patient</string>
+    <string name="settings_delete_all_data_question">Delete data?</string>
+    <string name="settings_delete_all_data_description">Are you sure you want to delete data? This operation cannot be undone.</string>
+    <string name="settings_delete_all_data_delete_button">Delete</string>
+    <string name="settings_version">Version</string>
+    <string name="profile_error_in_avatar_image">Error in avatar image</string>
+    <string name="profile_pick_from_gallery">Pick from gallery</string>
+    <string name="profile_take_a_photo">Take photo</string>
+    <string name="profile_save">Save</string>
+
+    <string name="confirmation_title">Confirmation</string>
+    <string name="confirmation_are_you_sure">Are you sure?</string>
+    <string name="confirmation_confitm_text">OK</string>
+    <string name="confirmation_cancel_text">Cancel</string>
 
     <string name="difficulty_beginner">Beginner</string>
     <string name="difficulty_intermediate">Intermediate</string>

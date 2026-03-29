@@ -3,9 +3,12 @@ package com.pl.myworkoutapp.ui.navigation
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalWindowInfo
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -37,7 +40,7 @@ fun Navigation(
 
         // MAIN GRAPH
         composable(ScreenRoutes.Plans.route) {
-            val viewModel : PlansViewModel = koinViewModel()
+            val viewModel: PlansViewModel = koinViewModel()
             //UiEventConsumer(snackbarHostState, viewModel.events)
             val state by viewModel.state.collectAsStateWithLifecycle()
             PlansScreen(
@@ -51,7 +54,7 @@ fun Navigation(
             )
         }
         composable(ScreenRoutes.Workouts.route) {
-            val viewModel : WorkoutsViewModel = koinViewModel()
+            val viewModel: WorkoutsViewModel = koinViewModel()
             //UiEventConsumer(snackbarHostState, viewModel.events)
             val state by viewModel.state.collectAsStateWithLifecycle()
             WorkoutsScreen(
@@ -60,7 +63,7 @@ fun Navigation(
             )
         }
         composable(ScreenRoutes.Reports.route) {
-            val viewModel : ReportsViewModel = koinViewModel()
+            val viewModel: ReportsViewModel = koinViewModel()
             //UiEventConsumer(snackbarHostState, viewModel.events)
             val state by viewModel.state.collectAsStateWithLifecycle()
             ReportsScreen(
@@ -69,12 +72,13 @@ fun Navigation(
             )
         }
         composable(ScreenRoutes.Settings.route) {
-            val viewModel : SettingsViewModel = koinViewModel()
+            //val viewModel: SettingsViewModel = sharedKoinViewModel(navController, "settings_graph")
+            val viewModel: SettingsViewModel = koinViewModel()
             //UiEventConsumer(snackbarHostState, viewModel.events)
             val state by viewModel.state.collectAsStateWithLifecycle()
             SettingsScreen(
                 state = state,
-                onAction = viewModel::onAction
+                onAction = viewModel::onAction,
             )
         }
 
@@ -83,7 +87,7 @@ fun Navigation(
             ScreenRoutes.WorkoutExecution.route
         ) { backStackEntry ->
             //val workoutId = backStackEntry.arguments?.getString("workoutId")!!
-            val viewModel : WorkoutExecutionViewModel = koinViewModel(
+            val viewModel: WorkoutExecutionViewModel = koinViewModel(
                 viewModelStoreOwner = backStackEntry
             )
             val state by viewModel.state.collectAsStateWithLifecycle()
@@ -101,4 +105,33 @@ fun Navigation(
 private fun isLandscape(): Boolean {
     val size = LocalWindowInfo.current.containerSize
     return size.width > size.height
+}
+
+/*
+@Composable
+inline fun <reified T : ViewModel> NavBackStackEntry.sharedKoinViewModel(
+    navController: NavController,
+    graphRoute: String
+): T {
+    val parentEntry = remember(this) {
+        navController.getBackStackEntry(graphRoute)
+    }
+
+    return koinViewModel(
+        viewModelStoreOwner = parentEntry
+    )
+}*/
+
+@Composable
+inline fun <reified T : ViewModel> sharedKoinViewModel(
+    navController: NavController,
+    graphRoute: String
+): T {
+    val parentEntry = remember {
+        navController.getBackStackEntry(graphRoute)
+    }
+
+    return koinViewModel(
+        viewModelStoreOwner = parentEntry
+    )
 }

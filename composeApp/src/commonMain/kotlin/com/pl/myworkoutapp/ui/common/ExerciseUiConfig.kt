@@ -55,6 +55,7 @@ import myworkoutapplication.composeapp.generated.resources.ic_superman
 import myworkoutapplication.composeapp.generated.resources.ic_todo
 import myworkoutapplication.composeapp.generated.resources.ic_triceps_dip_on_chair
 import myworkoutapplication.composeapp.generated.resources.ic_v_hold
+import myworkoutapplication.composeapp.generated.resources.ic_walking
 import org.jetbrains.compose.resources.DrawableResource
 
 data class ExerciseUiConfig(
@@ -161,7 +162,7 @@ fun BuiltInExerciseId.toUiConfig(): ExerciseUiConfig = when (this) {
     )
     BuiltInExerciseId.WALKING -> ExerciseUiConfig(
         name = Res.string.exercise_walk.asUiText(),
-        image = Res.drawable.ic_todo, //TODO Res.drawable.ic_walk,
+        image = Res.drawable.ic_walking,
     )
     BuiltInExerciseId.DUMBELL_BICEPS_CURLS -> ExerciseUiConfig(
         name = Res.string.exercise_dumbell_biceps_curls.asUiText(),

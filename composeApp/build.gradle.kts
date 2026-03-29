@@ -65,6 +65,9 @@ kotlin {
             implementation(libs.compose.material.icons.extended)
             implementation(libs.compose.markdown)
             implementation(libs.compose.markdown.material3)
+
+            implementation(libs.androidx.datastore)
+            implementation(libs.androidx.datastore.preferences)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -72,6 +75,8 @@ kotlin {
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutinesSwing)
+            implementation(libs.webcam.capture)
+            implementation(libs.slf4j.simple)
         }
     }
 }
@@ -84,6 +89,10 @@ compose.desktop {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "com.pl.myworkoutapp"
             packageVersion = "1.0.0"
+
+            windows {
+                iconFile.set(file("src/commonMain/composeResources/drawable/app_icon.png"))
+            }
         }
     }
 }

@@ -1,0 +1,56 @@
+package com.pl.myworkoutapp.data
+
+import android.content.Context
+import android.util.Log
+import com.pl.myworkoutapp.domain.StorageSupport
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import java.io.File
+
+class AndroidStorageSupport(
+    private val context: Context,
+) : StorageSupport {
+    companion object {
+        private val TAG = object {}.javaClass.enclosingClass?.simpleName
+    }
+
+    override suspend fun exists(path: String): Boolean = withContext(Dispatchers.IO) {
+        File(path).exists()
+    }
+
+    override suspend fun logStorage() = withContext(Dispatchers.IO) {
+        (context.filesDir.listFiles() ?: emptyArray()).forEach { file ->
+            Log.d(
+                TAG,
+                "File[filesDir]: ${file.name}, size: ${file.length()}, exists: ${file.exists()}"
+            )
+        }
+        (context.cacheDir.listFiles() ?: emptyArray()).forEach { file ->
+            Log.d(
+                TAG,
+                "File[cacheDir]: ${file.name}, size: ${file.length()}, exists: ${file.exists()}"
+            )
+        }
+    }
+
+    override suspend fun cleanupTemporary() = withContext(Dispatchers.IO) {
+    }
+
+    /*override suspend fun saveProfileImage(input: InputStream): String = withContext(Dispatchers.IO) {
+        val file = File(context.cacheDir, "profile_tmp_gallery.jpg")
+        input.use { it.copyTo(file.outputStream()) }
+        file.absolutePath
+    }*/
+
+    override suspend fun copyTmpToFinal(fromPath: String, toFilename: String): String = withContext(Dispatchers.IO) {
+        val finalFile = File(context.filesDir, toFilename)
+        val tmpFile = File(fromPath)
+
+        tmpFile.copyTo(finalFile, overwrite = true)
+
+        Log.d(TAG, "Copied tmp file to: ${finalFile.absolutePath}")
+
+        finalFile.absolutePath
+    }
+
+}

@@ -18,5 +18,6 @@ data class ExerciseInfoUiModel(
     val name: UiText,
     val customDesc: UiText?,
     val descExerciseId: BuiltInExerciseId?,//
-    val icon: DrawableResource
+    val icon: DrawableResource?,
+    val imagePath: String?,
 )

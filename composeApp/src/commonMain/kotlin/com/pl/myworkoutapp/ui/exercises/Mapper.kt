@@ -22,6 +22,7 @@ fun Exercise.toUi(): ExerciseInfoUiModel = when(this) {
             customDesc = null,
             descExerciseId = id.toBuiltInExerciseId(),
             icon = config.image,
+            imagePath = null,
             equipment = equipment,
         )
     }
@@ -42,9 +43,13 @@ fun Exercise.toUi(): ExerciseInfoUiModel = when(this) {
             },
             descExerciseId = basedOn?.toBuiltInExerciseId(),
             icon = when {
-                !imageUri.isNullOrEmpty() -> Res.drawable.ic_flying_witch1 //TODO
+                !imageUri.isNullOrEmpty() -> null
                 configBase != null -> configBase.image
-                else -> Res.drawable.compose_multiplatform //TODO
+                else -> null
+            },
+            imagePath = when {
+                !imageUri.isNullOrEmpty() -> imageUri
+                else -> null
             },
             equipment = equipment,
         )

@@ -7,6 +7,7 @@ sealed class ScreenRoutes(val route: String) {
     data object Workouts : ScreenRoutes("workouts")
     data object Reports : ScreenRoutes("reports")
     data object Settings : ScreenRoutes("settings")
+    //data object Camera : ScreenRoutes("camera")
 
     // execution
     data object WorkoutExecution : ScreenRoutes("$WORKOUT_EXECUTION_ROUTE_PREFIX/{workoutId}") {

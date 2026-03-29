@@ -1,8 +1,13 @@
 package com.pl.myworkoutapp
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import com.pl.myworkoutapp.ui.common.LocalAppLocale
 import com.pl.myworkoutapp.ui.navigation.AppRoot
 import com.pl.myworkoutapp.ui.theme.AppTheme
+import org.koin.compose.koinInject
 
 //@Composable
 //@Preview
@@ -49,12 +54,11 @@ import com.pl.myworkoutapp.ui.theme.AppTheme
 
 @Composable
 fun App() {
-//    CompositionLocalProvider(
-//        LocalPlatformEffects provides platformEffects
-//    ) {
-//        AppRoot()
-//    }
     AppTheme {
-        AppRoot()
+        val vm = koinInject<AppViewModel>()
+        val language by vm.language.collectAsState()
+        CompositionLocalProvider(LocalAppLocale provides language) {
+            AppRoot()
+        }
     }
 }
