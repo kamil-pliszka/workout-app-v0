@@ -1,49 +1,47 @@
 package com.pl.myworkoutapp.ui.navigation
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.List
-import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.ui.graphics.vector.ImageVector
 import com.pl.myworkoutapp.ui.common.UiText
 import com.pl.myworkoutapp.ui.common.asUiText
 import myworkoutapplication.composeapp.generated.resources.Res
+import myworkoutapplication.composeapp.generated.resources.ic_calendar_month
+import myworkoutapplication.composeapp.generated.resources.ic_exercise
+import myworkoutapplication.composeapp.generated.resources.ic_monitoring
+import myworkoutapplication.composeapp.generated.resources.ic_settings_account_box
 import myworkoutapplication.composeapp.generated.resources.navigation_plans
 import myworkoutapplication.composeapp.generated.resources.navigation_reports
 import myworkoutapplication.composeapp.generated.resources.navigation_settings
 import myworkoutapplication.composeapp.generated.resources.navigation_workouts
+import org.jetbrains.compose.resources.DrawableResource
 
 data class NavItem(
-    //name resource
     val nameResource: UiText,
     val route: String,
-    val icon: ImageVector,
+    val icon: DrawableResource,
 )
 
 val NAV_ITEMS = listOf(
     NavItem(
         nameResource = Res.string.navigation_plans.asUiText(),
         route = ScreenRoutes.Plans.route,
-        icon = Icons.Default.DateRange,
+        icon = Res.drawable.ic_calendar_month,
     ),
 
     NavItem(
         nameResource = Res.string.navigation_workouts.asUiText(),
-        route = ScreenRoutes.Workouts.route,
-        icon = Icons.Default.Home,
+        route = ScreenRoutes.WorkoutsRoot.route,
+        icon = Res.drawable.ic_exercise,
     ),
 
     NavItem(
         nameResource = Res.string.navigation_reports.asUiText(),
         route = ScreenRoutes.Reports.route,
-        icon = Icons.AutoMirrored.Filled.List,
+        icon = Res.drawable.ic_monitoring,
     ),
 
     NavItem(
         nameResource = Res.string.navigation_settings.asUiText(),
         route = ScreenRoutes.Settings.route,
-        icon = Icons.Default.Settings,
+        icon = Res.drawable.ic_settings_account_box,
     ),
 
 )

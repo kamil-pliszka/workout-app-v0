@@ -1,7 +1,5 @@
 package com.pl.myworkoutapp.core
 
-import kotlin.jvm.JvmInline
-
 //@JvmInline
 //value class ContentBytes(val bytes: ByteArray)
 

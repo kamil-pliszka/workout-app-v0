@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
+import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun AppBottomNavigationBar(navController: NavController) {
@@ -41,7 +42,7 @@ fun AppBottomNavigationBar(navController: NavController) {
                 },
                 icon = {
                     Icon(
-                        imageVector = navItem.icon,
+                        painter = painterResource(navItem.icon),
                         contentDescription = navItem.route
                     )
                 },
@@ -87,7 +88,7 @@ fun AppNavigationRail(navController: NavController) {
                     },
                     icon = {
                         Icon(
-                            imageVector = navItem.icon,
+                            painter = painterResource(navItem.icon),
                             contentDescription = navItem.route
                         )
                     },

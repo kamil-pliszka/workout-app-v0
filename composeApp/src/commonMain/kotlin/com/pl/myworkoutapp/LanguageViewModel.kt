@@ -7,8 +7,9 @@ import com.pl.myworkoutapp.domain.AppSettingRepository
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 
-class AppViewModel(
-    settingsRepo: AppSettingRepository
+//wstrzykiwać za pomocą koinInject
+class LanguageViewModel(
+    settingsRepo: AppSettingRepository,
 ) : ViewModel() {
 
     val language = settingsRepo.languageFlow
@@ -17,4 +18,5 @@ class AppViewModel(
             SharingStarted.WhileSubscribed(5000),
             getSystemLanguage()
         )
+
 }

@@ -2,6 +2,7 @@ package com.pl.myworkoutapp.ui.common
 
 import android.webkit.MimeTypeMap
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -21,7 +22,8 @@ actual fun rememberImagePicker(
     val scope = rememberCoroutineScope()
 
     val launcher = rememberLauncherForActivityResult(
-        ActivityResultContracts.GetContent()
+        //ActivityResultContracts.GetContent()
+        ActivityResultContracts.PickVisualMedia()
     ) { uri ->
 
         scope.launch(Dispatchers.IO) {
@@ -60,7 +62,12 @@ actual fun rememberImagePicker(
     return remember {
         object : ImagePicker {
             override fun pickImage() {
-                launcher.launch("image/*")
+                //launcher.launch("image/*")
+                launcher.launch(
+                    PickVisualMediaRequest(
+                        ActivityResultContracts.PickVisualMedia.ImageOnly
+                    )
+                )
             }
         }
     }

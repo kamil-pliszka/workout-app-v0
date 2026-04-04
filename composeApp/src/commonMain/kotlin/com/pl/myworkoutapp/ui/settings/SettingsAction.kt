@@ -1,7 +1,5 @@
 package com.pl.myworkoutapp.ui.settings
 
-import com.pl.myworkoutapp.core.ContentBytes
-
 sealed interface SettingsAction {
     object OnLanguageClick : SettingsAction
     object OnDeleteAllDataClick : SettingsAction

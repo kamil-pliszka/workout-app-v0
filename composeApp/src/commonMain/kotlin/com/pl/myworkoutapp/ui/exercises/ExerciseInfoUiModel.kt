@@ -14,10 +14,12 @@ data class ExerciseInfoUiModel(
     val muscle: MuscleGroup,
     val quantityType: QuantityType,
     val quantityValue: Int? = null,
+    val quantityDirty : Boolean = false,
     val equipment: Equipment,
     val name: UiText,
     val customDesc: UiText?,
     val descExerciseId: BuiltInExerciseId?,//
+    val descriptionMarkdown: String?,
     val icon: DrawableResource?,
     val imagePath: String?,
 )

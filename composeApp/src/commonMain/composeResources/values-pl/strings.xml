@@ -4,6 +4,8 @@
     <string name="lang_en">Angielski</string>
     <string name="choose_lang">Wybierz język</string>
 
+    <string name="btn_close">Zamknij</string>
+
     <string name="navigation_plans">Zestawy</string>
     <string name="navigation_workouts">Treningi</string>
     <string name="navigation_reports">Raporty</string>
@@ -50,6 +52,11 @@
     <string name="workouts_phase_warmup">Rozgrzewka</string>
     <string name="workouts_phase_training">Trening</string>
     <string name="workouts_phase_coldown">Ochłodzenie</string>
+
+    <string name="workout_start">Uruchom</string>
+    <string name="workout_close">Zamknij</string>
+    <string name="workout_change">Zmień</string>
+    <string name="workout_qty_save">Zapisz</string>
 
     <string name="exercise_description_label">Opis ćwiczenia</string>
     <string name="exercise_qty_reps">Powtórzenia</string>

@@ -31,14 +31,14 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
-import com.pl.myworkoutapp.core.ContentBytes
+import com.pl.myworkoutapp.AppStateHolder
 import com.pl.myworkoutapp.ui.common.CameraScreenContent
 import com.pl.myworkoutapp.ui.common.ConfirmationDialog
 import com.pl.myworkoutapp.ui.common.asUiText
@@ -65,10 +65,12 @@ import myworkoutapplication.composeapp.generated.resources.settings_reset
 import myworkoutapplication.composeapp.generated.resources.settings_version
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 
 @Composable
 fun SettingsScreen(
     state: SettingsUiState,
+    appStateHolder: AppStateHolder = koinInject(),
     onAction: (SettingsAction) -> Unit,
 ) {
     if (state.isLoading) {
@@ -242,6 +244,11 @@ fun SettingsScreen(
         )
     }
 
+
+    // 👇 TU spinamy lokalny + globalny stan
+    LaunchedEffect(state.showCamera) {
+        appStateHolder.setCameraActive(state.showCamera)
+    }
     // 🔴 OVERLAY KAMERY
     if (state.showCamera) {
         Box(
@@ -354,6 +361,7 @@ fun SettingsScreenPreviewPL() {
                 appVersionDate = "2026-03-27",
                 appVersionHash = "43433f"
             ),
+            AppStateHolder(),
             onAction = {}
         )
     }
@@ -369,6 +377,7 @@ fun SettingsScreenPreviewEN() {
                 appVersionDate = "2026-03-27",
                 appVersionHash = "43433f"
             ),
+            AppStateHolder(),
             onAction = {}
         )
     }
@@ -385,6 +394,7 @@ fun SettingsScreenPreviewDeleteConfirm() {
                 appVersionDate = "2026-03-27",
                 appVersionHash = "43433f"
             ),
+            AppStateHolder(),
             onAction = {}
         )
     }
@@ -401,6 +411,7 @@ fun SettingsScreenPreviewLanguageChooser() {
                 appVersionDate = "2026-03-27",
                 appVersionHash = "43433f"
             ),
+            AppStateHolder(),
             onAction = {}
         )
     }

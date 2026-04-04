@@ -12,10 +12,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalWindowInfo
-import androidx.navigation.NavDestination.Companion.hierarchy
-import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
+import com.pl.myworkoutapp.AppStateHolder
 import com.pl.myworkoutapp.getPlatform
+import org.koin.compose.koinInject
 
 
 @Composable
@@ -26,17 +27,20 @@ fun AppRoot() {
 
     //val isInWorkout = currentRoute?.startsWith(WORKOUT_EXECUTION_ROUTE_PREFIX) == true
     //val isInWorkout = currentRoute?.contains(WORKOUT_EXECUTION_ROUTE_PREFIX) == true
-    val currentDestination = navController.currentBackStackEntryAsState().value?.destination
-    val isInWorkout = currentDestination?.hierarchy?.any {
-        it.route?.startsWith(WORKOUT_EXECUTION_ROUTE_PREFIX) == true
-    } == true
+//    val currentDestination = navController.currentBackStackEntryAsState().value?.destination
+//    val isInWorkout = currentDestination?.hierarchy?.any {
+//        it.route?.startsWith(WORKOUT_EXECUTION_ROUTE_PREFIX) == true
+//    } == true
 
     val isMobile = getPlatform().isMobile()
     val size = LocalWindowInfo.current.containerSize
     //nawigacja boczna jest przeznaczona tylko na wersje mobilne
     //w wersji desktop nie występuje RailNavigation
     val useRailNavigation = isMobile && size.width > size.height
-    val showBottomBar = !isInWorkout && !useRailNavigation
+    //val showBottomBar = !isInWorkout && !useRailNavigation
+    val appStateHolder = koinInject<AppStateHolder>()
+    val state = appStateHolder.state.collectAsStateWithLifecycle()
+    val showBottomBar = state.value.showNavigationBar && !useRailNavigation
 
     Scaffold(
         bottomBar = {
@@ -63,7 +67,7 @@ fun AppRoot() {
                         snackbarHostState = snackBarState
                     )
                 }
-                if (!isInWorkout) {
+                if (state.value.showNavigationBar) {
                     AppNavigationRail(
                         navController = navController,
                     )

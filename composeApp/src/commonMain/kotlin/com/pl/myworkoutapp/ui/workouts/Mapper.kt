@@ -46,9 +46,10 @@ fun Workout.toUi(): WorkoutUiModel = when(this) {
             name = config.name,
             desc = config.desc,
             imageUrl = config.image,
-            items = emptyList(), //tutaj nie mapujemy ćwiczeń
             isInProgress = false, //TODO
-            themeColor = config.color
+            themeColor = config.color,
+            durationText = "17 min".asUiText(),//TODO
+            kcalText = "≈317 kCal".asUiText(),//TODO
         )
     }
     is CustomWorkout -> {
@@ -71,9 +72,10 @@ fun Workout.toUi(): WorkoutUiModel = when(this) {
                 configBase != null -> configBase.image
                 else -> Res.drawable.compose_multiplatform //TODO
             },
-            items = emptyList(), // items są budowane w WorkoutUiTransformer (flatten + timeline)
             isInProgress = false, //TODO
-            themeColor = CustomThemeColors[id.toInt() % CustomThemeColors.size]
+            themeColor = CustomThemeColors[id.toInt() % CustomThemeColors.size],
+            durationText = "13 min".asUiText(),//TODO
+            kcalText = "≈123 kCal".asUiText(),//TODO
         )
     }
 }
@@ -97,6 +99,8 @@ fun WorkoutExercise.toUiBase(): ExerciseUiItem = when(exercise) {
             isDone = false, //na tym poziomie nie mamy wiedzy
             timeline = emptyList(), //na tym poziomie nie mamy wiedzy
             exerciseId = this.exercise.id,
+            quantityType = this.quantity.type,
+            quantityValue = this.quantity.value,
             quantityText = this.quantity.asUiText(),
             name = config.name,
             icon = config.image,
@@ -109,6 +113,8 @@ fun WorkoutExercise.toUiBase(): ExerciseUiItem = when(exercise) {
             isDone = false, //na tym poziomie nie mamy wiedzy
             timeline = emptyList(), //na tym poziomie nie mamy wiedzy
             exerciseId = this.exercise.id,
+            quantityType = this.quantity.type,
+            quantityValue = this.quantity.value,
             quantityText = this.quantity.asUiText(),
             name = when {
                 exercise.name.isNotBlank() -> exercise.name.asUiText()

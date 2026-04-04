@@ -2,6 +2,7 @@ package com.pl.myworkoutapp.ui.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.pl.myworkoutapp.AppConfig
 import com.pl.myworkoutapp.core.Constants.PROFILE_PHOTO_FILENAME
 import com.pl.myworkoutapp.domain.AppSettingRepository
 import com.pl.myworkoutapp.domain.StorageSupport
@@ -17,22 +18,45 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.number
+import kotlinx.datetime.toLocalDateTime
 import myworkoutapplication.composeapp.generated.resources.Res
 import myworkoutapplication.composeapp.generated.resources.lang_en
 import myworkoutapplication.composeapp.generated.resources.lang_pl
+import kotlin.time.Instant
 
 class SettingsViewModel(
     private val repository: AppSettingRepository,
     private val storageSupport: StorageSupport,
 ) : ViewModel() {
     private val _state = MutableStateFlow(
-        SettingsUiState()
+        prepareInitialState()
     )
     val state: StateFlow<SettingsUiState> = _state
 
     init {
         observeLang()
         observeProfile()
+    }
+
+    private fun prepareInitialState() : SettingsUiState {
+        val versionHash = AppConfig.VERSION_HASH
+        val instant = Instant.fromEpochSeconds(AppConfig.VERSION_EPOCH.toLong())
+        val dateTime = instant.toLocalDateTime(TimeZone.currentSystemDefault())
+        //val versionDateStr = DateTimeFormatter.ofPattern("yyyyMMdd-HHmm").format(dateTime)
+        val versionDateStr = buildString {
+            append(dateTime.year)
+            append(dateTime.month.number.toString().padStart(2, '0'))
+            append(dateTime.day.toString().padStart(2, '0'))
+            append("-")
+            append(dateTime.hour.toString().padStart(2, '0'))
+            append(dateTime.minute.toString().padStart(2, '0'))
+        }
+        return SettingsUiState(
+            appVersionDate = versionDateStr,
+            appVersionHash = versionHash.substring(0, 3)
+        )
     }
 
     private fun observeLang() {
@@ -107,9 +131,8 @@ class SettingsViewModel(
             is SettingsAction.OnImagePicked -> {
                 _state.update {
                     it.copy(
-                        showCamera = false,
                         tmpPhotoPath = action.path ?: it.tmpPhotoPath,
-                        isDirty = true
+                        isDirty = action.path != null || it.isDirty
                     )
                 }
             }
@@ -119,7 +142,7 @@ class SettingsViewModel(
                     it.copy(
                         showCamera = false,
                         tmpPhotoPath = action.path ?: it.tmpPhotoPath,
-                        isDirty = true
+                        isDirty = action.path != null || it.isDirty
                     )
                 }
             }
@@ -188,12 +211,15 @@ class SettingsViewModel(
                     } else {
                         s.photoPath
                     }
+                    //tu przydałoby się zrobić walidację przed zapisem
+                    val weight = s.weightKg.toFloatOrNull()
+                    val birthYear = s.birthYear.toIntOrNull()
 
                     val userProfile = UserProfile(
-                        name = null,
-                        weightKg = null,
-                        birthYear = null,
-                        gender = null,
+                        name = s.name,
+                        weightKg = weight,
+                        birthYear = birthYear,
+                        gender = s.gender,
                         photoPath = finalPhoto
                     )
 

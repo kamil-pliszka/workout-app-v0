@@ -7,9 +7,6 @@ import com.pl.myworkoutapp.domain.model.exercise.toBuiltInExerciseId
 import com.pl.myworkoutapp.ui.common.EmptyUiText
 import com.pl.myworkoutapp.ui.common.asUiText
 import com.pl.myworkoutapp.ui.common.toUiConfig
-import myworkoutapplication.composeapp.generated.resources.Res
-import myworkoutapplication.composeapp.generated.resources.compose_multiplatform
-import myworkoutapplication.composeapp.generated.resources.ic_flying_witch1
 
 fun Exercise.toUi(): ExerciseInfoUiModel = when(this) {
     is BuiltInExercise -> {
@@ -21,6 +18,7 @@ fun Exercise.toUi(): ExerciseInfoUiModel = when(this) {
             name = config.name,
             customDesc = null,
             descExerciseId = id.toBuiltInExerciseId(),
+            descriptionMarkdown = null, //będzie ustawione w VM
             icon = config.image,
             imagePath = null,
             equipment = equipment,
@@ -42,6 +40,7 @@ fun Exercise.toUi(): ExerciseInfoUiModel = when(this) {
                 else -> null
             },
             descExerciseId = basedOn?.toBuiltInExerciseId(),
+            descriptionMarkdown = null, //będzie ustawione w VM
             icon = when {
                 !imageUri.isNullOrEmpty() -> null
                 configBase != null -> configBase.image

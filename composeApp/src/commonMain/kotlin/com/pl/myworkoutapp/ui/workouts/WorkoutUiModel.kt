@@ -3,6 +3,7 @@ package com.pl.myworkoutapp.ui.workouts
 import androidx.compose.ui.graphics.Color
 import com.pl.myworkoutapp.domain.model.Difficulty
 import com.pl.myworkoutapp.domain.model.exercise.ExerciseId
+import com.pl.myworkoutapp.domain.model.exercise.QuantityType
 import com.pl.myworkoutapp.domain.model.workout.CircuitStructure
 import com.pl.myworkoutapp.domain.model.workout.Phase
 import com.pl.myworkoutapp.domain.model.workout.WorkoutId
@@ -14,10 +15,16 @@ data class WorkoutUiModel(
     val name: UiText,
     val desc: UiText,
     val imageUrl: DrawableResource,
-    val items: List<WorkoutUiItem>,
     val isInProgress: Boolean,
     val difficulty: Difficulty,
     val themeColor: Color,
+    val durationText: UiText,
+    val kcalText: UiText,
+)
+
+data class WorkoutWithExercisesUiModel(
+    val workout: WorkoutUiModel,
+    val items: List<WorkoutUiItem>,
 )
 
 sealed interface TimeLineItemType {
@@ -42,9 +49,9 @@ data class ExerciseUiItem(
 
     val exerciseId: ExerciseId,
     //val muscle: MuscleGroup,
-    //val quantityType: QuantityType,
-    //val quantityValue: Int,
-    val quantityText: UiText,
+    val quantityType: QuantityType,
+    val quantityValue: Int,
+    val quantityText: UiText,//TODO - wywalić
     val name: UiText,
     //val desc: UiText,
     val icon: DrawableResource
@@ -64,6 +71,9 @@ data class CircuitUiItem(
     //val subtitle: UiText?,
 ) : WorkoutUiItem
 
-fun WorkoutUiModel.with(vararg items: WorkoutUiItem) = copy(items = listOf(*items))
+//fun WorkoutUiModel.with(vararg items: WorkoutUiItem) = WorkoutWithExercisesUiModel(
+//    workout = this,
+//    items = listOf(*items)
+//)
 fun ExerciseUiItem.with(vararg ts: TimeLineItemType) = copy(timeline = listOf(*ts))
 fun CircuitUiItem.with(vararg ts: TimeLineItemType) = copy(timeline = listOf(*ts))

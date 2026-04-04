@@ -52,7 +52,6 @@ import myworkoutapplication.composeapp.generated.resources.ic_side_plank_left
 import myworkoutapplication.composeapp.generated.resources.ic_side_plank_right
 import myworkoutapplication.composeapp.generated.resources.ic_squat
 import myworkoutapplication.composeapp.generated.resources.ic_superman
-import myworkoutapplication.composeapp.generated.resources.ic_todo
 import myworkoutapplication.composeapp.generated.resources.ic_triceps_dip_on_chair
 import myworkoutapplication.composeapp.generated.resources.ic_v_hold
 import myworkoutapplication.composeapp.generated.resources.ic_walking

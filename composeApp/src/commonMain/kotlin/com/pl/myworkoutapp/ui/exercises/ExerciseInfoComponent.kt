@@ -7,20 +7,13 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AddBox
-import androidx.compose.material.icons.filled.IndeterminateCheckBox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -44,8 +37,11 @@ import com.pl.myworkoutapp.ui.theme.AppTheme
 import com.pl.myworkoutapp.ui.theme.EurostileExt
 import com.pl.myworkoutapp.ui.theme.LuminousGreen
 import com.pl.myworkoutapp.ui.theme.RobotoItalicVariable
+import kotlinx.coroutines.runBlocking
 import myworkoutapplication.composeapp.generated.resources.Res
 import myworkoutapplication.composeapp.generated.resources.exercise_description_label
+import myworkoutapplication.composeapp.generated.resources.ic_outline_add_box_24
+import myworkoutapplication.composeapp.generated.resources.ic_outline_indeterminate_check_box_24
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
@@ -64,7 +60,7 @@ fun ExerciseInfoComponent(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp)
-                .verticalScroll(rememberScrollState())
+                //.verticalScroll(rememberScrollState())
         ) {
             Text(
                 text = exerciseInfo.name.asString(),
@@ -133,7 +129,8 @@ private fun QuantityPicker(
         if (showButtons) {
             IconButton(onClick = { onValueChange(false) }) {
                 Icon(
-                    imageVector = Icons.Filled.IndeterminateCheckBox,
+                    //imageVector = Icons.Filled.IndeterminateCheckBox,
+                    painter = painterResource(Res.drawable.ic_outline_indeterminate_check_box_24),
                     contentDescription = "Decrease",
                     tint = LuminousGreen.copy(alpha = 0.5f),
                 )
@@ -147,7 +144,8 @@ private fun QuantityPicker(
         if (showButtons) {
             IconButton(onClick = { onValueChange(true) }) {
                 Icon(
-                    imageVector = Icons.Filled.AddBox,
+                    //imageVector = Icons.Filled.AddBox,
+                    painter = painterResource(Res.drawable.ic_outline_add_box_24),
                     contentDescription = "Increase",
                     tint = LuminousGreen.copy(alpha = 0.5f),
                 )
@@ -173,6 +171,7 @@ private fun DescriptionSection(exerciseInfo: ExerciseInfoUiModel) {
             )
         }
     } else {
+        /*
         val descriptionMarkdown by produceState<String?>(
             null,
             exerciseInfo.descExerciseId
@@ -183,8 +182,8 @@ private fun DescriptionSection(exerciseInfo: ExerciseInfoUiModel) {
                     lang = Locale.current.language
                 )
             }
-        }
-        descriptionMarkdown?.let { markdown ->
+        }*/
+        exerciseInfo.descriptionMarkdown?.let { markdown ->
             val bodyLarge = MaterialTheme.typography.bodyLarge.copy(fontFamily = RobotoItalicVariable)
             Markdown(
                 content = markdown,
@@ -209,14 +208,30 @@ private fun DescriptionSection(exerciseInfo: ExerciseInfoUiModel) {
 }
 
 val EXE_B = BuiltInExerciseRegistry.get(BuiltInExerciseId.BENT_LEG_TWIST)
+fun ExerciseInfoUiModel.loadExerciseMarkdownForPreview(): String? = this
+    .takeIf { it.customDesc == null }
+    ?.descExerciseId
+    ?.let { id ->
+        runBlocking {
+            //error("lang=" + Locale.current.language)
+            loadExerciseDescription(
+                exerciseId = id,
+                lang = Locale.current.language
+            )
+        }
+    }
+
 
 @Preview(locale = "pl")
 @Composable
 fun ExerciseInfoComponentBuiltinPL() {
     AppTheme {
+        val exerciseInfo = EXE_B.toUi()
+        val markdown = exerciseInfo.loadExerciseMarkdownForPreview()
         ExerciseInfoComponent(
-            EXE_B.toUi().copy(
-                quantityValue = 16
+            exerciseInfo.copy(
+                quantityValue = 17,
+                descriptionMarkdown = markdown
             ),
             quantityChangeAction = {}
         )
@@ -227,9 +242,12 @@ fun ExerciseInfoComponentBuiltinPL() {
 @Composable
 fun ExerciseInfoComponentBuiltinEN() {
     AppTheme {
+        val exerciseInfo = EXE_B.toUi()
+        val markdown = exerciseInfo.loadExerciseMarkdownForPreview()
         ExerciseInfoComponent(
             EXE_B.toUi().copy(
-                quantityValue = 16
+                quantityValue = 16,
+                descriptionMarkdown = markdown
             ),
             quantityChangeAction = {}
         )
@@ -287,9 +305,12 @@ val EXE_CB = CustomExercise(
 @Composable
 fun ExerciseInfoComponentCustomBased() {
     AppTheme {
+        val exerciseInfo = EXE_CB.toUi()
+        val markdown = exerciseInfo.loadExerciseMarkdownForPreview()
         ExerciseInfoComponent(
             EXE_CB.toUi().copy(
-                quantityValue = 145
+                quantityValue = 145,
+                descriptionMarkdown = markdown
             ),
             quantityChangeAction = {}
         )

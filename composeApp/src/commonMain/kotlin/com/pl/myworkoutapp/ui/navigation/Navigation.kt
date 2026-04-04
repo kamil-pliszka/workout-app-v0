@@ -12,7 +12,8 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.pl.myworkoutapp.ui.common.asString
+import androidx.navigation.compose.navigation
+import com.pl.myworkoutapp.domain.model.workout.asString
 import com.pl.myworkoutapp.ui.execution.WorkoutExecutionScreen
 import com.pl.myworkoutapp.ui.execution.WorkoutExecutionViewModel
 import com.pl.myworkoutapp.ui.plans.PlansAction
@@ -22,6 +23,9 @@ import com.pl.myworkoutapp.ui.reports.ReportsScreen
 import com.pl.myworkoutapp.ui.reports.ReportsViewModel
 import com.pl.myworkoutapp.ui.settings.SettingsScreen
 import com.pl.myworkoutapp.ui.settings.SettingsViewModel
+import com.pl.myworkoutapp.ui.workouts.WorkoutDetailsScreen
+import com.pl.myworkoutapp.ui.workouts.WorkoutDetailsViewModel
+import com.pl.myworkoutapp.ui.workouts.WorkoutsAction
 import com.pl.myworkoutapp.ui.workouts.WorkoutsScreen
 import com.pl.myworkoutapp.ui.workouts.WorkoutsViewModel
 import org.koin.compose.viewmodel.koinViewModel
@@ -34,7 +38,7 @@ fun Navigation(
 ) {
     NavHost(
         navController = navController,
-        startDestination = ScreenRoutes.Plans.route,
+        startDestination = ScreenRoutes.WorkoutsRoot.route,
         modifier = modifier
     ) {
 
@@ -48,19 +52,44 @@ fun Navigation(
                 onAction = { action ->
                     viewModel.onAction(action)
                     if (action is PlansAction.NavToWorkout) {
+                        println("nav from plan to workout: ${action.workoutId.asString()}")
                         navController.navigate(ScreenRoutes.WorkoutExecution.create(action.workoutId.asString()))
                     }
                 }
             )
         }
-        composable(ScreenRoutes.Workouts.route) {
-            val viewModel: WorkoutsViewModel = koinViewModel()
-            //UiEventConsumer(snackbarHostState, viewModel.events)
-            val state by viewModel.state.collectAsStateWithLifecycle()
-            WorkoutsScreen(
-                state = state,
-                onAction = viewModel::onAction
-            )
+
+        navigation(
+            startDestination = ScreenRoutes.WorkoutsList.route,
+            route = ScreenRoutes.WorkoutsRoot.route
+        ) {
+            composable(ScreenRoutes.WorkoutsList.route) {
+                val viewModel: WorkoutsViewModel = koinViewModel()
+                //UiEventConsumer(snackbarHostState, viewModel.events)
+                val state by viewModel.state.collectAsStateWithLifecycle()
+                WorkoutsScreen(
+                    state = state,
+                    onAction = { action ->
+                        viewModel.onAction(action)
+                        if (action is WorkoutsAction.NavToWorkout) {
+                            println("nav to: ${action.workoutId.asString()}")
+                            navController.navigate(ScreenRoutes.WorkoutDetails.create(action.workoutId.asString()))
+                        }
+                    }
+                )
+            }
+            composable(ScreenRoutes.WorkoutDetails.route) { backStackEntry ->
+                val viewModel: WorkoutDetailsViewModel =
+                    koinViewModel(viewModelStoreOwner = backStackEntry)
+                //UiEventConsumer(snackbarHostState, viewModel.events)
+                val state by viewModel.state.collectAsStateWithLifecycle()
+                WorkoutDetailsScreen(
+                    state = state,
+                    onAction = { action ->
+                        viewModel.onAction(action)
+                    }
+                )
+            }
         }
         composable(ScreenRoutes.Reports.route) {
             val viewModel: ReportsViewModel = koinViewModel()
@@ -86,7 +115,6 @@ fun Navigation(
         composable(
             ScreenRoutes.WorkoutExecution.route
         ) { backStackEntry ->
-            //val workoutId = backStackEntry.arguments?.getString("workoutId")!!
             val viewModel: WorkoutExecutionViewModel = koinViewModel(
                 viewModelStoreOwner = backStackEntry
             )

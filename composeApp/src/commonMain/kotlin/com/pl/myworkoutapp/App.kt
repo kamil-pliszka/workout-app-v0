@@ -55,8 +55,8 @@ import org.koin.compose.koinInject
 @Composable
 fun App() {
     AppTheme {
-        val vm = koinInject<AppViewModel>()
-        val language by vm.language.collectAsState()
+        val langViewModel = koinInject<LanguageViewModel>()
+        val language by langViewModel.language.collectAsState()
         CompositionLocalProvider(LocalAppLocale provides language) {
             AppRoot()
         }

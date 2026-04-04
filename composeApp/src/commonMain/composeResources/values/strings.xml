@@ -4,6 +4,8 @@
     <string name="lang_en">English</string>
     <string name="choose_lang">Choose language</string>
 
+    <string name="btn_close">Close</string>
+
     <string name="navigation_plans">Plans</string>
     <string name="navigation_workouts">Workouts</string>
     <string name="navigation_reports">Reports</string>
@@ -76,6 +78,11 @@
     <string name="workouts_phase_warmup">Warmup</string>
     <string name="workouts_phase_training">Training</string>
     <string name="workouts_phase_coldown">Coldown</string>
+
+    <string name="workout_start">Start</string>
+    <string name="workout_close">Close</string>
+    <string name="workout_change">Change</string>
+    <string name="workout_qty_save">Save</string>
 
     <string name="exercise_description_label">Description</string>
     <string name="exercise_qty_reps">Repeat</string>

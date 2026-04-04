@@ -67,7 +67,7 @@ fun WorkoutTraversalItem.toTimeline(): List<TimeLineItemType> {
 }
 
 
-fun transform(workout: Workout): WorkoutUiModel {
+fun transform(workout: Workout): WorkoutWithExercisesUiModel {
     val workoutUiModel = workout.toUi()
     val traversalItems = workout.items.flatten()
 
@@ -81,7 +81,8 @@ fun transform(workout: Workout): WorkoutUiModel {
             )
         }
     }
-    return workoutUiModel.copy(
+    return WorkoutWithExercisesUiModel(
+        workout = workoutUiModel,
         items = itemsUiModel
     )
 }

@@ -23,16 +23,6 @@ actual fun CameraScreenContent(
         File(context.filesDir, "_tmp_camera_$timestamp.jpeg")
     }
 
-//    if (LocalInspectionMode.current) {//jeśli preview w android studio
-//        return remember {
-//            object : CameraController {
-//                override fun takePhoto() {
-//                    onResult("/preview/fake.jpg")
-//                }
-//            }
-//        }
-//    }
-
     val uri = remember {
         FileProvider.getUriForFile(
             context,
