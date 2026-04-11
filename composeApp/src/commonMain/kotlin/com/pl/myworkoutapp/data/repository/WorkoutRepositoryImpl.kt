@@ -3,7 +3,9 @@ package com.pl.myworkoutapp.data.repository
 import com.pl.myworkoutapp.data.database.WorkoutDao
 import com.pl.myworkoutapp.data.mappers.toDomain
 import com.pl.myworkoutapp.domain.WorkoutRepository
+import com.pl.myworkoutapp.domain.model.exercise.BuiltInExercise
 import com.pl.myworkoutapp.domain.model.exercise.BuiltInExerciseRegistry
+import com.pl.myworkoutapp.domain.model.exercise.CustomExercise
 import com.pl.myworkoutapp.domain.model.exercise.Exercise
 import com.pl.myworkoutapp.domain.model.exercise.ExerciseId
 import com.pl.myworkoutapp.domain.model.plan.BuiltInTrainingPlansRegistry
@@ -26,11 +28,17 @@ class WorkoutRepositoryImpl(
             list -> list.map { it.toDomain() }
         }
     }
-    override suspend fun getAllExercises(): List<Exercise> = withContext(Dispatchers.IO) {
+    override suspend fun getCustomExercises(): List<CustomExercise> = withContext(Dispatchers.IO) {
         workoutDao.getAllExercises().map {
             it.toDomain()
         }
     }
+
+    override suspend fun getBuiltinExercises(): List<BuiltInExercise> = withContext(Dispatchers.IO) {
+        BuiltInExerciseRegistry.getAll().toList()
+    }
+
+    override suspend fun getAllExercises(): List<Exercise> = getCustomExercises() + getBuiltinExercises()
 
     override suspend fun getPlans(): List<TrainingPlan> {
         return BuiltInTrainingPlansRegistry.getAll()

@@ -9,3 +9,21 @@ WALKING
 Wygeneruj opis( w formacie prosty markdown) ćwiczenia dla aplikacji workout/fitness na androida w wersje jęęzykowej: polska i angielska.
 Opis powinien zawierać sekcje: ogólny opis ćwiczenia, wskazówki, błędy.
 Ćwiczenie: WALKING
+
+
+
+
+generate fitness app icon: material design style fitness icon, outline icon, monochrome, transparent background, vector style, with dimensions: 300x300px, png format
+for equipment used: barbell
+
+ic_equipment_rope.png
+
+
+generate fitness app icon: material design style fitness icon, outline icon, monochrome, transparent background, vector style, with dimensions: 300x450px, png format
+for muscle group used: core
+
+
+ic_muscle_group_back.png
+ic_muscle_group_arms.png
+ic_muscle_group_legs.png
+ic_muscle_group_core.png

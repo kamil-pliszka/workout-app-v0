@@ -5,6 +5,8 @@
     <string name="choose_lang">Wybierz język</string>
 
     <string name="btn_close">Zamknij</string>
+    <string name="btn_cancel">Anuluj</string>
+    <string name="btn_save">Zapisz</string>
 
     <string name="navigation_plans">Zestawy</string>
     <string name="navigation_workouts">Treningi</string>
@@ -57,11 +59,50 @@
     <string name="workout_close">Zamknij</string>
     <string name="workout_change">Zmień</string>
     <string name="workout_qty_save">Zapisz</string>
+    <string name="workout_reset">Reset</string>
+    <string name="workout_save">Save</string>
 
     <string name="exercise_description_label">Opis ćwiczenia</string>
     <string name="exercise_qty_reps">Powtórzenia</string>
     <string name="exercise_qty_reps_per_side">Powtórzenia (każda strona)</string>
     <string name="exercise_qty_duration">Czas trwania</string>
     <string name="exercise_qty_distance">Dystans</string>
+    <string name="exercise_exchange">Zamień</string>
+    <string name="exercise_clear">Wyczyść</string>
+    <string name="exercise_current">Bieżące</string>
+    <string name="exercise_exchange_with">Zamień na...</string>
+    <string name="exercise_exercises_all">Wszystkie (%1$d)</string>
+    <string name="exercise_exercises_filtered">Filtrowane (%1$d)</string>
+
+    <string name="exercise_filters_label">Filtry</string>
+    <string name="exercise_filters_muscle_groups">Grupy mięśni : (%1$d)</string>
+    <string name="exercise_filters_equipment">Wyposażenie : (%1$d)</string>
+    <string name="exercise_filters_exe_type">Rodzaj : (%1$d)</string>
+
+    <string name="muscle_group_abs">Mięśnie brzucha</string>
+    <string name="muscle_group_back">Mięśnie pleców</string>
+    <string name="muscle_group_chest">Klata</string>
+    <string name="muscle_group_arms">Ramiona</string>
+    <string name="muscle_group_legs">Nogi</string>
+    <string name="muscle_group_core">Mięśnie głębokie</string>
+
+    <string name="equipment_bodyweight">Ciężar ciała</string>
+    <string name="equipment_dumbbells">Hantle</string>
+    <string name="equipment_barbell">Sztanga</string>
+    <string name="equipment_kettlebell">Kettlebell</string>
+    <string name="equipment_resistance_bands">Taśmy oporowe</string>
+    <string name="equipment_machine">Atlas</string>
+    <string name="equipment_rope">Lina</string>
+    <string name="equipment_rings">Pierścienie</string>
+    <string name="equipment_pullup_bar">Drążek</string>
+
+    <string name="exercise_type_cardio">Cardio</string>
+    <string name="exercise_type_strength">Siłowy</string>
+    <string name="exercise_type_mobility">Mobilność</string>
+    <string name="exercise_type_stretch">Rozciąganie</string>
+
+    <string name="exercise_jumping_jacks">PAJACYKI</string>
+    <string name="exercise_push_up">POMPKI</string>
+    <string name="exercise_plank">DESKA</string>
 
 </resources>

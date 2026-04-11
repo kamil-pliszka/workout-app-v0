@@ -11,6 +11,7 @@ import com.pl.myworkoutapp.data.repository.WorkoutRepositoryImpl
 import com.pl.myworkoutapp.domain.AppSettingRepository
 import com.pl.myworkoutapp.domain.WorkoutRepository
 import com.pl.myworkoutapp.ui.execution.WorkoutExecutionViewModel
+import com.pl.myworkoutapp.ui.exercises.ExercisePickerViewModel
 import com.pl.myworkoutapp.ui.plans.PlansViewModel
 import com.pl.myworkoutapp.ui.reports.ReportsViewModel
 import com.pl.myworkoutapp.ui.settings.SettingsViewModel
@@ -47,4 +48,5 @@ val sharedModule = module {
     viewModelOf(::WorkoutExecutionViewModel)
     viewModelOf(::WorkoutsViewModel)
     viewModelOf(::WorkoutDetailsViewModel)
+    viewModelOf(::ExercisePickerViewModel)
 }

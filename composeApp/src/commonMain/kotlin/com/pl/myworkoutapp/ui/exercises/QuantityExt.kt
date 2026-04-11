@@ -60,3 +60,14 @@ fun Int?.qtyValueAsUiText(qType: QuantityType): UiText =
             QuantityType.DURATION -> this.secondsAsText().asUiText()
             QuantityType.DISTANCE -> this.distanceAsText().asUiText()
         }
+
+/*
+fun Quantity.asUiText(): UiText {
+    return when (type) {
+        QuantityType.REPS -> Res.string.workouts_qty_reps.asUiText(value)
+        QuantityType.REPS_PER_SIDE -> Res.string.workouts_qty_reps_per_side.asUiText(value)
+        QuantityType.DURATION -> value.secondsAsText().asUiText()
+        QuantityType.DISTANCE -> value.distanceAsText().asUiText()
+    }
+}
+*/

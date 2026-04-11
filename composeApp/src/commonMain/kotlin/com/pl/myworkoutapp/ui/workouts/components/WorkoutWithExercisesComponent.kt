@@ -14,6 +14,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.pl.myworkoutapp.domain.model.Difficulty
 import com.pl.myworkoutapp.domain.model.exercise.BuiltInExerciseId
+import com.pl.myworkoutapp.domain.model.exercise.BuiltInExerciseRegistry
+import com.pl.myworkoutapp.domain.model.exercise.ExerciseId
 import com.pl.myworkoutapp.domain.model.exercise.QuantityType
 import com.pl.myworkoutapp.domain.model.exercise.asExerciseId
 import com.pl.myworkoutapp.domain.model.workout.BuiltInWorkoutId
@@ -39,6 +41,7 @@ import com.pl.myworkoutapp.ui.workouts.WorkoutUiModel
 import com.pl.myworkoutapp.ui.workouts.WorkoutWithExercisesUiModel
 import com.pl.myworkoutapp.ui.workouts.transform
 import com.pl.myworkoutapp.ui.workouts.with
+import kotlinx.coroutines.runBlocking
 import myworkoutapplication.composeapp.generated.resources.Res
 import myworkoutapplication.composeapp.generated.resources.ic_flying_witch
 import myworkoutapplication.composeapp.generated.resources.ic_flying_witch1
@@ -47,7 +50,6 @@ import myworkoutapplication.composeapp.generated.resources.ic_push_up
 import myworkoutapplication.composeapp.generated.resources.ic_rest_day0
 import myworkoutapplication.composeapp.generated.resources.ic_rest_day2
 import myworkoutapplication.composeapp.generated.resources.ic_side_plank
-import myworkoutapplication.composeapp.generated.resources.test_string_2_param
 
 @Composable
 fun WorkoutWithExercisesComponent(
@@ -109,7 +111,6 @@ val EXE1 = ExerciseUiItem(
     exerciseId = 123.asExerciseId(),
     quantityType = QuantityType.REPS,
     quantityValue = 13,
-    quantityText = "do świtu".asUiText(),
     name = "Lot na miotle".asUiText(),
     icon = Res.drawable.ic_flying_witch,
 )
@@ -118,7 +119,6 @@ val EXE2 = ExerciseUiItem(
     exerciseId = 123.asExerciseId(),
     quantityType = QuantityType.REPS,
     quantityValue = 13,
-    quantityText = "do świtu".asUiText(),
     name = "Lot na miotle".asUiText(),
     icon = Res.drawable.ic_flying_witch1,
 )
@@ -127,7 +127,6 @@ val EXE3 = ExerciseUiItem(
     exerciseId = 123.asExerciseId(),
     quantityType = QuantityType.REPS,
     quantityValue = 13,
-    quantityText = Res.string.test_string_2_param.asUiText("rano", "świt"),
     name = "Lot na miotle".asUiText(),
     icon = Res.drawable.ic_side_plank,
 )
@@ -157,7 +156,6 @@ val EXE_WM_1 = ExerciseUiItem(
     exerciseId = 123.asExerciseId(),
     quantityType = QuantityType.REPS,
     quantityValue = 13,
-    quantityText = "3 godz i trochę".asUiText(),
     name = "ruszaj się".asUiText(),
     icon = Res.drawable.ic_jumping_jacks,
 )
@@ -165,7 +163,6 @@ val EXE_WM_2 = ExerciseUiItem(
     exerciseId = 123.asExerciseId(),
     quantityType = QuantityType.REPS,
     quantityValue = 13,
-    quantityText = "przez chwilę".asUiText(),
     name = "fiku miku".asUiText(),
     icon = Res.drawable.ic_push_up,
 )
@@ -174,7 +171,6 @@ val EXE_CD_1 = ExerciseUiItem(
     exerciseId = 123.asExerciseId(),
     quantityType = QuantityType.REPS,
     quantityValue = 13,
-    quantityText = "przez chwilę".asUiText(),
     name = "fiku miku".asUiText(),
     icon = Res.drawable.ic_rest_day0,
 )
@@ -182,7 +178,6 @@ val EXE_CD_2 = ExerciseUiItem(
     exerciseId = 123.asExerciseId(),
     quantityType = QuantityType.REPS,
     quantityValue = 13,
-    quantityText = "przez chwilę".asUiText(),
     name = "fiku miku".asUiText(),
     icon = Res.drawable.ic_rest_day2,
 )
@@ -309,7 +304,12 @@ fun WorkoutWithExercisesComponentPreviewNested() {//zagnieżdżone wersje
             )
         )
     )
-    val workoutUiModel = transform(workoutDomain)
+    //val workoutUiModel = transform(workoutDomain)
+    val workoutUiModel = runBlocking {
+        transform(workoutDomain) { exerciseId ->
+            BuiltInExerciseRegistry.get((exerciseId as ExerciseId.BuiltIn).id)
+        }
+    }
     WorkoutWithExercisesComponent(
         workoutUiModel = workoutUiModel,
         onExerciseClick = { }
@@ -320,7 +320,11 @@ fun WorkoutWithExercisesComponentPreviewNested() {//zagnieżdżone wersje
 @Preview(locale = "pl")
 @Composable
 fun WorkoutWithExercisesComponentPreviewAbsWithSet() {//rozgrzewka, trening, wychłodzenie
-    val workoutUiModel = transform(MY_ABS_WORKOUT_WITH_SET)
+    val workoutUiModel = runBlocking {
+        transform(MY_ABS_WORKOUT_WITH_SET) { exerciseId ->
+            BuiltInExerciseRegistry.get((exerciseId as ExerciseId.BuiltIn).id)
+        }
+    }
     WorkoutWithExercisesComponent(
         workoutUiModel = workoutUiModel,
         onExerciseClick = { }
@@ -331,7 +335,11 @@ fun WorkoutWithExercisesComponentPreviewAbsWithSet() {//rozgrzewka, trening, wyc
 @Preview(locale = "pl")
 @Composable
 fun WorkoutWithExercisesComponentPreviewAbsNoSet() {//pojedyńczy poziom, ok 30 ćwiczeń
-    val workoutUiModel = transform(MY_WORKOUT_NO_SET)
+    val workoutUiModel = runBlocking {
+        transform(MY_WORKOUT_NO_SET) { exerciseId ->
+            BuiltInExerciseRegistry.get((exerciseId as ExerciseId.BuiltIn).id)
+        }
+    }
     WorkoutWithExercisesComponent(
         workoutUiModel = workoutUiModel,
         onExerciseClick = { }

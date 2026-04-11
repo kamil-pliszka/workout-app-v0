@@ -2,8 +2,7 @@ package com.pl.myworkoutapp.ui.workouts
 
 import com.pl.myworkoutapp.domain.model.exercise.BuiltInExercise
 import com.pl.myworkoutapp.domain.model.exercise.CustomExercise
-import com.pl.myworkoutapp.domain.model.exercise.Quantity
-import com.pl.myworkoutapp.domain.model.exercise.QuantityType
+import com.pl.myworkoutapp.domain.model.exercise.Exercise
 import com.pl.myworkoutapp.domain.model.exercise.toBuiltInExerciseId
 import com.pl.myworkoutapp.domain.model.workout.BuiltInWorkout
 import com.pl.myworkoutapp.domain.model.workout.Circuit
@@ -17,8 +16,6 @@ import com.pl.myworkoutapp.ui.common.EmptyUiText
 import com.pl.myworkoutapp.ui.common.UiText
 import com.pl.myworkoutapp.ui.common.asUiText
 import com.pl.myworkoutapp.ui.common.toUiConfig
-import com.pl.myworkoutapp.ui.exercises.distanceAsText
-import com.pl.myworkoutapp.ui.exercises.secondsAsText
 import com.pl.myworkoutapp.ui.theme.StrawberryRed
 import com.pl.myworkoutapp.ui.theme.TrafficPurple
 import com.pl.myworkoutapp.ui.theme.holoRed
@@ -28,8 +25,6 @@ import myworkoutapplication.composeapp.generated.resources.ic_flying_witch1
 import myworkoutapplication.composeapp.generated.resources.workouts_phase_coldown
 import myworkoutapplication.composeapp.generated.resources.workouts_phase_training
 import myworkoutapplication.composeapp.generated.resources.workouts_phase_warmup
-import myworkoutapplication.composeapp.generated.resources.workouts_qty_reps
-import myworkoutapplication.composeapp.generated.resources.workouts_qty_reps_per_side
 
 private val CustomThemeColors = listOf(
     StrawberryRed,
@@ -58,7 +53,7 @@ fun Workout.toUi(): WorkoutUiModel = when(this) {
             workoutId = id,
             difficulty = difficulty,
             name = when {
-                name.isNotBlank() -> name.asUiText()
+                !name.isNullOrBlank() -> name.asUiText()
                 configBase != null -> configBase.name
                 else -> EmptyUiText
             },
@@ -82,27 +77,18 @@ fun Workout.toUi(): WorkoutUiModel = when(this) {
 
 
 
-fun Quantity.asUiText(): UiText {
-    return when (type) {
-        QuantityType.REPS -> Res.string.workouts_qty_reps.asUiText(value)
-        QuantityType.REPS_PER_SIDE -> Res.string.workouts_qty_reps_per_side.asUiText(value)
-        QuantityType.DURATION -> value.secondsAsText().asUiText()
-        QuantityType.DISTANCE -> value.distanceAsText().asUiText()
-    }
-}
 
-fun WorkoutExercise.toUiBase(): ExerciseUiItem = when(exercise) {
+fun WorkoutExercise.toUiBase(exercise: Exercise): ExerciseUiItem = when(exercise) {
     is BuiltInExercise -> {
         val config = exercise.id.toBuiltInExerciseId().toUiConfig()
         ExerciseUiItem(
             isCurrent = false, //na tym poziomie nie mamy wiedzy
             isDone = false, //na tym poziomie nie mamy wiedzy
             timeline = emptyList(), //na tym poziomie nie mamy wiedzy
-            exerciseId = this.exercise.id,
+            exerciseId = exercise.id,
             quantityType = this.quantity.type,
             quantityValue = this.quantity.value,
-            quantityText = this.quantity.asUiText(),
-            name = config.name,
+            name = config.name.asUiText(),
             icon = config.image,
         )
     }
@@ -112,13 +98,12 @@ fun WorkoutExercise.toUiBase(): ExerciseUiItem = when(exercise) {
             isCurrent = false, //na tym poziomie nie mamy wiedzy
             isDone = false, //na tym poziomie nie mamy wiedzy
             timeline = emptyList(), //na tym poziomie nie mamy wiedzy
-            exerciseId = this.exercise.id,
+            exerciseId = exercise.id,
             quantityType = this.quantity.type,
             quantityValue = this.quantity.value,
-            quantityText = this.quantity.asUiText(),
             name = when {
                 exercise.name.isNotBlank() -> exercise.name.asUiText()
-                configBase != null -> configBase.name
+                configBase != null -> configBase.name.asUiText()
                 else -> EmptyUiText
             },
             icon = when {

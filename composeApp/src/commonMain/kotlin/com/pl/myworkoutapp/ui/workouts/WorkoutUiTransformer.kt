@@ -1,6 +1,11 @@
 package com.pl.myworkoutapp.ui.workouts
 
+import com.pl.myworkoutapp.domain.model.exercise.Exercise
+import com.pl.myworkoutapp.domain.model.exercise.ExerciseId
+import com.pl.myworkoutapp.domain.model.exercise.Quantity
 import com.pl.myworkoutapp.domain.model.workout.Circuit
+import com.pl.myworkoutapp.domain.model.workout.CircuitStructure
+import com.pl.myworkoutapp.domain.model.workout.Phase
 import com.pl.myworkoutapp.domain.model.workout.Workout
 import com.pl.myworkoutapp.domain.model.workout.WorkoutExercise
 import com.pl.myworkoutapp.domain.model.workout.WorkoutItem
@@ -67,7 +72,7 @@ fun WorkoutTraversalItem.toTimeline(): List<TimeLineItemType> {
 }
 
 
-fun transform(workout: Workout): WorkoutWithExercisesUiModel {
+suspend fun transform(workout: Workout, exerciseLoader: suspend (ExerciseId) -> Exercise): WorkoutWithExercisesUiModel {
     val workoutUiModel = workout.toUi()
     val traversalItems = workout.items.flatten()
 
@@ -76,7 +81,7 @@ fun transform(workout: Workout): WorkoutWithExercisesUiModel {
             is Circuit -> workoutTraversalItem.item.toUiBase().copy(
                 timeline = workoutTraversalItem.toTimeline()
             )
-            is WorkoutExercise -> workoutTraversalItem.item.toUiBase().copy(
+            is WorkoutExercise -> workoutTraversalItem.item.toUiBase(exerciseLoader(workoutTraversalItem.item.exerciseId)).copy(
                 timeline = workoutTraversalItem.toTimeline()
             )
         }
@@ -85,4 +90,90 @@ fun transform(workout: Workout): WorkoutWithExercisesUiModel {
         workout = workoutUiModel,
         items = itemsUiModel
     )
+}
+
+private class CircuitBuilder(
+    val phase: Phase,
+    val name: String?,
+    val rounds: Int,
+    val structure: CircuitStructure,
+) {
+    val items = mutableListOf<WorkoutItem>()
+
+    fun build(): Circuit {
+        require(items.isNotEmpty()) {
+            "Circuit must contain at least one item"
+        }
+        return Circuit(
+            phase = phase,
+            name = name,
+            rounds = rounds,
+            structure = structure,
+            items = items.toList()
+        )
+    }
+}
+
+fun toDomain(items: List<WorkoutUiItem>): List<WorkoutItem> {
+    val result = mutableListOf<WorkoutItem>()
+    val stack = mutableListOf<CircuitBuilder>()
+
+    items.forEach { uiItem ->
+        val level = uiItem.timeline.size - 1
+//        println("level: $level, stack: ${stack.size}")
+//        when(uiItem) {
+//            is CircuitUiItem -> println("circuit: ${uiItem.phase}")
+//            is ExerciseUiItem -> println("exercise: ${uiItem.exerciseId}")
+//        }
+        require(level <= stack.size) {
+            "Invalid hierarchy: level=$level, stack=${stack.size}"
+        }
+        // schodzimy do odpowiedniego poziomu
+        while (stack.size > level) {
+            val finished = stack.removeAt(stack.lastIndex).build()
+            if (stack.isEmpty()) {
+                result.add(finished)
+            } else {
+                stack.last().items.add(finished)
+            }
+        }
+        when (uiItem) {
+            is CircuitUiItem -> {
+                val builder = CircuitBuilder(
+                    phase = uiItem.phase,
+                    name = null, //TODO - name = uiItem.title.asString(), // dostosuj
+                    rounds = uiItem.rounds,
+                    structure = uiItem.structure
+                )
+                stack.add(builder)
+            }
+            is ExerciseUiItem -> {
+                val exercise = WorkoutExercise(
+                    exerciseId = uiItem.exerciseId,
+                    quantity = Quantity(
+                        uiItem.quantityType,
+                        uiItem.quantityValue
+                    )
+                )
+
+                if (stack.isEmpty()) {
+                    result.add(exercise)
+                } else {
+                    stack.last().items.add(exercise)
+                }
+            }
+        }
+    }
+
+    // domykamy wszystkie otwarte circuity
+    while (stack.isNotEmpty()) {
+        val finished = stack.removeAt(stack.lastIndex).build()
+        if (stack.isEmpty()) {
+            result.add(finished)
+        } else {
+            stack.last().items.add(finished)
+        }
+    }
+
+    return result
 }

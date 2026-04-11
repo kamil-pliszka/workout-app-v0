@@ -20,4 +20,9 @@ class AppStateHolder {
     fun setCameraActive(active: Boolean) {
         _state.update { it.copy(isCameraActive = active) }
     }
+
+    fun setHideNavigation(hidden: Boolean) {
+        _state.update { it.copy(isHiddenNavigation = hidden) }
+    }
+
 }

@@ -1,6 +1,6 @@
 package com.pl.myworkoutapp.domain.model.workout
 
-import com.pl.myworkoutapp.domain.model.exercise.Exercise
+import com.pl.myworkoutapp.domain.model.exercise.ExerciseId
 import com.pl.myworkoutapp.domain.model.exercise.Quantity
 
 sealed interface WorkoutItem
@@ -8,13 +8,15 @@ sealed interface WorkoutItem
 data class WorkoutExercise(
     // chcę całego dostępu do ćwiczenia, żeby zwalidować quantity,
     // zaś na poziomie bazy będzie zapisywane ExerciseId
-    val exercise: Exercise,
+    //val exercise: Exercise,
+    val exerciseId: ExerciseId,
     val quantity: Quantity
 ) : WorkoutItem {
     init {
+        /*
         require(quantity.type == exercise.quantityType) {
             "Exercise: ${exercise.id} requires quantityType: ${exercise.quantityType}, got: ${quantity.type}"
-        }
+        }*/
         require(quantity.value > 0) {
             "quantity must be > 0"
         }

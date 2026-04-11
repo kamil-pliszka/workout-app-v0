@@ -31,7 +31,7 @@ import com.pl.myworkoutapp.ui.workouts.CircuitUiItem
 import com.pl.myworkoutapp.ui.workouts.TimeLineItemType
 import com.pl.myworkoutapp.ui.workouts.with
 import myworkoutapplication.composeapp.generated.resources.Res
-import myworkoutapplication.composeapp.generated.resources.done_all
+import myworkoutapplication.composeapp.generated.resources.ic_done_all
 import org.jetbrains.compose.resources.painterResource
 
 
@@ -73,7 +73,7 @@ fun WorkoutItemCircuit(
         println("circuit: $circuit")
         if (circuit.isDone) {
             Icon(
-                painter = painterResource(Res.drawable.done_all),
+                painter = painterResource(Res.drawable.ic_done_all),
                 contentDescription = "Well done",
                 tint = themeColor,
                 modifier = Modifier.scale(0.7f)

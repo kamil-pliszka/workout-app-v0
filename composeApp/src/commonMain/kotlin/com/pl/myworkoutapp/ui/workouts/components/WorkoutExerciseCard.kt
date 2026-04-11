@@ -20,7 +20,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import myworkoutapplication.composeapp.generated.resources.Res
-import myworkoutapplication.composeapp.generated.resources.done_all
+import myworkoutapplication.composeapp.generated.resources.ic_done_all
 import myworkoutapplication.composeapp.generated.resources.ic_jumping_jacks
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
@@ -69,7 +69,7 @@ fun ExerciseCard(
                     .padding(horizontal = 8.dp, vertical = 4.dp)
             ) {
                 Icon(
-                    painter = painterResource(Res.drawable.done_all),
+                    painter = painterResource(Res.drawable.ic_done_all),
                     contentDescription = "Well done",
                     tint = themeColor,
                     modifier = Modifier.scale(0.7f)

@@ -1,9 +1,10 @@
 package com.pl.myworkoutapp.data.mappers
 
 import com.pl.myworkoutapp.data.database.ExerciseEntity
+import com.pl.myworkoutapp.domain.model.exercise.CustomExercise
 import com.pl.myworkoutapp.domain.model.exercise.Exercise
 
-fun ExerciseEntity.toDomain(): Exercise {
+fun ExerciseEntity.toDomain(): CustomExercise {
     TODO()
 //    return BuiltInExercise(
 //        builtInId = TODO(),

@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import com.pl.myworkoutapp.domain.model.exercise.QuantityType
 import com.pl.myworkoutapp.domain.model.exercise.asExerciseId
 import com.pl.myworkoutapp.ui.common.asUiText
+import com.pl.myworkoutapp.ui.exercises.qtyValueAsUiText
 import com.pl.myworkoutapp.ui.theme.DesertWhite
 import com.pl.myworkoutapp.ui.theme.PureGreen
 import com.pl.myworkoutapp.ui.workouts.ExerciseUiItem
@@ -59,7 +60,7 @@ fun WorkoutItemExercise(
             )
             //Spacer(Modifier.height(8.dp))
             ExerciseCard(
-                qty = exercise.quantityText.asString(),
+                qty = exercise.quantityValue.qtyValueAsUiText(exercise.quantityType).asString(),
                 icon = exercise.icon,
                 isDone = exercise.isDone,
                 isCurrent = exercise.isCurrent,
@@ -77,7 +78,6 @@ val EXERCISE_ITEM = ExerciseUiItem(
     exerciseId = 123.asExerciseId(),
     quantityType = QuantityType.REPS,
     quantityValue = 13,
-    quantityText = "do świtu".asUiText(),
     name = "Lot na miotle".asUiText(),
     icon = Res.drawable.ic_flying_witch,
 )

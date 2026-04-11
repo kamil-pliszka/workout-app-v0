@@ -34,7 +34,7 @@ import com.pl.myworkoutapp.ui.plans.PlanDayUiModel
 import com.pl.myworkoutapp.ui.theme.DesertWhite
 import com.pl.myworkoutapp.ui.theme.FernGreen
 import myworkoutapplication.composeapp.generated.resources.Res
-import myworkoutapplication.composeapp.generated.resources.done_all
+import myworkoutapplication.composeapp.generated.resources.ic_done_all
 import myworkoutapplication.composeapp.generated.resources.ic_rest_day1
 import myworkoutapplication.composeapp.generated.resources.ic_rest_day2
 import myworkoutapplication.composeapp.generated.resources.plans_day_number
@@ -111,7 +111,7 @@ fun DayCard(
                         when (day.dayProgress) {
                             DayProgress.Done -> {
                                 Icon(
-                                    painter = painterResource(Res.drawable.done_all),
+                                    painter = painterResource(Res.drawable.ic_done_all),
                                     contentDescription = "Well done",
                                     tint = themeColor,
                                     modifier = Modifier

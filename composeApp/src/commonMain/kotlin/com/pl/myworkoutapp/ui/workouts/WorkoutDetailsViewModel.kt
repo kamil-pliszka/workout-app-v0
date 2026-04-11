@@ -6,14 +6,21 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pl.myworkoutapp.domain.WorkoutRepository
 import com.pl.myworkoutapp.domain.model.exercise.Exercise
+import com.pl.myworkoutapp.domain.model.exercise.ExerciseId
+import com.pl.myworkoutapp.domain.model.workout.WorkoutId
+import com.pl.myworkoutapp.domain.model.workout.WorkoutItem
 import com.pl.myworkoutapp.domain.model.workout.toWorkoutIdOrNull
 import com.pl.myworkoutapp.ui.common.loadExerciseDescription
+import com.pl.myworkoutapp.ui.exercises.ExerciseInfoUiModel
+import com.pl.myworkoutapp.ui.exercises.mapQuantityValue
 import com.pl.myworkoutapp.ui.exercises.quantityChange
 import com.pl.myworkoutapp.ui.exercises.toUi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import myworkoutapplication.composeapp.generated.resources.Res
+import myworkoutapplication.composeapp.generated.resources.compose_multiplatform
 
 class WorkoutDetailsViewModel(
     private val repository: WorkoutRepository,
@@ -27,16 +34,25 @@ class WorkoutDetailsViewModel(
     val state: StateFlow<WorkoutDetailsUiState> = _state
 
     init {
-        loadWorkout()
+        loadWorkoutFromParam()
     }
 
-    private fun loadWorkout() {
+    private fun loadWorkoutFromParam() {
+        val workoutId = workoutIdParam.toWorkoutIdOrNull()
+        workoutId?.let {
+            loadWorkoutById(workoutId)
+        }
+    }
+
+    private fun loadWorkoutById(workoutId: WorkoutId) {
         viewModelScope.launch {
-            val workoutId = workoutIdParam.toWorkoutIdOrNull()
-            val workout = workoutId?.let { repository.getWorkout(workoutId) }
+            val workout = repository.getWorkout(workoutId)
             _state.value = WorkoutDetailsUiState(
                 isLoading = false,
-                workout = workout?.let { transform(it) }
+                workout = transform(workout) { exerciseId ->
+                    repository.getExercise(exerciseId)
+                },
+                isDirty = true, //TODO
             )
             println("Wczytane trening dla: $workoutIdParam : $workoutId")
         }
@@ -46,8 +62,6 @@ class WorkoutDetailsViewModel(
     fun onAction(action: WorkoutDetailsAction) {
         println("Got action: $action")
         when (action) {
-            WorkoutDetailsAction.OnStartWorkout -> TODO()
-
             is WorkoutDetailsAction.ShowExerciseInfo -> {
                 when (action.exercise) {
                     is CircuitUiItem -> {} //nic nie robimy z Circuit
@@ -61,41 +75,102 @@ class WorkoutDetailsViewModel(
                 _state.update { it.copy(selectedItem = null, exerciseInfo = null) }
             }
 
-            WorkoutDetailsAction.ChangeExercise -> {
-                //TODO
+            WorkoutDetailsAction.ExerciseExchange -> {
+                _state.update { it.copy(showExercisePicker = true) }
             }
 
             is WorkoutDetailsAction.ChangeQuantity -> {
                 changeQuantity(action.increase)
             }
 
-            WorkoutDetailsAction.QuantitySave -> {
-                quantitySave()
+            WorkoutDetailsAction.ExerciseSave -> {
+                exerciseSave()
+            }
+
+            WorkoutDetailsAction.ExerciseNext -> {
+                showNextExercise()
+            }
+            WorkoutDetailsAction.ExercisePrev -> {
+                showPrevExercise()
+            }
+            WorkoutDetailsAction.ExerciseReset -> {
+                resetExercise()
+            }
+
+            is WorkoutDetailsAction.ExercisePicked -> {
+                println("EXE PICKED: ${action.exerciseId}")
+                _state.update { it.copy(showExercisePicker = false) }
+                action.exerciseId?.let {
+                    currentExerciseExchange(action.exerciseId)
+                }
+            }
+
+            WorkoutDetailsAction.OnStartWorkout -> {
+                startWorkout()
+            }
+
+            WorkoutDetailsAction.OnSaveWorkout -> {
+                saveWorkout()
+            }
+
+            WorkoutDetailsAction.OnResetWorkout -> {
+                resetWorkout()
             }
         }
     }
 
+    private suspend fun prepareExerciseInfo(exerciseId: ExerciseId): ExerciseInfoUiModel {
+        val exercise: Exercise = repository.getExercise(exerciseId)
+        val exerciseInfo = exercise.toUi()
+        val exerciseMarkdown = exerciseInfo
+            .takeIf { it.customDesc == null }
+            ?.descExerciseId
+            ?.let { id ->
+                loadExerciseDescription(
+                    exerciseId = id,
+                    lang = Locale.current.language
+                )
+            }
+        return exerciseInfo.copy( descriptionMarkdown = exerciseMarkdown )
+    }
+
     private fun showExerciseInfo(exe: ExerciseUiItem) {
         viewModelScope.launch {
-            val exercise: Exercise = repository.getExercise(exe.exerciseId)
-            val exerciseInfo = exercise.toUi()
-            val exerciseMarkdown = exerciseInfo
-                .takeIf { it.customDesc == null }
-                ?.descExerciseId
-                ?.let { id ->
-                    loadExerciseDescription(
-                        exerciseId = id,
-                        lang = Locale.current.language
-                    )
-                }
+            val exerciseInfo = prepareExerciseInfo(exe.exerciseId)
+            val exes = _state.value.workout?.items?.filterIsInstance<ExerciseUiItem>() ?: emptyList()
+            val current = exes.indexOf(exe) + 1
+            val total = exes.size
             _state.update {
                 it.copy(
                     selectedItem = exe,
                     exerciseInfo = exerciseInfo.copy(
                         quantityValue = exe.quantityValue,
-                        descriptionMarkdown = exerciseMarkdown
+                        current = current,
+                        total = total,
                     )
                 )
+            }
+        }
+    }
+
+    private fun showNextExercise() {
+        _state.value.selectedItem?.let { item ->
+            val exes = _state.value.workout?.items?.filterIsInstance<ExerciseUiItem>() ?: emptyList()
+            val current = exes.indexOf(item)
+            val next = exes.getOrNull(current + 1)
+            next?.let {
+                showExerciseInfo(next)
+            }
+        }
+    }
+
+    private fun showPrevExercise() {
+        _state.value.selectedItem?.let { item ->
+            val exes = _state.value.workout?.items?.filterIsInstance<ExerciseUiItem>() ?: emptyList()
+            val current = exes.indexOf(item)
+            val prev = exes.getOrNull(current - 1)
+            prev?.let {
+                showExerciseInfo(prev)
             }
         }
     }
@@ -130,20 +205,115 @@ class WorkoutDetailsViewModel(
         }
     }
 
-    private fun quantitySave() {
+    private fun exerciseSave() {
         _state.value.exerciseInfo?.let { exerciseInfo ->
             _state.value.selectedItem?.let { item ->
                 if (item is ExerciseUiItem && exerciseInfo.quantityValue != null) {
+                    val newSelectedItem = item.copy(
+                        exerciseId = exerciseInfo.exerciseId,
+                        quantityValue = exerciseInfo.quantityValue,
+                        quantityType = exerciseInfo.quantityType,
+                        name = exerciseInfo.name,
+                        icon = exerciseInfo.icon ?: Res.drawable.compose_multiplatform, //TODO - rozwiązać problem
+                    )
                     _state.update {
                         it.copy(
-                            selectedItem = item.copy(
-                                quantityValue = exerciseInfo.quantityValue
+                            workout = it.workout?.copy(
+                                items = it.workout.items.map { i ->
+                                    if (i == item) newSelectedItem else i
+                                }
                             ),
-                            exerciseInfo = exerciseInfo.copy(quantityDirty = false)
+                            isDirty = true,
+                            //selectedItem = newSelectedItem,
+                            //exerciseInfo = exerciseInfo.copy(quantityDirty = false)
+                            selectedItem = null,//zamkniecie bottom sheet
+                            exerciseInfo = null,//zamkniecie bottom sheet
                         )
                     }
                 }
             }
+        }
+    }
+
+    private fun resetExercise() {
+        /*_state.value.exerciseInfo?.let { exerciseInfo ->
+            val originalValue = _state.value.selectedItem?.let { item ->
+                if (item is ExerciseUiItem) {
+                    item.quantityValue
+                } else {
+                    null
+                }
+            }
+            _state.update {
+                it.copy(
+                    exerciseInfo = exerciseInfo.copy(
+                        quantityValue = originalValue,
+                        quantityDirty = false
+                    )
+                )
+            }
+            println("originalValue: $originalValue")
+        }*/
+        _state.value.selectedItem?.let {selectedItem ->
+            if (selectedItem is ExerciseUiItem) {
+                showExerciseInfo(selectedItem)
+            }
+        }
+    }
+
+
+    private fun currentExerciseExchange(exerciseId: ExerciseId) {
+        viewModelScope.launch {
+            _state.value.exerciseInfo?.let { currentExerciseInfo ->
+                val newExerciseInfo = prepareExerciseInfo(exerciseId)
+                //pozostaje zaktualizować qty
+                val newQuantityValue = mapQuantityValue(
+                    currentExerciseInfo.quantityType,
+                    currentExerciseInfo.quantityValue ?: 1,
+                    newExerciseInfo.quantityType
+                )
+                _state.update {
+                    it.copy(
+                        exerciseInfo = newExerciseInfo.copy(
+                            quantityValue = newQuantityValue,
+                            quantityDirty = true
+                        )
+                    )
+                }
+            }
+        }
+    }
+
+
+    private fun startWorkout() {
+        println("i co jeszcze?")
+    }
+
+    private fun resetWorkout() {
+        //ważne, tutaj używamy id zapisanego treningu(może sięzmienić po edycji i zapisaniu wbudowanego treningu)
+        val workoutId = _state.value.workout?.workout?.workoutId ?: workoutIdParam.toWorkoutIdOrNull()
+        workoutId?.let {
+            loadWorkoutById(workoutId)
+        }
+    }
+
+    private fun saveWorkout() {
+        viewModelScope.launch {
+            println("saving")
+            _state.value.workout?.let { workoutWithExercisesUi ->
+                val workoutId = workoutWithExercisesUi.workout.workoutId
+                val items : List<WorkoutItem> = toDomain(workoutWithExercisesUi.items)
+                println("Saving workout: $workoutId")
+                items.forEachIndexed { index, item ->
+                    println("ITEM[$index]: $item")
+                }
+            }
+
+            /*_state.update {
+                it.copy(
+                    isDirty = false
+                )
+            }*/
         }
     }
 

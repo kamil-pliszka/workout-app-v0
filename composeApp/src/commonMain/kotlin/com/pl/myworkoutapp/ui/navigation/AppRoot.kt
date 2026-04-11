@@ -39,8 +39,8 @@ fun AppRoot() {
     val useRailNavigation = isMobile && size.width > size.height
     //val showBottomBar = !isInWorkout && !useRailNavigation
     val appStateHolder = koinInject<AppStateHolder>()
-    val state = appStateHolder.state.collectAsStateWithLifecycle()
-    val showBottomBar = state.value.showNavigationBar && !useRailNavigation
+    val appState = appStateHolder.state.collectAsStateWithLifecycle()
+    val showBottomBar = appState.value.showNavigationBar && !useRailNavigation
 
     Scaffold(
         bottomBar = {
@@ -67,7 +67,7 @@ fun AppRoot() {
                         snackbarHostState = snackBarState
                     )
                 }
-                if (state.value.showNavigationBar) {
+                if (appState.value.showNavigationBar) {
                     AppNavigationRail(
                         navController = navController,
                     )

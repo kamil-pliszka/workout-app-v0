@@ -51,9 +51,7 @@ data class ExerciseUiItem(
     //val muscle: MuscleGroup,
     val quantityType: QuantityType,
     val quantityValue: Int,
-    val quantityText: UiText,//TODO - wywalić
     val name: UiText,
-    //val desc: UiText,
     val icon: DrawableResource
 ) : WorkoutUiItem
 
@@ -68,7 +66,6 @@ data class CircuitUiItem(
     val structure: CircuitStructure = CircuitStructure.Standard,
     val title: UiText,
     val progress: Float? = null,
-    //val subtitle: UiText?,
 ) : WorkoutUiItem
 
 //fun WorkoutUiModel.with(vararg items: WorkoutUiItem) = WorkoutWithExercisesUiModel(

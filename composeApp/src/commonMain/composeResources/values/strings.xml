@@ -5,6 +5,8 @@
     <string name="choose_lang">Choose language</string>
 
     <string name="btn_close">Close</string>
+    <string name="btn_cancel">Cancel</string>
+    <string name="btn_save">Save</string>
 
     <string name="navigation_plans">Plans</string>
     <string name="navigation_workouts">Workouts</string>
@@ -83,16 +85,50 @@
     <string name="workout_close">Close</string>
     <string name="workout_change">Change</string>
     <string name="workout_qty_save">Save</string>
+    <string name="workout_reset">Reset</string>
+    <string name="workout_save">Save</string>
 
     <string name="exercise_description_label">Description</string>
     <string name="exercise_qty_reps">Repeat</string>
     <string name="exercise_qty_reps_per_side">Repeat (each side)</string>
     <string name="exercise_qty_duration">Duration</string>
     <string name="exercise_qty_distance">Distance</string>
+    <string name="exercise_exchange">Change</string>
+    <string name="exercise_clear">Clear</string>
+    <string name="exercise_current">Current</string>
+    <string name="exercise_exchange_with">Exchange with...</string>
+    <string name="exercise_exercises_all">All exercises (%1$d)</string>
+    <string name="exercise_exercises_filtered">Filtered (%1$d)</string>
+
+    <string name="exercise_filters_label">Filters</string>
+    <string name="exercise_filters_muscle_groups">Muscle groups : (%1$d)</string>
+    <string name="exercise_filters_equipment">Equipment : (%1$d)</string>
+    <string name="exercise_filters_exe_type">Type : (%1$d)</string>
 
     <string name="qty_value_reps">x%1$s</string>
     <string name="qty_value_reps_per_side">x%1$s</string>
 
+    <string name="muscle_group_abs">Abdominals</string>
+    <string name="muscle_group_back">Back</string>
+    <string name="muscle_group_chest">Chest</string>
+    <string name="muscle_group_arms">Arms</string>
+    <string name="muscle_group_legs">Legs</string>
+    <string name="muscle_group_core">Core</string>
+
+    <string name="equipment_bodyweight">Bodyweight</string>
+    <string name="equipment_dumbbells">Dumbbells</string>
+    <string name="equipment_barbell">Barbell</string>
+    <string name="equipment_kettlebell">Kettlebell</string>
+    <string name="equipment_resistance_bands">Resistance bands</string>
+    <string name="equipment_machine">Machine</string>
+    <string name="equipment_rope">Rope</string>
+    <string name="equipment_rings">Rings</string>
+    <string name="equipment_pullup_bar">Pullup bar</string>
+
+    <string name="exercise_type_cardio">Cardio</string>
+    <string name="exercise_type_strength">Strength</string>
+    <string name="exercise_type_mobility">Mobility</string>
+    <string name="exercise_type_stretch">Stretch</string>
 
     <string name="exercise_jumping_jacks">JUMPING JACKS</string>
     <string name="exercise_push_up">PUSH UPS</string>

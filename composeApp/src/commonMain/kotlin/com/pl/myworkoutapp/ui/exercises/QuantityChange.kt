@@ -1,6 +1,7 @@
 package com.pl.myworkoutapp.ui.exercises
 
 import com.pl.myworkoutapp.domain.model.exercise.QuantityType
+import kotlin.math.roundToInt
 
 fun quantityChange(type: QuantityType, currentQuantityValua : Int, increase : Boolean) : Int = when(type) {
         QuantityType.REPS -> changeReps(currentQuantityValua, increase)
@@ -48,3 +49,26 @@ fun changeDistance(value: Int, increase: Boolean): Int {
     return newValue.coerceAtLeast(100)
 }
 
+
+private fun toBase(type: QuantityType, value: Int): Double = when(type) {
+    QuantityType.REPS -> value * 5.0
+    QuantityType.REPS_PER_SIDE -> value * 10.0
+    QuantityType.DISTANCE -> value / 10.0
+    QuantityType.DURATION -> value.toDouble()
+}
+
+private fun fromBase(type: QuantityType, value: Double): Int = when(type) {
+    QuantityType.REPS -> (value / 5).roundToInt()
+    QuantityType.REPS_PER_SIDE -> (value / 10).roundToInt()
+    QuantityType.DISTANCE -> (value * 10).roundToInt()
+    QuantityType.DURATION -> value.roundToInt()
+}
+
+fun mapQuantityValue(oldType : QuantityType, oldValue: Int, newType : QuantityType): Int {
+    if (oldType == newType) return oldValue
+
+    val base = toBase(oldType, oldValue)
+    val result = fromBase(newType, base)
+
+    return result.coerceAtLeast(1)
+}

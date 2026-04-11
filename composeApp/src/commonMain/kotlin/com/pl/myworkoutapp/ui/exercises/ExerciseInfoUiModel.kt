@@ -22,4 +22,6 @@ data class ExerciseInfoUiModel(
     val descriptionMarkdown: String?,
     val icon: DrawableResource?,
     val imagePath: String?,
+    val current: Int? = null,
+    val total: Int? = null,
 )
