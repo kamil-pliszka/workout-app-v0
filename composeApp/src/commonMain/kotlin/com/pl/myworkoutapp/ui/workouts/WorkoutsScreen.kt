@@ -1,25 +1,30 @@
 package com.pl.myworkoutapp.ui.workouts
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.pl.myworkoutapp.domain.model.workout.BuiltInWorkoutId
-import com.pl.myworkoutapp.domain.model.workout.BuiltInWorkoutRegistry
-import com.pl.myworkoutapp.domain.model.workout.asString
+import com.pl.myworkoutapp.domain.model.exercise.ExerciseId
+import com.pl.myworkoutapp.domain.model.workout.*
+import com.pl.myworkoutapp.ui.navigation.AppNavigator
 import com.pl.myworkoutapp.ui.workouts.components.WorkoutHeaderCard
+import myworkoutapplication.composeapp.generated.resources.*
+import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 
 @Composable
 fun WorkoutsScreen(
     state: WorkoutsUiState,
     onAction: (WorkoutsAction) -> Unit,
+    appNavigator: AppNavigator = koinInject(),
 ) {
     if (state.isLoading) {
         CircularProgressIndicator()
@@ -35,22 +40,40 @@ fun WorkoutsScreen(
         onAction(WorkoutsAction.OnPageChanged(pagerState.currentPage))
     }
 
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+    Box(
+        modifier = Modifier.fillMaxSize()
     ) {
-        items(
-            count = state.workouts.size,
-            key = { idx -> state.workouts[idx].workoutId.asString() }
-        ) { idx ->
-            val workoutUiModel = state.workouts[idx]
-            WorkoutHeaderCard(
-                workout = workoutUiModel,
-                onClick = {
-                    onAction(WorkoutsAction.NavToWorkout(workoutUiModel.workoutId))
-                }
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            items(
+                count = state.workouts.size,
+                key = { idx -> state.workouts[idx].workoutId.asString() }
+            ) { idx ->
+                val workoutUiModel = state.workouts[idx]
+                WorkoutHeaderCard(
+                    workout = workoutUiModel,
+                    onClick = {
+                        appNavigator.navigateToWorkoutDetails(workoutUiModel.workoutId)
+                    }
+                )
+            }
+        }
+
+        //tymczasoe, do szybkiego odpalenia edytora
+        FloatingActionButton(
+            onClick = {
+                appNavigator.navigateToExerciseEditor(ExerciseId.Custom.NEW)
+            },
+            modifier = Modifier.align(Alignment.BottomCenter).offset(y = (-16).dp),
+            shape = CircleShape
+        ) {
+            Icon(
+                painter = painterResource(Res.drawable.ic_add),
+                contentDescription = stringResource(Res.string.btn_create)
             )
         }
     }

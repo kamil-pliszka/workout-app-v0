@@ -1,41 +1,14 @@
 package com.pl.myworkoutapp.ui.exercises
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.AssistChip
-import androidx.compose.material3.Button
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -45,26 +18,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.pl.myworkoutapp.AppStateHolder
-import com.pl.myworkoutapp.domain.model.exercise.BuiltInExerciseId
-import com.pl.myworkoutapp.domain.model.exercise.Equipment
-import com.pl.myworkoutapp.domain.model.exercise.ExerciseId
-import com.pl.myworkoutapp.domain.model.exercise.ExerciseType
-import com.pl.myworkoutapp.domain.model.exercise.MuscleGroup
-import com.pl.myworkoutapp.domain.model.exercise.asExerciseId
+import com.pl.myworkoutapp.domain.model.exercise.*
+import com.pl.myworkoutapp.ui.navigation.AppNavigator
 import com.pl.myworkoutapp.ui.theme.AppTheme
-import myworkoutapplication.composeapp.generated.resources.Res
-import myworkoutapplication.composeapp.generated.resources.exercise_clear
-import myworkoutapplication.composeapp.generated.resources.exercise_exchange
-import myworkoutapplication.composeapp.generated.resources.exercise_exchange_with
-import myworkoutapplication.composeapp.generated.resources.exercise_exercises_all
-import myworkoutapplication.composeapp.generated.resources.exercise_exercises_filtered
-import myworkoutapplication.composeapp.generated.resources.ic_bent_leg_twist
-import myworkoutapplication.composeapp.generated.resources.ic_checked
-import myworkoutapplication.composeapp.generated.resources.ic_close
-import myworkoutapplication.composeapp.generated.resources.ic_flutter_kicks
-import myworkoutapplication.composeapp.generated.resources.ic_flying_witch1
-import myworkoutapplication.composeapp.generated.resources.ic_question_mark
-import myworkoutapplication.composeapp.generated.resources.ic_search
+import myworkoutapplication.composeapp.generated.resources.*
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
@@ -76,6 +33,7 @@ fun ExercisePickerScreen(
     currentExerciseId: ExerciseId?,
     onResult: (ExerciseId?) -> Unit,
     appStateHolder: AppStateHolder = koinInject(),
+    appNavigator: AppNavigator = koinInject(),
 ) {
     /*LaunchedEffect(Unit) {
         appStateHolder.setHideNavigation(true)
@@ -85,7 +43,7 @@ fun ExercisePickerScreen(
             appStateHolder.setHideNavigation(false)
         }
     }*/
-    println("ExercisePickerScreen: $currentExerciseId")
+    //println("ExercisePickerScreen: $currentExerciseId")
     val viewModel = koinViewModel<ExercisePickerViewModel>()
     val filtered by viewModel.filteredExercises.collectAsStateWithLifecycle()
     val current by viewModel.currentExerciseFlow.collectAsStateWithLifecycle(null)
@@ -93,14 +51,17 @@ fun ExercisePickerScreen(
     LaunchedEffect(currentExerciseId) {
         viewModel.initWithCurrentExerciseId(currentExerciseId)
     }
-    println("VM: $viewModel")
+    //println("VM: $viewModel")
     val state by viewModel.state.collectAsStateWithLifecycle()
     ExercisePickerContent(
         state = state,
         filteredExercises = filtered,
         currentExercise = current,
         onResult = onResult,
-        onAction = { action -> viewModel.onAction(action) }
+        onAction = { action -> viewModel.onAction(action) },
+        onNavToExerciseEditor = {
+            exerciseId -> appNavigator.navigateToExerciseEditor(exerciseId)
+        }
     )
 }
 
@@ -111,6 +72,7 @@ fun ExercisePickerContent(
     currentExercise: ExercisePickerListItem?,
     onResult: (ExerciseId?) -> Unit,
     onAction: (ExercisePickerAction) -> Unit,
+    onNavToExerciseEditor: (ExerciseId) -> Unit,
 ) {
     Box(
         modifier = Modifier
@@ -186,6 +148,17 @@ fun ExercisePickerContent(
                 ) {
                     Text(stringResource(Res.string.exercise_exchange))
                 }
+            }
+        } else {
+            FloatingActionButton(
+                onClick = { onNavToExerciseEditor(ExerciseId.Custom.NEW) },
+                modifier = Modifier.align(Alignment.BottomCenter).offset(y = (-16).dp),
+                shape = CircleShape
+            ) {
+                Icon(
+                    painter = painterResource(Res.drawable.ic_add),
+                    contentDescription = stringResource(Res.string.btn_create)
+                )
             }
         }
     }
@@ -512,6 +485,7 @@ private fun ExercisePickerContentPreview() {
             currentExercise = null,
             onResult = { },
             onAction = { },
+            onNavToExerciseEditor = {},
         )
     }
 }
@@ -540,6 +514,7 @@ private fun ExercisePickerContentPreview2() {
             currentExercise = EXE_CURR,
             onResult = { },
             onAction = { },
+            onNavToExerciseEditor = {},
         )
     }
 }

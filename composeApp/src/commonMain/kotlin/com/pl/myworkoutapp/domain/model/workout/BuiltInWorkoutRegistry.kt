@@ -1,9 +1,7 @@
 package com.pl.myworkoutapp.domain.model.workout
 
 import com.pl.myworkoutapp.core.associateByUnique
-import com.pl.myworkoutapp.domain.model.workout.builtin.AbsWorkouts
-import com.pl.myworkoutapp.domain.model.workout.builtin.LegsWorkouts
-import com.pl.myworkoutapp.domain.model.workout.builtin.TabataWorkouts
+import com.pl.myworkoutapp.domain.model.workout.builtin.*
 
 object BuiltInWorkoutRegistry {
     private val BUILT_INS = listOf(

@@ -7,6 +7,8 @@
     <string name="btn_close">Zamknij</string>
     <string name="btn_cancel">Anuluj</string>
     <string name="btn_save">Zapisz</string>
+    <string name="btn_delete">Usuń</string>
+    <string name="btn_create">Stwórz</string>
 
     <string name="navigation_plans">Zestawy</string>
     <string name="navigation_workouts">Treningi</string>
@@ -53,14 +55,15 @@
 
     <string name="workouts_phase_warmup">Rozgrzewka</string>
     <string name="workouts_phase_training">Trening</string>
-    <string name="workouts_phase_coldown">Ochłodzenie</string>
+    <string name="workouts_phase_coldown">Schłodzenie</string>
 
     <string name="workout_start">Uruchom</string>
     <string name="workout_close">Zamknij</string>
     <string name="workout_change">Zmień</string>
     <string name="workout_qty_save">Zapisz</string>
-    <string name="workout_reset">Reset</string>
-    <string name="workout_save">Save</string>
+    <string name="workout_reset">Wyczyść</string>
+    <string name="workout_save">Zapisz</string>
+    <string name="workout_saved_success">Zestaw ćwiczeń został zapisany</string>
 
     <string name="exercise_description_label">Opis ćwiczenia</string>
     <string name="exercise_qty_reps">Powtórzenia</string>

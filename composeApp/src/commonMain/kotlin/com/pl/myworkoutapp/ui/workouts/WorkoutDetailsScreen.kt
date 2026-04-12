@@ -1,17 +1,8 @@
 package com.pl.myworkoutapp.ui.workouts
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
 import androidx.compose.material3.ButtonDefaults.buttonColors
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,10 +16,7 @@ import com.pl.myworkoutapp.ui.exercises.ExercisePickerScreen
 import com.pl.myworkoutapp.ui.workouts.components.WorkoutExerciseInfoScreen
 import com.pl.myworkoutapp.ui.workouts.components.WorkoutWithExercisesComponent
 import kotlinx.coroutines.runBlocking
-import myworkoutapplication.composeapp.generated.resources.Res
-import myworkoutapplication.composeapp.generated.resources.workout_reset
-import myworkoutapplication.composeapp.generated.resources.workout_save
-import myworkoutapplication.composeapp.generated.resources.workout_start
+import myworkoutapplication.composeapp.generated.resources.*
 import org.jetbrains.compose.resources.stringResource
 
 
@@ -111,7 +99,7 @@ fun WorkoutDetailsScreen(
     if (state.showExercisePicker) {
         ExercisePickerScreen(
             currentExerciseId = state.exerciseInfo?.exerciseId,
-            onResult = { exerciseId -> onAction(WorkoutDetailsAction.ExercisePicked(exerciseId))}
+            onResult = { exerciseId -> onAction(WorkoutDetailsAction.ExercisePicked(exerciseId))},
         )
     }
 }

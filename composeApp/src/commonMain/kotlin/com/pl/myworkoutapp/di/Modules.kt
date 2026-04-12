@@ -12,8 +12,10 @@ import com.pl.myworkoutapp.data.repository.AppSettingRepositoryImpl
 import com.pl.myworkoutapp.data.repository.WorkoutRepositoryImpl
 import com.pl.myworkoutapp.domain.AppSettingRepository
 import com.pl.myworkoutapp.domain.WorkoutRepository
+import com.pl.myworkoutapp.ui.common.MessageCoordinator
 import com.pl.myworkoutapp.ui.execution.WorkoutExecutionViewModel
-import com.pl.myworkoutapp.ui.exercises.ExercisePickerViewModel
+import com.pl.myworkoutapp.ui.exercises.*
+import com.pl.myworkoutapp.ui.navigation.AppNavigator
 import com.pl.myworkoutapp.ui.plans.PlansViewModel
 import com.pl.myworkoutapp.ui.reports.ReportsViewModel
 import com.pl.myworkoutapp.ui.settings.SettingsViewModel
@@ -44,6 +46,9 @@ val sharedModule = module {
     singleOf(::AppSettingRepositoryImpl).bind<AppSettingRepository>()
     singleOf(::WorkoutFlatteningMapper)
     singleOf(::WorkoutTreeBuilder)
+    singleOf(::ExerciseEditorCoordinator)
+    singleOf(::AppNavigator)
+    singleOf(::MessageCoordinator)
 
     viewModelOf(::LanguageViewModel)
     viewModelOf(::PlansViewModel)
@@ -53,4 +58,5 @@ val sharedModule = module {
     viewModelOf(::WorkoutsViewModel)
     viewModelOf(::WorkoutDetailsViewModel)
     viewModelOf(::ExercisePickerViewModel)
+    viewModelOf(::ExerciseEditorViewModel)
 }

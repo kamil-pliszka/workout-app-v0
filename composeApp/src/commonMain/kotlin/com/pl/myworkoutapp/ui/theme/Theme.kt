@@ -2,20 +2,12 @@ package com.pl.myworkoutapp.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Shapes
-import androidx.compose.material3.Typography
-import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.lightColorScheme
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
-import myworkoutapplication.composeapp.generated.resources.Res
-import myworkoutapplication.composeapp.generated.resources.eurostile_bold_iItalic
-import myworkoutapplication.composeapp.generated.resources.eurostile_extended_black_italic
-import myworkoutapplication.composeapp.generated.resources.orbitron_variable
-import myworkoutapplication.composeapp.generated.resources.roboto_italic_variable
+import myworkoutapplication.composeapp.generated.resources.*
 import org.jetbrains.compose.resources.Font
 
 //import com.example.resources.R

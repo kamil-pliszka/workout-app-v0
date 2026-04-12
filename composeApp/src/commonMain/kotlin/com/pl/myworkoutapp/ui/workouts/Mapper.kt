@@ -1,29 +1,10 @@
 package com.pl.myworkoutapp.ui.workouts
 
-import com.pl.myworkoutapp.domain.model.exercise.BuiltInExercise
-import com.pl.myworkoutapp.domain.model.exercise.CustomExercise
-import com.pl.myworkoutapp.domain.model.exercise.Exercise
-import com.pl.myworkoutapp.domain.model.exercise.toBuiltInExerciseId
-import com.pl.myworkoutapp.domain.model.workout.BuiltInWorkout
-import com.pl.myworkoutapp.domain.model.workout.Circuit
-import com.pl.myworkoutapp.domain.model.workout.CustomWorkout
-import com.pl.myworkoutapp.domain.model.workout.Phase
-import com.pl.myworkoutapp.domain.model.workout.Workout
-import com.pl.myworkoutapp.domain.model.workout.WorkoutExercise
-import com.pl.myworkoutapp.domain.model.workout.toBuiltInWorkoutId
-import com.pl.myworkoutapp.ui.common.EmptyUiText
-import com.pl.myworkoutapp.ui.common.UiText
-import com.pl.myworkoutapp.ui.common.asUiText
-import com.pl.myworkoutapp.ui.common.toUiConfig
-import com.pl.myworkoutapp.ui.theme.StrawberryRed
-import com.pl.myworkoutapp.ui.theme.TrafficPurple
-import com.pl.myworkoutapp.ui.theme.holoRed
-import myworkoutapplication.composeapp.generated.resources.Res
-import myworkoutapplication.composeapp.generated.resources.compose_multiplatform
-import myworkoutapplication.composeapp.generated.resources.ic_flying_witch1
-import myworkoutapplication.composeapp.generated.resources.workouts_phase_coldown
-import myworkoutapplication.composeapp.generated.resources.workouts_phase_training
-import myworkoutapplication.composeapp.generated.resources.workouts_phase_warmup
+import com.pl.myworkoutapp.domain.model.exercise.*
+import com.pl.myworkoutapp.domain.model.workout.*
+import com.pl.myworkoutapp.ui.common.*
+import com.pl.myworkoutapp.ui.theme.*
+import myworkoutapplication.composeapp.generated.resources.*
 
 private val CustomThemeColors = listOf(
     StrawberryRed,

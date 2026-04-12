@@ -1,12 +1,7 @@
 package com.pl.myworkoutapp.domain.model.exercise
 
 import com.pl.myworkoutapp.core.associateByUnique
-import com.pl.myworkoutapp.domain.model.exercise.builtin.ABS_EXERCISES
-import com.pl.myworkoutapp.domain.model.exercise.builtin.ARM_EXERCISES
-import com.pl.myworkoutapp.domain.model.exercise.builtin.BACK_EXERCISES
-import com.pl.myworkoutapp.domain.model.exercise.builtin.CHEST_EXERCISES
-import com.pl.myworkoutapp.domain.model.exercise.builtin.CORE_EXERCISES
-import com.pl.myworkoutapp.domain.model.exercise.builtin.LEGS_EXERCISES
+import com.pl.myworkoutapp.domain.model.exercise.builtin.*
 
 object BuiltInExerciseRegistry {
     private val BUILT_IN_EXERCISES = (

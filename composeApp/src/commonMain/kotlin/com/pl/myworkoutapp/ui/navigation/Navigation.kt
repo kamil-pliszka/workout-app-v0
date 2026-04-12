@@ -1,41 +1,54 @@
 package com.pl.myworkoutapp.ui.navigation
 
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.navigation
+import androidx.navigation.compose.*
+import com.pl.myworkoutapp.domain.model.exercise.asString
 import com.pl.myworkoutapp.domain.model.workout.asString
+import com.pl.myworkoutapp.ui.common.ObserveAsEvents
 import com.pl.myworkoutapp.ui.execution.WorkoutExecutionScreen
 import com.pl.myworkoutapp.ui.execution.WorkoutExecutionViewModel
-import com.pl.myworkoutapp.ui.plans.PlansAction
+import com.pl.myworkoutapp.ui.exercises.ExerciseEditorDialog
+import com.pl.myworkoutapp.ui.exercises.ExerciseEditorViewModel
 import com.pl.myworkoutapp.ui.plans.PlansScreen
 import com.pl.myworkoutapp.ui.plans.PlansViewModel
 import com.pl.myworkoutapp.ui.reports.ReportsScreen
 import com.pl.myworkoutapp.ui.reports.ReportsViewModel
 import com.pl.myworkoutapp.ui.settings.SettingsScreen
 import com.pl.myworkoutapp.ui.settings.SettingsViewModel
-import com.pl.myworkoutapp.ui.workouts.WorkoutDetailsScreen
-import com.pl.myworkoutapp.ui.workouts.WorkoutDetailsViewModel
-import com.pl.myworkoutapp.ui.workouts.WorkoutsAction
-import com.pl.myworkoutapp.ui.workouts.WorkoutsScreen
-import com.pl.myworkoutapp.ui.workouts.WorkoutsViewModel
+import com.pl.myworkoutapp.ui.workouts.*
+import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun Navigation(
     modifier: Modifier = Modifier,
     navController: NavHostController,
-    snackbarHostState: SnackbarHostState
+    appNavigator : AppNavigator = koinInject<AppNavigator>(),
 ) {
+    ObserveAsEvents(appNavigator.navEvents) { event ->
+        when (event) {
+            AppNavigatorEvent.PopBackStack -> navController.popBackStack()
+            is AppNavigatorEvent.NavToExerciseEditor -> {
+                println("nav to: ${event.exerciseId.asString()}")
+                navController.navigate(ScreenRoutes.ExerciseEditor.create(event.exerciseId.asString()))
+            }
+            is AppNavigatorEvent.NavToWorkoutDetails -> {
+                println("nav to workout details: ${event.workoutId.asString()}")
+                navController.navigate(ScreenRoutes.WorkoutDetails.create(event.workoutId.asString()))
+            }
+            is AppNavigatorEvent.NavToWorkoutExecution -> {
+                println("nav to workout exec: ${event.workoutId.asString()}")
+                navController.navigate(ScreenRoutes.WorkoutExecution.create(event.workoutId.asString()))
+            }
+        }
+    }
+
     NavHost(
         navController = navController,
         startDestination = ScreenRoutes.WorkoutsRoot.route,
@@ -49,13 +62,7 @@ fun Navigation(
             val state by viewModel.state.collectAsStateWithLifecycle()
             PlansScreen(
                 state = state,
-                onAction = { action ->
-                    viewModel.onAction(action)
-                    if (action is PlansAction.NavToWorkout) {
-                        println("nav from plan to workout: ${action.workoutId.asString()}")
-                        navController.navigate(ScreenRoutes.WorkoutExecution.create(action.workoutId.asString()))
-                    }
-                }
+                onAction = viewModel::onAction
             )
         }
 
@@ -69,13 +76,7 @@ fun Navigation(
                 val state by viewModel.state.collectAsStateWithLifecycle()
                 WorkoutsScreen(
                     state = state,
-                    onAction = { action ->
-                        viewModel.onAction(action)
-                        if (action is WorkoutsAction.NavToWorkout) {
-                            println("nav to: ${action.workoutId.asString()}")
-                            navController.navigate(ScreenRoutes.WorkoutDetails.create(action.workoutId.asString()))
-                        }
-                    }
+                    onAction = viewModel::onAction
                 )
             }
             composable(ScreenRoutes.WorkoutDetails.route) { backStackEntry ->
@@ -85,9 +86,7 @@ fun Navigation(
                 val state by viewModel.state.collectAsStateWithLifecycle()
                 WorkoutDetailsScreen(
                     state = state,
-                    onAction = { action ->
-                        viewModel.onAction(action)
-                    }
+                    onAction = viewModel::onAction
                 )
             }
         }
@@ -108,6 +107,19 @@ fun Navigation(
             SettingsScreen(
                 state = state,
                 onAction = viewModel::onAction,
+            )
+        }
+
+        dialog(
+            route = ScreenRoutes.ExerciseEditor.route,
+        ) { backStackEntry ->
+            val viewModel: ExerciseEditorViewModel =
+                koinViewModel(viewModelStoreOwner = backStackEntry)
+            //UiEventConsumer(snackbarHostState, viewModel.events)
+            val state by viewModel.state.collectAsStateWithLifecycle()
+            ExerciseEditorDialog(
+                state = state,
+                onAction = viewModel::onAction
             )
         }
 

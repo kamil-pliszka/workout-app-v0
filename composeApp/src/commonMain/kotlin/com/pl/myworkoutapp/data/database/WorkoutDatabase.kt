@@ -1,9 +1,6 @@
 package com.pl.myworkoutapp.data.database
 
-import androidx.room.ConstructedBy
-import androidx.room.Database
-import androidx.room.RoomDatabase
-import androidx.room.TypeConverters
+import androidx.room.*
 
 @Database(
     entities = [ExerciseEntity::class, WorkoutPlanEntity::class, WorkoutSessionEntity::class,

@@ -1,9 +1,7 @@
 package com.pl.myworkoutapp.domain.model.plan
 
 import com.pl.myworkoutapp.core.associateByUnique
-import com.pl.myworkoutapp.domain.model.plan.builtin.BellyFatBurnPlan
-import com.pl.myworkoutapp.domain.model.plan.builtin.RockSolidAbsPlan
-import com.pl.myworkoutapp.domain.model.plan.builtin.SixPackAbsPlan
+import com.pl.myworkoutapp.domain.model.plan.builtin.*
 
 object BuiltInTrainingPlansRegistry {
     private val BUILT_INS = listOf(

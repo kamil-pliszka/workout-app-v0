@@ -1,9 +1,7 @@
 package com.pl.myworkoutapp.data.mappers
 
 import com.pl.myworkoutapp.data.database.WorkoutItemEntity
-import com.pl.myworkoutapp.domain.model.workout.Circuit
-import com.pl.myworkoutapp.domain.model.workout.WorkoutExercise
-import com.pl.myworkoutapp.domain.model.workout.WorkoutItem
+import com.pl.myworkoutapp.domain.model.workout.*
 
 class WorkoutTreeBuilder {
 

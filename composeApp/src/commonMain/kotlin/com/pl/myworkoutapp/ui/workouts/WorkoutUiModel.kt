@@ -4,9 +4,7 @@ import androidx.compose.ui.graphics.Color
 import com.pl.myworkoutapp.domain.model.Difficulty
 import com.pl.myworkoutapp.domain.model.exercise.ExerciseId
 import com.pl.myworkoutapp.domain.model.exercise.QuantityType
-import com.pl.myworkoutapp.domain.model.workout.CircuitStructure
-import com.pl.myworkoutapp.domain.model.workout.Phase
-import com.pl.myworkoutapp.domain.model.workout.WorkoutId
+import com.pl.myworkoutapp.domain.model.workout.*
 import com.pl.myworkoutapp.ui.common.UiText
 import org.jetbrains.compose.resources.DrawableResource
 

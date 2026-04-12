@@ -1,20 +1,12 @@
 package com.pl.myworkoutapp.data.repository
 
 import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.MutablePreferences
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.floatPreferencesKey
-import androidx.datastore.preferences.core.intPreferencesKey
-import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.core.*
 import com.pl.myworkoutapp.core.getSystemLanguage
 import com.pl.myworkoutapp.domain.AppSettingRepository
 import com.pl.myworkoutapp.domain.model.user.Gender
 import com.pl.myworkoutapp.domain.model.user.UserProfile
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.*
 
 class AppSettingRepositoryImpl(
     //private val dataStoreProvider: DataStoreProvider

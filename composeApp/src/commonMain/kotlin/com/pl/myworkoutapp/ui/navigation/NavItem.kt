@@ -2,15 +2,7 @@ package com.pl.myworkoutapp.ui.navigation
 
 import com.pl.myworkoutapp.ui.common.UiText
 import com.pl.myworkoutapp.ui.common.asUiText
-import myworkoutapplication.composeapp.generated.resources.Res
-import myworkoutapplication.composeapp.generated.resources.ic_calendar_month
-import myworkoutapplication.composeapp.generated.resources.ic_exercise
-import myworkoutapplication.composeapp.generated.resources.ic_monitoring
-import myworkoutapplication.composeapp.generated.resources.ic_settings_account_box
-import myworkoutapplication.composeapp.generated.resources.navigation_plans
-import myworkoutapplication.composeapp.generated.resources.navigation_reports
-import myworkoutapplication.composeapp.generated.resources.navigation_settings
-import myworkoutapplication.composeapp.generated.resources.navigation_workouts
+import myworkoutapplication.composeapp.generated.resources.*
 import org.jetbrains.compose.resources.DrawableResource
 
 data class NavItem(

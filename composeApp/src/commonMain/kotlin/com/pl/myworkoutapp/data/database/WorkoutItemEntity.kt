@@ -1,9 +1,6 @@
 package com.pl.myworkoutapp.data.database
 
-import androidx.room.Entity
-import androidx.room.ForeignKey
-import androidx.room.Index
-import androidx.room.PrimaryKey
+import androidx.room.*
 
 
 @Entity(

@@ -1,18 +1,8 @@
 package com.pl.myworkoutapp.ui.workouts
 
-import com.pl.myworkoutapp.domain.model.exercise.Exercise
-import com.pl.myworkoutapp.domain.model.exercise.ExerciseId
-import com.pl.myworkoutapp.domain.model.exercise.Quantity
-import com.pl.myworkoutapp.domain.model.workout.Circuit
-import com.pl.myworkoutapp.domain.model.workout.CircuitStructure
-import com.pl.myworkoutapp.domain.model.workout.Phase
-import com.pl.myworkoutapp.domain.model.workout.Workout
-import com.pl.myworkoutapp.domain.model.workout.WorkoutExercise
-import com.pl.myworkoutapp.domain.model.workout.WorkoutItem
-import com.pl.myworkoutapp.ui.theme.BrillantBlue
-import com.pl.myworkoutapp.ui.theme.FernGreen
-import com.pl.myworkoutapp.ui.theme.PearlOpalGreen
-import com.pl.myworkoutapp.ui.theme.TrafficPurple
+import com.pl.myworkoutapp.domain.model.exercise.*
+import com.pl.myworkoutapp.domain.model.workout.*
+import com.pl.myworkoutapp.ui.theme.*
 
 
 data class WorkoutTraversalItem(

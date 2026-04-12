@@ -1,16 +1,8 @@
 package com.pl.myworkoutapp.ui.exercises
 
 import com.pl.myworkoutapp.domain.model.exercise.QuantityType
-import com.pl.myworkoutapp.ui.common.EmptyUiText
-import com.pl.myworkoutapp.ui.common.UiText
-import com.pl.myworkoutapp.ui.common.asUiText
-import myworkoutapplication.composeapp.generated.resources.Res
-import myworkoutapplication.composeapp.generated.resources.exercise_qty_distance
-import myworkoutapplication.composeapp.generated.resources.exercise_qty_duration
-import myworkoutapplication.composeapp.generated.resources.exercise_qty_reps
-import myworkoutapplication.composeapp.generated.resources.exercise_qty_reps_per_side
-import myworkoutapplication.composeapp.generated.resources.qty_value_reps
-import myworkoutapplication.composeapp.generated.resources.qty_value_reps_per_side
+import com.pl.myworkoutapp.ui.common.*
+import myworkoutapplication.composeapp.generated.resources.*
 
 private fun Int.pad2(): String = this.toString().padStart(2, '0')
 private fun Int.pad3(): String = this.toString().padStart(3, '0')

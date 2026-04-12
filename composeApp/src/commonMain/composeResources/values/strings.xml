@@ -7,6 +7,8 @@
     <string name="btn_close">Close</string>
     <string name="btn_cancel">Cancel</string>
     <string name="btn_save">Save</string>
+    <string name="btn_delete">Delete</string>
+    <string name="btn_create">Create</string>
 
     <string name="navigation_plans">Plans</string>
     <string name="navigation_workouts">Workouts</string>
@@ -87,6 +89,7 @@
     <string name="workout_qty_save">Save</string>
     <string name="workout_reset">Reset</string>
     <string name="workout_save">Save</string>
+    <string name="workout_saved_success">Workout saved succesfully</string>
 
     <string name="exercise_description_label">Description</string>
     <string name="exercise_qty_reps">Repeat</string>

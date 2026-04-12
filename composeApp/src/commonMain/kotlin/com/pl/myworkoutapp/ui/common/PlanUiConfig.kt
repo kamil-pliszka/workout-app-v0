@@ -2,14 +2,8 @@ package com.pl.myworkoutapp.ui.common
 
 import androidx.compose.ui.graphics.Color
 import com.pl.myworkoutapp.domain.model.plan.BuiltInTrainingPlanId
-import com.pl.myworkoutapp.ui.theme.Blue
-import com.pl.myworkoutapp.ui.theme.LightBlue
-import com.pl.myworkoutapp.ui.theme.holoGreen
-import myworkoutapplication.composeapp.generated.resources.Res
-import myworkoutapplication.composeapp.generated.resources.ic_plank1
-import myworkoutapplication.composeapp.generated.resources.plans_belly_fat_burn
-import myworkoutapplication.composeapp.generated.resources.plans_rock_solid_abs
-import myworkoutapplication.composeapp.generated.resources.plans_six_pack_abs
+import com.pl.myworkoutapp.ui.theme.*
+import myworkoutapplication.composeapp.generated.resources.*
 import org.jetbrains.compose.resources.DrawableResource
 
 data class PlanUiConfig(

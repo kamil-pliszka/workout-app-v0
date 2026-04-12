@@ -1,10 +1,6 @@
 package com.pl.myworkoutapp.domain.model.workout.builtin
 
-import com.pl.myworkoutapp.domain.model.exercise.BuiltInExercise
-import com.pl.myworkoutapp.domain.model.exercise.BuiltInExerciseId
-import com.pl.myworkoutapp.domain.model.exercise.BuiltInExerciseRegistry
-import com.pl.myworkoutapp.domain.model.exercise.Quantity
-import com.pl.myworkoutapp.domain.model.exercise.QuantityType
+import com.pl.myworkoutapp.domain.model.exercise.*
 import com.pl.myworkoutapp.domain.model.workout.WorkoutExercise
 
 //fun BuiltInExerciseId.toExercise(): BuiltInExercise = BuiltInExerciseRegistry.get(this)

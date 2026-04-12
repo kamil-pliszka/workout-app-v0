@@ -2,31 +2,8 @@ package com.pl.myworkoutapp.ui.common
 
 import androidx.compose.ui.graphics.Color
 import com.pl.myworkoutapp.domain.model.workout.BuiltInWorkoutId
-import com.pl.myworkoutapp.ui.theme.BrillantBlue
-import com.pl.myworkoutapp.ui.theme.DarkBlue
-import com.pl.myworkoutapp.ui.theme.PastelGreen
-import com.pl.myworkoutapp.ui.theme.PastelTurquoise
-import com.pl.myworkoutapp.ui.theme.PureGreen
-import com.pl.myworkoutapp.ui.theme.SilverGrey
-import com.pl.myworkoutapp.ui.theme.YellowGreen
-import myworkoutapplication.composeapp.generated.resources.Res
-import myworkoutapplication.composeapp.generated.resources.ic_jumping_jacks
-import myworkoutapplication.composeapp.generated.resources.ic_plank1
-import myworkoutapplication.composeapp.generated.resources.ic_side_plank
-import myworkoutapplication.composeapp.generated.resources.ic_triceps_dip_on_chair
-import myworkoutapplication.composeapp.generated.resources.plans_belly_fat_burn
-import myworkoutapplication.composeapp.generated.resources.workouts_legs_and_glutes_10_min
-import myworkoutapplication.composeapp.generated.resources.workouts_legs_and_glutes_10_min_desc
-import myworkoutapplication.composeapp.generated.resources.workouts_my_abs_workout_no_set
-import myworkoutapplication.composeapp.generated.resources.workouts_my_abs_workout_no_set_desc
-import myworkoutapplication.composeapp.generated.resources.workouts_my_abs_workout_with_set
-import myworkoutapplication.composeapp.generated.resources.workouts_my_abs_workout_with_set_desc
-import myworkoutapplication.composeapp.generated.resources.workouts_my_abs_workout_with_superset
-import myworkoutapplication.composeapp.generated.resources.workouts_my_abs_workout_with_superset_desc
-import myworkoutapplication.composeapp.generated.resources.workouts_six_pack_10_minutes
-import myworkoutapplication.composeapp.generated.resources.workouts_six_pack_10_minutes_desc
-import myworkoutapplication.composeapp.generated.resources.workouts_tabata_1
-import myworkoutapplication.composeapp.generated.resources.workouts_tabata_1_desc
+import com.pl.myworkoutapp.ui.theme.*
+import myworkoutapplication.composeapp.generated.resources.*
 import org.jetbrains.compose.resources.DrawableResource
 
 data class WorkoutUiConfig(

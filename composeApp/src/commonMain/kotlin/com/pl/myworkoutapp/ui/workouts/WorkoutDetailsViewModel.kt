@@ -1,32 +1,22 @@
 package com.pl.myworkoutapp.ui.workouts
 
 import androidx.compose.ui.text.intl.Locale
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.pl.myworkoutapp.core.Log
 import com.pl.myworkoutapp.domain.WorkoutRepository
 import com.pl.myworkoutapp.domain.model.exercise.Exercise
 import com.pl.myworkoutapp.domain.model.exercise.ExerciseId
-import com.pl.myworkoutapp.domain.model.workout.CustomWorkout
-import com.pl.myworkoutapp.domain.model.workout.WorkoutId
-import com.pl.myworkoutapp.domain.model.workout.WorkoutItem
-import com.pl.myworkoutapp.domain.model.workout.toWorkoutIdOrNull
-import com.pl.myworkoutapp.ui.common.loadExerciseDescription
-import com.pl.myworkoutapp.ui.exercises.ExerciseInfoUiModel
-import com.pl.myworkoutapp.ui.exercises.mapQuantityValue
-import com.pl.myworkoutapp.ui.exercises.quantityChange
-import com.pl.myworkoutapp.ui.exercises.toUi
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.update
+import com.pl.myworkoutapp.domain.model.workout.*
+import com.pl.myworkoutapp.ui.common.*
+import com.pl.myworkoutapp.ui.exercises.*
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import myworkoutapplication.composeapp.generated.resources.Res
-import myworkoutapplication.composeapp.generated.resources.compose_multiplatform
+import myworkoutapplication.composeapp.generated.resources.*
 
 class WorkoutDetailsViewModel(
     private val repository: WorkoutRepository,
     savedStateHandle: SavedStateHandle,
+    private val messageCoordinator : MessageCoordinator,
 ) : ViewModel() {
     private val workoutIdParam: String =
         savedStateHandle["workoutId"] ?: error("workoutId is required")
@@ -289,6 +279,7 @@ class WorkoutDetailsViewModel(
 
     private fun startWorkout() {
         println("i co jeszcze?")
+        messageCoordinator.error("ale o co chodzi?".asUiText())
     }
 
     private fun resetWorkout() {
@@ -328,6 +319,7 @@ class WorkoutDetailsViewModel(
                 )
                 val savedWorkoutId = repository.saveCustomWorkout(customWorkout)
                 println("Saved as : $savedWorkoutId")
+                messageCoordinator.success(Res.string.workout_saved_success.asUiText())
                 loadWorkoutById(savedWorkoutId)
             }
         }

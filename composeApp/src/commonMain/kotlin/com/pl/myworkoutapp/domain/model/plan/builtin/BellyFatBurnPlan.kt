@@ -1,11 +1,7 @@
 package com.pl.myworkoutapp.domain.model.plan.builtin
 
 import com.pl.myworkoutapp.domain.model.Difficulty
-import com.pl.myworkoutapp.domain.model.plan.BuiltInTrainingPlanId
-import com.pl.myworkoutapp.domain.model.plan.RestDayItem
-import com.pl.myworkoutapp.domain.model.plan.TrainingPlan
-import com.pl.myworkoutapp.domain.model.plan.WorkoutDayItem
-import com.pl.myworkoutapp.domain.model.plan.toTrainingDays
+import com.pl.myworkoutapp.domain.model.plan.*
 import com.pl.myworkoutapp.domain.model.workout.BuiltInWorkoutId
 import com.pl.myworkoutapp.domain.model.workout.asWorkoutId
 

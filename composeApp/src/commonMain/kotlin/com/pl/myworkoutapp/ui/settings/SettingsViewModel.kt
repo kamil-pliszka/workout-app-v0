@@ -11,19 +11,10 @@ import com.pl.myworkoutapp.domain.model.user.UserProfile
 import com.pl.myworkoutapp.ui.common.UiText
 import com.pl.myworkoutapp.ui.common.asUiText
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.number
-import kotlinx.datetime.toLocalDateTime
-import myworkoutapplication.composeapp.generated.resources.Res
-import myworkoutapplication.composeapp.generated.resources.lang_en
-import myworkoutapplication.composeapp.generated.resources.lang_pl
+import kotlinx.datetime.*
+import myworkoutapplication.composeapp.generated.resources.*
 import kotlin.time.Instant
 
 class SettingsViewModel(

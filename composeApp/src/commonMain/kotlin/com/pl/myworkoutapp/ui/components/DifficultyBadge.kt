@@ -14,10 +14,7 @@ import androidx.compose.ui.unit.dp
 import com.pl.myworkoutapp.domain.model.Difficulty
 import com.pl.myworkoutapp.ui.common.UiText
 import com.pl.myworkoutapp.ui.common.asUiText
-import myworkoutapplication.composeapp.generated.resources.Res
-import myworkoutapplication.composeapp.generated.resources.difficulty_advanced
-import myworkoutapplication.composeapp.generated.resources.difficulty_beginner
-import myworkoutapplication.composeapp.generated.resources.difficulty_intermediate
+import myworkoutapplication.composeapp.generated.resources.*
 
 data class DifficultyPresentation(
     val text: UiText,

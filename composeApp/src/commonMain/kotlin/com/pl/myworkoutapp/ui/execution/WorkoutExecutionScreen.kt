@@ -1,12 +1,8 @@
 package com.pl.myworkoutapp.ui.execution
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.*
 import com.pl.myworkoutapp.AppStateHolder
-import com.pl.myworkoutapp.ui.execution.components.PausedView
-import com.pl.myworkoutapp.ui.execution.components.RestView
-import com.pl.myworkoutapp.ui.execution.components.RunningWorkoutView
+import com.pl.myworkoutapp.ui.execution.components.*
 import com.pl.myworkoutapp.ui.theme.PearlOpalGreen
 import org.koin.compose.koinInject
 

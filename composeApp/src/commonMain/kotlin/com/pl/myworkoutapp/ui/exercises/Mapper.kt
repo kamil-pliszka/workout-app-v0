@@ -1,12 +1,7 @@
 package com.pl.myworkoutapp.ui.exercises
 
-import com.pl.myworkoutapp.domain.model.exercise.BuiltInExercise
-import com.pl.myworkoutapp.domain.model.exercise.CustomExercise
-import com.pl.myworkoutapp.domain.model.exercise.Exercise
-import com.pl.myworkoutapp.domain.model.exercise.toBuiltInExerciseId
-import com.pl.myworkoutapp.ui.common.EmptyUiText
-import com.pl.myworkoutapp.ui.common.asUiText
-import com.pl.myworkoutapp.ui.common.toUiConfig
+import com.pl.myworkoutapp.domain.model.exercise.*
+import com.pl.myworkoutapp.ui.common.*
 import org.jetbrains.compose.resources.getString
 
 fun Exercise.toUi(): ExerciseInfoUiModel = when(this) {

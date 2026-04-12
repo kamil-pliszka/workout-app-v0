@@ -15,6 +15,4 @@ sealed interface WorkoutDetailsAction {
     object ExerciseNext: WorkoutDetailsAction
     data class ChangeQuantity(val increase: Boolean) : WorkoutDetailsAction
     data class ExercisePicked(val exerciseId: ExerciseId?) : WorkoutDetailsAction
-//    data class NavToWorkout(val workoutId: WorkoutId) : WorkoutDetailsAction
-//    data class NavToExercise(val exerciseId: ExerciseId) : WorkoutDetailsAction
 }

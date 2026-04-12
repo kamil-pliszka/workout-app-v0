@@ -1,15 +1,16 @@
 package com.pl.myworkoutapp.domain.model.exercise
 
-import com.pl.myworkoutapp.domain.model.workout.BuiltInWorkoutId
-import com.pl.myworkoutapp.domain.model.workout.WorkoutId
-import com.pl.myworkoutapp.domain.model.workout.asWorkoutId
 import kotlin.jvm.JvmInline
 
 sealed interface ExerciseId {
     @JvmInline
     value class BuiltIn(val id: BuiltInExerciseId) : ExerciseId
     @JvmInline
-    value class Custom(val id: Long) : ExerciseId
+    value class Custom(val id: Long) : ExerciseId {
+        companion object {
+            val NEW = Custom(0)
+        }
+    }
 }
 
 fun Long.asExerciseId(): ExerciseId.Custom = ExerciseId.Custom(this)
