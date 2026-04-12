@@ -5,6 +5,8 @@ import com.pl.myworkoutapp.AppStateHolder
 import com.pl.myworkoutapp.LanguageViewModel
 import com.pl.myworkoutapp.data.database.DatabaseFactory
 import com.pl.myworkoutapp.data.database.WorkoutDatabase
+import com.pl.myworkoutapp.data.mappers.WorkoutFlatteningMapper
+import com.pl.myworkoutapp.data.mappers.WorkoutTreeBuilder
 import com.pl.myworkoutapp.data.prefs.DataStoreProvider
 import com.pl.myworkoutapp.data.repository.AppSettingRepositoryImpl
 import com.pl.myworkoutapp.data.repository.WorkoutRepositoryImpl
@@ -40,6 +42,8 @@ val sharedModule = module {
     }
     single { get<WorkoutDatabase>().workoutDao }
     singleOf(::AppSettingRepositoryImpl).bind<AppSettingRepository>()
+    singleOf(::WorkoutFlatteningMapper)
+    singleOf(::WorkoutTreeBuilder)
 
     viewModelOf(::LanguageViewModel)
     viewModelOf(::PlansViewModel)

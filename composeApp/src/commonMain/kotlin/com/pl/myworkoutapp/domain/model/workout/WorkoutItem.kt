@@ -57,8 +57,5 @@ data class Circuit(
         require(rounds > 0) {
             "rounds must be > 0"
         }
-        require(items.isNotEmpty()) {
-            "items must be not empty"
-        }
     }
 }

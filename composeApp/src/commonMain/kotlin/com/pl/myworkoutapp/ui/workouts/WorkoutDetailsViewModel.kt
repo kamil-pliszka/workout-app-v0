@@ -4,9 +4,11 @@ import androidx.compose.ui.text.intl.Locale
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.pl.myworkoutapp.core.Log
 import com.pl.myworkoutapp.domain.WorkoutRepository
 import com.pl.myworkoutapp.domain.model.exercise.Exercise
 import com.pl.myworkoutapp.domain.model.exercise.ExerciseId
+import com.pl.myworkoutapp.domain.model.workout.CustomWorkout
 import com.pl.myworkoutapp.domain.model.workout.WorkoutId
 import com.pl.myworkoutapp.domain.model.workout.WorkoutItem
 import com.pl.myworkoutapp.domain.model.workout.toWorkoutIdOrNull
@@ -52,15 +54,15 @@ class WorkoutDetailsViewModel(
                 workout = transform(workout) { exerciseId ->
                     repository.getExercise(exerciseId)
                 },
-                isDirty = true, //TODO
+                isDirty = false,
             )
-            println("Wczytane trening dla: $workoutIdParam : $workoutId")
+            println("Wczytany trening dla: $workoutIdParam : $workoutId")
         }
     }
 
 
     fun onAction(action: WorkoutDetailsAction) {
-        println("Got action: $action")
+        Log.d("WorkoutDetail","Got action: $action")
         when (action) {
             is WorkoutDetailsAction.ShowExerciseInfo -> {
                 when (action.exercise) {
@@ -307,13 +309,27 @@ class WorkoutDetailsViewModel(
                 items.forEachIndexed { index, item ->
                     println("ITEM[$index]: $item")
                 }
-            }
-
-            /*_state.update {
-                it.copy(
-                    isDirty = false
+                val basedOn : WorkoutId.BuiltIn? = when(workoutId) {
+                    is WorkoutId.BuiltIn -> workoutId
+                    is WorkoutId.Custom -> workoutWithExercisesUi.workout.basedOn
+                }
+                val customId: WorkoutId.Custom = when(workoutId) {
+                    is WorkoutId.BuiltIn -> WorkoutId.Custom.NEW
+                    is WorkoutId.Custom -> workoutId
+                }
+                val customWorkout = CustomWorkout(
+                    id = customId,
+                    name = null,//TODO
+                    description = null,//TODO
+                    imageUri = null,//TODO
+                    basedOn = basedOn,
+                    difficulty = workoutWithExercisesUi.workout.difficulty,
+                    items = items
                 )
-            }*/
+                val savedWorkoutId = repository.saveCustomWorkout(customWorkout)
+                println("Saved as : $savedWorkoutId")
+                loadWorkoutById(savedWorkoutId)
+            }
         }
     }
 

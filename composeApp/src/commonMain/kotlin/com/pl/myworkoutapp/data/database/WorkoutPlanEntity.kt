@@ -7,7 +7,7 @@ import com.pl.myworkoutapp.domain.model.Difficulty
 //TODO - encje potrzebne w przypadku umożliwienia manualnego tworzenia planów treningowych
 @Entity
 data class WorkoutPlanEntity(
-    @PrimaryKey(autoGenerate = false) val id: Int,
+    @PrimaryKey(autoGenerate = false) val id: Long,
     val name: String,
     //val category: Category,
     val difficulty: Difficulty,

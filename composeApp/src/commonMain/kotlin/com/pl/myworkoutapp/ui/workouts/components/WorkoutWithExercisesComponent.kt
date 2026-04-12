@@ -94,7 +94,8 @@ fun WorkoutWithExercisesComponent(
 }
 
 val PREVIEW_WORKOUT = WorkoutUiModel(
-    workoutId = 56789.asWorkoutId(),
+    workoutId = 56789L.asWorkoutId(),
+    basedOn = null,
     name = "Twój workout ABS".asUiText(),
     desc = "Opis workouta, potrzebny bądź nie".asUiText(),
     imageUrl = Res.drawable.ic_flying_witch1,
@@ -108,7 +109,7 @@ val PREVIEW_WORKOUT = WorkoutUiModel(
 
 
 val EXE1 = ExerciseUiItem(
-    exerciseId = 123.asExerciseId(),
+    exerciseId = 123L.asExerciseId(),
     quantityType = QuantityType.REPS,
     quantityValue = 13,
     name = "Lot na miotle".asUiText(),
@@ -116,7 +117,7 @@ val EXE1 = ExerciseUiItem(
 )
 
 val EXE2 = ExerciseUiItem(
-    exerciseId = 123.asExerciseId(),
+    exerciseId = 123L.asExerciseId(),
     quantityType = QuantityType.REPS,
     quantityValue = 13,
     name = "Lot na miotle".asUiText(),
@@ -124,7 +125,7 @@ val EXE2 = ExerciseUiItem(
 )
 
 val EXE3 = ExerciseUiItem(
-    exerciseId = 123.asExerciseId(),
+    exerciseId = 123L.asExerciseId(),
     quantityType = QuantityType.REPS,
     quantityValue = 13,
     name = "Lot na miotle".asUiText(),
@@ -153,14 +154,14 @@ val COOLDOWN = CircuitUiItem(
 )
 
 val EXE_WM_1 = ExerciseUiItem(
-    exerciseId = 123.asExerciseId(),
+    exerciseId = 123L.asExerciseId(),
     quantityType = QuantityType.REPS,
     quantityValue = 13,
     name = "ruszaj się".asUiText(),
     icon = Res.drawable.ic_jumping_jacks,
 )
 val EXE_WM_2 = ExerciseUiItem(
-    exerciseId = 123.asExerciseId(),
+    exerciseId = 123L.asExerciseId(),
     quantityType = QuantityType.REPS,
     quantityValue = 13,
     name = "fiku miku".asUiText(),
@@ -168,14 +169,14 @@ val EXE_WM_2 = ExerciseUiItem(
 )
 
 val EXE_CD_1 = ExerciseUiItem(
-    exerciseId = 123.asExerciseId(),
+    exerciseId = 123L.asExerciseId(),
     quantityType = QuantityType.REPS,
     quantityValue = 13,
     name = "fiku miku".asUiText(),
     icon = Res.drawable.ic_rest_day0,
 )
 val EXE_CD_2 = ExerciseUiItem(
-    exerciseId = 123.asExerciseId(),
+    exerciseId = 123L.asExerciseId(),
     quantityType = QuantityType.REPS,
     quantityValue = 13,
     name = "fiku miku".asUiText(),
@@ -273,7 +274,7 @@ val EXE = BuiltInExerciseId.BENT_LEG_TWIST.withRepsPerSide(10)
 @Composable
 fun WorkoutWithExercisesComponentPreviewNested() {//zagnieżdżone wersje
     val workoutDomain = CustomWorkout(
-        id = 13.asWorkoutId(),
+        id = 13L.asWorkoutId(),
         name = "nested workout",
         description = "",
         imageUri = null,

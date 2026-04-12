@@ -75,7 +75,7 @@ fun WorkoutItemExercise(
 val EXERCISE_ITEM = ExerciseUiItem(
     isCurrent = false,
     isDone = true,
-    exerciseId = 123.asExerciseId(),
+    exerciseId = 123L.asExerciseId(),
     quantityType = QuantityType.REPS,
     quantityValue = 13,
     name = "Lot na miotle".asUiText(),

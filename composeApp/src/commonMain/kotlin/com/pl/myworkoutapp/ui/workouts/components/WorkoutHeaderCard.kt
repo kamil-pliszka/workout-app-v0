@@ -145,7 +145,7 @@ fun WorkoutHeaderCard(
 @Composable
 fun WorkoutHeaderCardPreview() {
     val workoutUiModel = CustomWorkout(
-        id = 13.asWorkoutId(),
+        id = 13L.asWorkoutId(),
         name = "BICEPS AND TRICEPS",
         description = "",
         imageUri = null,

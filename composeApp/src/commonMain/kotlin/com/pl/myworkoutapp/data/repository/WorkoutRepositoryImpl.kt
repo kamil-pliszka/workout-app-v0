@@ -1,37 +1,31 @@
 package com.pl.myworkoutapp.data.repository
 
 import com.pl.myworkoutapp.data.database.WorkoutDao
-import com.pl.myworkoutapp.data.mappers.toDomain
+import com.pl.myworkoutapp.data.mappers.*
 import com.pl.myworkoutapp.domain.WorkoutRepository
-import com.pl.myworkoutapp.domain.model.exercise.BuiltInExercise
-import com.pl.myworkoutapp.domain.model.exercise.BuiltInExerciseRegistry
-import com.pl.myworkoutapp.domain.model.exercise.CustomExercise
-import com.pl.myworkoutapp.domain.model.exercise.Exercise
-import com.pl.myworkoutapp.domain.model.exercise.ExerciseId
+import com.pl.myworkoutapp.domain.model.exercise.*
 import com.pl.myworkoutapp.domain.model.plan.BuiltInTrainingPlansRegistry
 import com.pl.myworkoutapp.domain.model.plan.TrainingPlan
-import com.pl.myworkoutapp.domain.model.workout.BuiltInWorkoutRegistry
-import com.pl.myworkoutapp.domain.model.workout.Workout
-import com.pl.myworkoutapp.domain.model.workout.WorkoutId
-import com.pl.myworkoutapp.domain.model.workout.WorkoutSession
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
+import com.pl.myworkoutapp.domain.model.workout.*
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.withContext
 
 class WorkoutRepositoryImpl(
-    private val workoutDao: WorkoutDao
+    private val workoutDao: WorkoutDao,
+    private val flatteningMapper: WorkoutFlatteningMapper,
+    private val workoutTreeBuilder: WorkoutTreeBuilder,
 ) : WorkoutRepository {
     override fun observeExercises(): Flow<List<Exercise>> {
-        return workoutDao.observeExercises().map {
-            list -> list.map { it.toDomain() }
-        }
+//        return workoutDao.observeExercises().map {
+//            list -> list.map { it.toDomain() }
+//        }
+        TODO()
     }
     override suspend fun getCustomExercises(): List<CustomExercise> = withContext(Dispatchers.IO) {
-        workoutDao.getAllExercises().map {
-            it.toDomain()
-        }
+//        workoutDao.getAllExercises().map {
+//            it.toDomain()
+//        }
+        emptyList()
     }
 
     override suspend fun getBuiltinExercises(): List<BuiltInExercise> = withContext(Dispatchers.IO) {
@@ -64,8 +58,21 @@ class WorkoutRepositoryImpl(
     override suspend fun getWorkout(workoutId: WorkoutId): Workout {
         return when(workoutId) {
             is WorkoutId.BuiltIn -> BuiltInWorkoutRegistry.get(workoutId.id)
-            is WorkoutId.Custom -> TODO()
+            is WorkoutId.Custom -> getCustomWorkout(workoutId.id)
         }
+    }
+
+    private suspend fun getCustomWorkout(workoutId: Long): CustomWorkout {
+        val workoutEntity = workoutDao.getWorkoutById(workoutId)
+        require(workoutEntity != null) {
+            "Workout not found: $workoutId"
+        }
+
+        val flatSortedItems = workoutDao.getSortedItemsByWorkoutId(workoutEntity.id)
+
+        val domainWorkout = workoutEntity.toDomain()
+        val roots = workoutTreeBuilder.build(flatSortedItems)
+        return domainWorkout.copy(items = roots)
     }
 
     override suspend fun getExercise(exerciseId: ExerciseId): Exercise {
@@ -74,4 +81,21 @@ class WorkoutRepositoryImpl(
             is ExerciseId.Custom -> TODO()
         }
     }
+
+    override suspend fun saveCustomWorkout(customWorkout: CustomWorkout) : WorkoutId.Custom {
+        //println("saveCustomWorkout, eq check: ${WorkoutId.Custom.NEW == 0L.asWorkoutId()}")
+        //val flatItems = mutableListOf<FlatWorkoutItem>()
+        //flatten(customWorkout.items, flatItems, null)
+        val flatItems = flatteningMapper.flatten(customWorkout.items)
+        println("FLATTEN:")
+        flatItems.forEachIndexed { index, item ->
+            println("idx = $index, pos = ${item.position}, parent = ${item.parentIndex} : ${item.itemEntity.type}, ${item.itemEntity.exerciseId}")
+        }
+        if (customWorkout.id == WorkoutId.Custom.NEW) { //insert as Custom
+            return workoutDao.insertWorkout(customWorkout.toEntity(), flatItems)
+        } else { //update Custom
+            return workoutDao.updateWorkout(customWorkout.toEntity(), flatItems)
+        }
+    }
 }
+

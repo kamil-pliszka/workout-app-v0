@@ -6,14 +6,18 @@ sealed interface WorkoutId {
     @JvmInline
     value class BuiltIn(val id: BuiltInWorkoutId) : WorkoutId
     @JvmInline
-    value class Custom(val id: Int) : WorkoutId
+    value class Custom(val id: Long) : WorkoutId {
+        companion object {
+            val NEW = Custom(0)
+        }
+    }
 }
 
-fun Int.asWorkoutId(): WorkoutId.Custom = WorkoutId.Custom(this)
+fun Long.asWorkoutId(): WorkoutId.Custom = WorkoutId.Custom(this)
 
 fun BuiltInWorkoutId.asWorkoutId(): WorkoutId.BuiltIn = WorkoutId.BuiltIn(this)
 
-fun WorkoutId.Custom.toInt() = this.id
+fun WorkoutId.Custom.toLong() = this.id
 
 fun WorkoutId.BuiltIn.toBuiltInWorkoutId() = this.id
 
@@ -27,7 +31,7 @@ fun String.toWorkoutIdOrNull(): WorkoutId? = when {
         BuiltInWorkoutId.entries.find { it.name == name }?.asWorkoutId()
     }
     startsWith(CUSTOM_PREFIX) -> {
-        removePrefix(CUSTOM_PREFIX).toIntOrNull()?.asWorkoutId()
+        removePrefix(CUSTOM_PREFIX).toLongOrNull()?.asWorkoutId()
     }
     else -> null
 }

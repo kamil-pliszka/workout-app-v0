@@ -5,6 +5,7 @@ import com.pl.myworkoutapp.domain.model.exercise.CustomExercise
 import com.pl.myworkoutapp.domain.model.exercise.Exercise
 import com.pl.myworkoutapp.domain.model.exercise.ExerciseId
 import com.pl.myworkoutapp.domain.model.plan.TrainingPlan
+import com.pl.myworkoutapp.domain.model.workout.CustomWorkout
 import com.pl.myworkoutapp.domain.model.workout.Workout
 import com.pl.myworkoutapp.domain.model.workout.WorkoutId
 import com.pl.myworkoutapp.domain.model.workout.WorkoutSession
@@ -30,4 +31,5 @@ interface WorkoutRepository {
     suspend fun getWorkout(workoutId : WorkoutId): Workout
 
     suspend fun getExercise(exerciseId: ExerciseId): Exercise
+    suspend fun saveCustomWorkout(customWorkout: CustomWorkout): WorkoutId.Custom
 }

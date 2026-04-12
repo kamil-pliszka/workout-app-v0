@@ -257,7 +257,7 @@ fun ExerciseInfoComponentBuiltinEN() {
 
 
 val EXE_C = CustomExercise(
-    id = 1234.asExerciseId(),
+    id = 1234L.asExerciseId(),
     name = "NAJLEPSZE ĆWICZENIE",
     description = """
         Potraktuj to ćwiczenie jako dodatek do głównej jednostki treningowej.
@@ -289,7 +289,7 @@ fun ExerciseInfoComponentCustom() {
 
 
 val EXE_CB = CustomExercise(
-    id = 1234.asExerciseId(),
+    id = 1234L.asExerciseId(),
     name = "NAJLEPSZE ĆWICZENIE BAZOWANE",
     description = null,
     imageUri = null,

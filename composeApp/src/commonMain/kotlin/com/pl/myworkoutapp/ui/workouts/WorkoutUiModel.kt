@@ -12,6 +12,7 @@ import org.jetbrains.compose.resources.DrawableResource
 
 data class WorkoutUiModel(
     val workoutId: WorkoutId,
+    val basedOn: WorkoutId.BuiltIn?,
     val name: UiText,
     val desc: UiText,
     val imageUrl: DrawableResource,

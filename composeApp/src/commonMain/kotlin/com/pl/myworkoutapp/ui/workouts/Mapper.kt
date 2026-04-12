@@ -11,7 +11,6 @@ import com.pl.myworkoutapp.domain.model.workout.Phase
 import com.pl.myworkoutapp.domain.model.workout.Workout
 import com.pl.myworkoutapp.domain.model.workout.WorkoutExercise
 import com.pl.myworkoutapp.domain.model.workout.toBuiltInWorkoutId
-import com.pl.myworkoutapp.domain.model.workout.toInt
 import com.pl.myworkoutapp.ui.common.EmptyUiText
 import com.pl.myworkoutapp.ui.common.UiText
 import com.pl.myworkoutapp.ui.common.asUiText
@@ -37,6 +36,7 @@ fun Workout.toUi(): WorkoutUiModel = when(this) {
         val config = id.toBuiltInWorkoutId().toUiConfig()
         WorkoutUiModel(
             workoutId = id,
+            basedOn = null,
             difficulty = difficulty,
             name = config.name,
             desc = config.desc,
@@ -51,6 +51,7 @@ fun Workout.toUi(): WorkoutUiModel = when(this) {
         val configBase = basedOn?.toBuiltInWorkoutId()?.toUiConfig()
         return WorkoutUiModel(
             workoutId = id,
+            basedOn = basedOn,
             difficulty = difficulty,
             name = when {
                 !name.isNullOrBlank() -> name.asUiText()
@@ -68,7 +69,7 @@ fun Workout.toUi(): WorkoutUiModel = when(this) {
                 else -> Res.drawable.compose_multiplatform //TODO
             },
             isInProgress = false, //TODO
-            themeColor = CustomThemeColors[id.toInt() % CustomThemeColors.size],
+            themeColor = CustomThemeColors[id.hashCode() % CustomThemeColors.size], //TODO
             durationText = "13 min".asUiText(),//TODO
             kcalText = "≈123 kCal".asUiText(),//TODO
         )
