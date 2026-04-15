@@ -14,6 +14,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.pl.myworkoutapp.domain.model.exercise.*
+import com.pl.myworkoutapp.ui.common.UiText
 import com.pl.myworkoutapp.ui.theme.AppTheme
 import myworkoutapplication.composeapp.generated.resources.*
 import org.jetbrains.compose.resources.*
@@ -130,7 +131,7 @@ private fun ExercisePickerFiltersContent(
         FilterGrid(
             items = muscleGroups,
             selectedItems = selectedMuscles,
-            label = { it.asUiText().asString() },
+            label = { it.asUiText() },
             image = { it.getImageResource() },
             onToggle = { item ->
                 if (selectedMuscles.contains(item)) {
@@ -151,7 +152,7 @@ private fun ExercisePickerFiltersContent(
         FilterGrid(
             items = equipments,
             selectedItems = selectedEquipment,
-            label = { it.asUiText().asString() },
+            label = { it.asUiText() },
             image = { it.getImageResource() },
             onToggle = { item ->
                 if (selectedEquipment.contains(item)) {
@@ -171,7 +172,7 @@ private fun ExercisePickerFiltersContent(
         FilterGrid(
             items = exerciseTypes,
             selectedItems = selectedExeTypes,
-            label = { it.asUiText().asString() },
+            label = { it.asUiText() },
             image = { it.getImageResource() },
             onToggle = { item ->
                 if (selectedExeTypes.contains(item)) {
@@ -190,7 +191,7 @@ private fun ExercisePickerFiltersContent(
 fun <T> FilterGrid(
     items: List<T>,
     selectedItems: List<T>,
-    label: @Composable (T) -> String,
+    label: (T) -> UiText,
     image: (T) -> DrawableResource,
     onToggle: (T) -> Unit
 ) {
@@ -199,7 +200,7 @@ fun <T> FilterGrid(
     ) {
         items.forEach { item ->
             FilterCard(
-                text = label(item),
+                text = label(item).asString(),
                 image = image(item),
                 selected = selectedItems.contains(item),
                 onClick = { onToggle(item) }

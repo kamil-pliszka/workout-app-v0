@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "ae0ab82783ffecd4bb1d90dc1135d9b0",
+    "identityHash": "bf3bb0fa5724a4e7d4f63dcb0ea3bf11",
     "entities": [
       {
         "tableName": "ExerciseEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `name` TEXT NOT NULL, `met` REAL NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `description` TEXT, `imageUri` TEXT, `basedOn` TEXT, `muscle` TEXT NOT NULL, `exerciseType` TEXT NOT NULL, `equipment` TEXT NOT NULL, `met` REAL NOT NULL, `quantityType` TEXT NOT NULL, `updatedAt` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -21,18 +21,83 @@
             "notNull": true
           },
           {
+            "fieldPath": "description",
+            "columnName": "description",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "imageUri",
+            "columnName": "imageUri",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "basedOn",
+            "columnName": "basedOn",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "muscle",
+            "columnName": "muscle",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "exerciseType",
+            "columnName": "exerciseType",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "equipment",
+            "columnName": "equipment",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
             "fieldPath": "met",
             "columnName": "met",
             "affinity": "REAL",
             "notNull": true
+          },
+          {
+            "fieldPath": "quantityType",
+            "columnName": "quantityType",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "updatedAt",
+            "columnName": "updatedAt",
+            "affinity": "INTEGER",
+            "notNull": true
           }
         ],
         "primaryKey": {
-          "autoGenerate": false,
+          "autoGenerate": true,
           "columnNames": [
             "id"
           ]
-        }
+        },
+        "indices": [
+          {
+            "name": "index_ExerciseEntity_basedOn",
+            "unique": false,
+            "columnNames": [
+              "basedOn"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_ExerciseEntity_basedOn` ON `${TABLE_NAME}` (`basedOn`)"
+          },
+          {
+            "name": "index_ExerciseEntity_name",
+            "unique": false,
+            "columnNames": [
+              "name"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_ExerciseEntity_name` ON `${TABLE_NAME}` (`name`)"
+          }
+        ]
       },
       {
         "tableName": "WorkoutPlanEntity",
@@ -298,7 +363,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'ae0ab82783ffecd4bb1d90dc1135d9b0')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'bf3bb0fa5724a4e7d4f63dcb0ea3bf11')"
     ]
   }
 }

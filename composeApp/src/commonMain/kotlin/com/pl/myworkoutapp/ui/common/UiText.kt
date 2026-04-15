@@ -7,10 +7,17 @@ import org.jetbrains.compose.resources.stringResource
 
 sealed interface UiText {
     data class DynamicString(val value: String): UiText
-    class StringResourceId(
+    data class StringResourceId(
         val id: StringResource,
         val args: List<Any> = emptyList()
-    ): UiText
+    ): UiText {
+        override fun toString(): String {
+            return when {
+                args.isEmpty() -> "StringResourceId(key=${id.key})"
+                else -> "StringResourceId(key=${id.key}, args=$args)"
+            }
+        }
+    }
 
     @Composable
     fun asString(): String {

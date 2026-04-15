@@ -76,11 +76,27 @@
     <string name="exercise_exchange_with">Zamień na...</string>
     <string name="exercise_exercises_all">Wszystkie (%1$d)</string>
     <string name="exercise_exercises_filtered">Filtrowane (%1$d)</string>
+    <string name="exercise_editor_name">Nazwa</string>
+    <string name="exercise_editor_desc">Opis</string>
+    <string name="exercise_editor_choose_image">Wybierz zdjęcie</string>
+    <string name="exercise_editor_save_success">Ćwiczenie zostało zapisane</string>
+    <string name="exercise_editor_save_failed">Błąd podczas zapisu ćwiczenia %1$s</string>
 
     <string name="exercise_filters_label">Filtry</string>
     <string name="exercise_filters_muscle_groups">Grupy mięśni : (%1$d)</string>
     <string name="exercise_filters_equipment">Wyposażenie : (%1$d)</string>
     <string name="exercise_filters_exe_type">Rodzaj : (%1$d)</string>
+
+    <string name="exercise_editor_muscle_groups">Grupa mięśniowa</string>
+    <string name="exercise_editor_equipment">Wyposażenie</string>
+    <string name="exercise_editor_exe_type">Typ ćwiczenia</string>
+    <string name="exercise_editor_qty_type">Jednostka miary</string>
+    <string name="exercise_editor_params">Parametry</string>
+    <string name="exercise_editor_met">MET</string>
+    <string name="exercise_editor_met_info">Np. 6 = średnia intensywność</string>
+    <string name="exercise_editor_choose_value">Wybierz...</string>
+    <string name="exercise_editor_add_exercise">Nowe ćwiczenie</string>
+    <string name="exercise_editor_edit_exercise">Edycja ćwiczenia</string>
 
     <string name="muscle_group_abs">Mięśnie brzucha</string>
     <string name="muscle_group_back">Mięśnie pleców</string>

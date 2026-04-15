@@ -2,6 +2,7 @@ package com.pl.myworkoutapp.ui.workouts
 
 import androidx.compose.ui.text.intl.Locale
 import androidx.lifecycle.*
+import com.pl.myworkoutapp.AppStateHolder
 import com.pl.myworkoutapp.core.Log
 import com.pl.myworkoutapp.domain.WorkoutRepository
 import com.pl.myworkoutapp.domain.model.exercise.Exercise
@@ -17,6 +18,7 @@ class WorkoutDetailsViewModel(
     private val repository: WorkoutRepository,
     savedStateHandle: SavedStateHandle,
     private val messageCoordinator : MessageCoordinator,
+    private val appStateHolder: AppStateHolder,
 ) : ViewModel() {
     private val workoutIdParam: String =
         savedStateHandle["workoutId"] ?: error("workoutId is required")
@@ -50,7 +52,6 @@ class WorkoutDetailsViewModel(
         }
     }
 
-
     fun onAction(action: WorkoutDetailsAction) {
         Log.d("WorkoutDetail","Got action: $action")
         when (action) {
@@ -64,6 +65,7 @@ class WorkoutDetailsViewModel(
             }
 
             WorkoutDetailsAction.CloseExerciseInfo -> {
+                appStateHolder.setHideNavigation(false)
                 _state.update { it.copy(selectedItem = null, exerciseInfo = null) }
             }
 
@@ -130,15 +132,16 @@ class WorkoutDetailsViewModel(
         viewModelScope.launch {
             val exerciseInfo = prepareExerciseInfo(exe.exerciseId)
             val exes = _state.value.workout?.items?.filterIsInstance<ExerciseUiItem>() ?: emptyList()
-            val current = exes.indexOf(exe) + 1
-            val total = exes.size
+            //val current = exes.indexOf(exe) + 1
+            val current = exes.indexOfFirst { it === exe } + 1
+            appStateHolder.setHideNavigation(true)
             _state.update {
                 it.copy(
                     selectedItem = exe,
                     exerciseInfo = exerciseInfo.copy(
                         quantityValue = exe.quantityValue,
                         current = current,
-                        total = total,
+                        total = exes.size,
                     )
                 )
             }
@@ -148,7 +151,7 @@ class WorkoutDetailsViewModel(
     private fun showNextExercise() {
         _state.value.selectedItem?.let { item ->
             val exes = _state.value.workout?.items?.filterIsInstance<ExerciseUiItem>() ?: emptyList()
-            val current = exes.indexOf(item)
+            val current = exes.indexOfFirst { it === item }
             val next = exes.getOrNull(current + 1)
             next?.let {
                 showExerciseInfo(next)
@@ -159,7 +162,7 @@ class WorkoutDetailsViewModel(
     private fun showPrevExercise() {
         _state.value.selectedItem?.let { item ->
             val exes = _state.value.workout?.items?.filterIsInstance<ExerciseUiItem>() ?: emptyList()
-            val current = exes.indexOf(item)
+            val current = exes.indexOfFirst { it === item }
             val prev = exes.getOrNull(current - 1)
             prev?.let {
                 showExerciseInfo(prev)
@@ -212,7 +215,7 @@ class WorkoutDetailsViewModel(
                         it.copy(
                             workout = it.workout?.copy(
                                 items = it.workout.items.map { i ->
-                                    if (i == item) newSelectedItem else i
+                                    if (i === item) newSelectedItem else i
                                 }
                             ),
                             isDirty = true,

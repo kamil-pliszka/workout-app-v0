@@ -32,9 +32,9 @@ import org.koin.compose.viewmodel.koinViewModel
 fun ExercisePickerScreen(
     currentExerciseId: ExerciseId?,
     onResult: (ExerciseId?) -> Unit,
-    appStateHolder: AppStateHolder = koinInject(),
     appNavigator: AppNavigator = koinInject(),
 ) {
+    val viewModel = koinViewModel<ExercisePickerViewModel>()
     /*LaunchedEffect(Unit) {
         appStateHolder.setHideNavigation(true)
     }
@@ -44,7 +44,6 @@ fun ExercisePickerScreen(
         }
     }*/
     //println("ExercisePickerScreen: $currentExerciseId")
-    val viewModel = koinViewModel<ExercisePickerViewModel>()
     val filtered by viewModel.filteredExercises.collectAsStateWithLifecycle()
     val current by viewModel.currentExerciseFlow.collectAsStateWithLifecycle(null)
 

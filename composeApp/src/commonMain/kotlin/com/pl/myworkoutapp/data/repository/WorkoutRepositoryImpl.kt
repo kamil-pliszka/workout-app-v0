@@ -22,10 +22,9 @@ class WorkoutRepositoryImpl(
         TODO()
     }
     override suspend fun getCustomExercises(): List<CustomExercise> = withContext(Dispatchers.IO) {
-//        workoutDao.getAllExercises().map {
-//            it.toDomain()
-//        }
-        emptyList()
+        workoutDao.getAllExercises().map {
+            it.toDomain()
+        }
     }
 
     override suspend fun getBuiltinExercises(): List<BuiltInExercise> = withContext(Dispatchers.IO) {
@@ -78,7 +77,10 @@ class WorkoutRepositoryImpl(
     override suspend fun getExercise(exerciseId: ExerciseId): Exercise {
         return when(exerciseId) {
             is ExerciseId.BuiltIn -> BuiltInExerciseRegistry.get(exerciseId.id)
-            is ExerciseId.Custom -> TODO()
+            is ExerciseId.Custom -> {
+                workoutDao.getExerciseById(exerciseId.toLong())?.toDomain()
+                    ?: error("Exercise not found: $exerciseId")
+            }
         }
     }
 
@@ -95,6 +97,14 @@ class WorkoutRepositoryImpl(
             return workoutDao.insertWorkout(customWorkout.toEntity(), flatItems)
         } else { //update Custom
             return workoutDao.updateWorkout(customWorkout.toEntity(), flatItems)
+        }
+    }
+
+    override suspend fun saveCustomExercise(customExercise: CustomExercise): ExerciseId.Custom {
+        if (customExercise.id == ExerciseId.Custom.NEW) { //insert as Custom
+            return workoutDao.insertExercise(customExercise.toEntity())
+        } else { //update Custom
+            return workoutDao.updateExercise(customExercise.toEntity())
         }
     }
 }

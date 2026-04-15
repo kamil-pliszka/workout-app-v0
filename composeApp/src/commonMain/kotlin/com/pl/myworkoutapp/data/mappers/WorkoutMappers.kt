@@ -6,20 +6,18 @@ import com.pl.myworkoutapp.domain.model.Difficulty
 import com.pl.myworkoutapp.domain.model.exercise.*
 import com.pl.myworkoutapp.domain.model.workout.*
 
-fun WorkoutId.BuiltIn.asString() = this.id.name
+fun WorkoutId.BuiltIn.asRawString() = this.id.name
 
 //fun String.toBuiltInWorkoutId(): WorkoutId.BuiltIn = BuiltInWorkoutId.entries.first { it.name == this }.asWorkoutId()
 fun String.toBuiltInWorkoutId(): WorkoutId.BuiltIn = BuiltInWorkoutId.valueOf(this).asWorkoutId()
-
-fun Difficulty.asString() = this.name
 
 fun CustomWorkout.toEntity() = WorkoutEntity(
     id = id.toLong(),
     name = name,
     description = description,
     imageUri = imageUri,
-    basedOn = basedOn?.asString(),
-    difficulty = difficulty.asString(),
+    basedOn = basedOn?.asRawString(),
+    difficulty = difficulty.name,
 )
 
 fun WorkoutEntity.toDomain() = CustomWorkout(

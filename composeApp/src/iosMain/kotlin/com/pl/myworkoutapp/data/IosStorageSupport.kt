@@ -2,6 +2,7 @@
 
 package com.pl.myworkoutapp.data
 
+import com.pl.myworkoutapp.core.Log
 import com.pl.myworkoutapp.domain.StorageSupport
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.Dispatchers
@@ -96,4 +97,16 @@ class IosStorageSupport : StorageSupport {
 
             finalPath
         }
+
+    override suspend fun delete(path: String) = withContext(Dispatchers.IO) {
+        val documentsDir = getDocumentsDir()
+        //val finalPath = "$documentsDir/$toFilename"
+        val fm = NSFileManager.defaultManager
+        if (fm.isDeletableFileAtPath(path)) {
+            //TODO
+        } else {
+            Log.e(TAG, "Cannot delete file: $path")
+        }
+    }
+
 }

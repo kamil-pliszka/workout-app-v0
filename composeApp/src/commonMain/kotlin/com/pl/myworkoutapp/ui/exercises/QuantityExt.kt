@@ -1,8 +1,10 @@
 package com.pl.myworkoutapp.ui.exercises
 
+import com.pl.myworkoutapp.domain.model.exercise.Equipment
 import com.pl.myworkoutapp.domain.model.exercise.QuantityType
 import com.pl.myworkoutapp.ui.common.*
 import myworkoutapplication.composeapp.generated.resources.*
+import org.jetbrains.compose.resources.DrawableResource
 
 private fun Int.pad2(): String = this.toString().padStart(2, '0')
 private fun Int.pad3(): String = this.toString().padStart(3, '0')
@@ -40,6 +42,13 @@ fun QuantityType.asUiText(): UiText {
         QuantityType.DURATION -> Res.string.exercise_qty_duration.asUiText()
         QuantityType.DISTANCE -> Res.string.exercise_qty_distance.asUiText()
     }
+}
+
+fun QuantityType.getImageResource(): DrawableResource = when (this) {
+    QuantityType.REPS -> Res.drawable.ic_todo
+    QuantityType.REPS_PER_SIDE -> Res.drawable.ic_todo
+    QuantityType.DURATION -> Res.drawable.ic_todo
+    QuantityType.DISTANCE -> Res.drawable.ic_todo
 }
 
 fun Int?.qtyValueAsUiText(qType: QuantityType): UiText =

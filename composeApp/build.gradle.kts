@@ -11,7 +11,7 @@ plugins {
 
 kotlin {
     android {
-        compileSdk = 36
+        compileSdk = 37
         minSdk = 26
         namespace = "com.pl.myworkoutapp"
         experimentalProperties["android.experimental.kmp.enableAndroidResources"] = true
@@ -168,21 +168,16 @@ abstract class GenerateAppConfigTask : DefaultTask() {
     @get:OutputDirectory
     abstract val outputDir: DirectoryProperty
 
+    @get:Input
+    abstract val gitHash: Property<String>
+
+    @get:Input
+    abstract val gitEpoch: Property<String>
+
     @TaskAction
     fun generate() {
-        fun runGit(vararg args: String): String {
-            return try {
-                val process = ProcessBuilder("git", *args)
-                    .redirectErrorStream(true)
-                    .start()
-                process.inputStream.bufferedReader().use { it.readText().trim() }
-            } catch (_: Exception) {
-                ""
-            }
-        }
-
-        val hash = runGit("rev-parse", "--short=8", "HEAD").ifBlank { "nogit" }
-        val epoch = runGit("log", "-1", "--format=%ct").ifBlank { "0" }
+        val hash = gitHash.get()
+        val epoch = gitEpoch.get()
 
         val file = outputDir.get().file("AppConfig.kt").asFile
         file.parentFile.mkdirs()
@@ -201,6 +196,17 @@ abstract class GenerateAppConfigTask : DefaultTask() {
 
 val generateAppConfig = tasks.register<GenerateAppConfigTask>("generateAppConfig") {
     outputDir.set(layout.buildDirectory.dir("generated/source/appConfig"))
+    //outputs.upToDateWhen { false }
+    gitHash.set(
+        providers.exec {
+            commandLine("git", "rev-parse", "--short=8", "HEAD")
+        }.standardOutput.asText.map { it.trim() }.orElse("nogit")
+    )
+    gitEpoch.set(
+        providers.exec {
+            commandLine("git", "log", "-1", "--format=%ct")
+        }.standardOutput.asText.map { it.trim() }.orElse("0")
+    )
 }
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
     dependsOn(generateAppConfig)

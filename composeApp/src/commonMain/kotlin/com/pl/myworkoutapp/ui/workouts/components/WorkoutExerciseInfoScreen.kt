@@ -13,7 +13,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.pl.myworkoutapp.AppStateHolder
 import com.pl.myworkoutapp.domain.model.exercise.BuiltInExerciseId
 import com.pl.myworkoutapp.domain.model.exercise.BuiltInExerciseRegistry
 import com.pl.myworkoutapp.ui.exercises.*
@@ -22,23 +21,13 @@ import com.pl.myworkoutapp.ui.workouts.WorkoutDetailsAction
 import myworkoutapplication.composeapp.generated.resources.*
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import org.koin.compose.koinInject
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WorkoutExerciseInfoScreen(
     exerciseInfo: ExerciseInfoUiModel,
     onAction: (WorkoutDetailsAction) -> Unit,
-    appStateHolder: AppStateHolder = koinInject(),
 ) {
-    LaunchedEffect(Unit) {
-        appStateHolder.setHideNavigation(true)
-    }
-    DisposableEffect(Unit) {
-        onDispose {
-            appStateHolder.setHideNavigation(false)
-        }
-    }
 //    val sheetState = rememberModalBottomSheetState(
 //        skipPartiallyExpanded = true // od razu full
 //    )

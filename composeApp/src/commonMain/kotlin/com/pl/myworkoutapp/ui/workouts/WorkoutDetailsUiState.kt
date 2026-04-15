@@ -6,7 +6,7 @@ data class WorkoutDetailsUiState(
     val isLoading: Boolean = false,
     val workout: WorkoutWithExercisesUiModel? = null,
     val isDirty: Boolean = false,
-    val selectedItem : WorkoutUiItem? = null,
+    val selectedItem : WorkoutUiItem? = null,//TODO - zmienić na index wybranego elementu
     val exerciseInfo: ExerciseInfoUiModel? = null,
     val showExercisePicker: Boolean = false,
 )

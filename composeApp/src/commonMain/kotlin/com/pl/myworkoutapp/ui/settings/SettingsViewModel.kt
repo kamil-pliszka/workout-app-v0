@@ -3,6 +3,7 @@ package com.pl.myworkoutapp.ui.settings
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pl.myworkoutapp.AppConfig
+import com.pl.myworkoutapp.AppStateHolder
 import com.pl.myworkoutapp.core.Constants.PROFILE_PHOTO_FILENAME
 import com.pl.myworkoutapp.domain.AppSettingRepository
 import com.pl.myworkoutapp.domain.StorageSupport
@@ -20,6 +21,7 @@ import kotlin.time.Instant
 class SettingsViewModel(
     private val repository: AppSettingRepository,
     private val storageSupport: StorageSupport,
+    private val appStateHolder: AppStateHolder,
 ) : ViewModel() {
     private val _state = MutableStateFlow(
         prepareInitialState()
@@ -129,6 +131,7 @@ class SettingsViewModel(
             }
 
             is SettingsAction.OnPhotoCaptured -> {
+                appStateHolder.setCameraActive(false)
                 _state.update {
                     it.copy(
                         showCamera = false,
@@ -139,6 +142,7 @@ class SettingsViewModel(
             }
 
             SettingsAction.OnCameraStart -> {
+                appStateHolder.setCameraActive(true)
                 _state.update { it.copy(showCamera = true) }
             }
 

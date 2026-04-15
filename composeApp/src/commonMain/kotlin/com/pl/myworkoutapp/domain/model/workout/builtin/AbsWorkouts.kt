@@ -12,6 +12,7 @@ object AbsWorkouts {
         items = listOf(
             //WARMUP
             BuiltInExerciseId.JUMPING_JACKS.withDuration(30),
+            BuiltInExerciseId.JUMPING_JACKS.withDuration(30),//TODO - testowe powtórzone cwiczenie
             BuiltInExerciseId.BENT_LEG_TWIST.withRepsPerSide(10),
             BuiltInExerciseId.COBRA_STRETCH.withDuration(30),
 

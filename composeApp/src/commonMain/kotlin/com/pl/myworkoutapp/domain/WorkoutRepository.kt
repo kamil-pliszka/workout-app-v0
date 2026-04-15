@@ -26,4 +26,6 @@ interface WorkoutRepository {
 
     suspend fun getExercise(exerciseId: ExerciseId): Exercise
     suspend fun saveCustomWorkout(customWorkout: CustomWorkout): WorkoutId.Custom
+
+    suspend fun saveCustomExercise(customExercise: CustomExercise): ExerciseId.Custom
 }

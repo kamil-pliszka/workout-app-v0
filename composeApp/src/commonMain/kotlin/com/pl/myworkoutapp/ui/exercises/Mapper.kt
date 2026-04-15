@@ -4,7 +4,7 @@ import com.pl.myworkoutapp.domain.model.exercise.*
 import com.pl.myworkoutapp.ui.common.*
 import org.jetbrains.compose.resources.getString
 
-fun Exercise.toUi(): ExerciseInfoUiModel = when(this) {
+fun Exercise.toUi(): ExerciseInfoUiModel = when (this) {
     is BuiltInExercise -> {
         val config = id.toBuiltInExerciseId().toUiConfig()
         ExerciseInfoUiModel(
@@ -20,6 +20,7 @@ fun Exercise.toUi(): ExerciseInfoUiModel = when(this) {
             equipment = equipment,
         )
     }
+
     is CustomExercise -> {
         val configBase = basedOn?.toBuiltInExerciseId()?.toUiConfig()
         ExerciseInfoUiModel(
@@ -51,7 +52,7 @@ fun Exercise.toUi(): ExerciseInfoUiModel = when(this) {
     }
 }
 
-suspend fun Exercise.toSearchUi(): ExercisePickerListItem = when(this) {
+suspend fun Exercise.toSearchUi(): ExercisePickerListItem = when (this) {
     is BuiltInExercise -> {
         val config = id.toBuiltInExerciseId().toUiConfig()
         ExercisePickerListItem(
@@ -65,6 +66,7 @@ suspend fun Exercise.toSearchUi(): ExercisePickerListItem = when(this) {
             imagePath = null,
         )
     }
+
     is CustomExercise -> {
         val configBase = basedOn?.toBuiltInExerciseId()?.toUiConfig()
         ExercisePickerListItem(
@@ -89,4 +91,37 @@ suspend fun Exercise.toSearchUi(): ExercisePickerListItem = when(this) {
             },
         )
     }
+}
+
+fun CustomExercise.toExerciseEditorUiModel(): ExerciseEditorUiModel {
+    val configBase = basedOn?.toBuiltInExerciseId()?.toUiConfig()
+    return ExerciseEditorUiModel(
+        exerciseId = id,
+        name = name,
+        description = description ?: "",
+        originalImagePath = imageUri,
+        imagePath = imageUri,
+        imageRes = configBase?.image,
+        basedOn = basedOn,
+        muscle = muscle,
+        exerciseType = exerciseType,
+        equipment = equipment,
+        met = met.toString(),
+        quantityType = quantityType
+    )
+}
+
+fun ExerciseEditorUiModel.toDomain() : CustomExercise {
+    return CustomExercise(
+        id = exerciseId,
+        name = name,
+        description = description,
+        imageUri = imagePath,
+        basedOn = basedOn,
+        muscle = requireNotNull(muscle),
+        exerciseType = requireNotNull(exerciseType),
+        equipment = requireNotNull(equipment),
+        met = met.toDouble(),
+        quantityType = requireNotNull(quantityType),
+    )
 }

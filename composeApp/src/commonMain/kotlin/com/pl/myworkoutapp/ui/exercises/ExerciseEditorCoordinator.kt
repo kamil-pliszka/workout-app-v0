@@ -5,9 +5,9 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 
 sealed interface ExerciseResult {
-    data class Created(val exerciseId: ExerciseId) : ExerciseResult
-    data class Updated(val exerciseId: ExerciseId) : ExerciseResult
-    data class Deleted(val exerciseId: ExerciseId) : ExerciseResult
+    data class Created(val exerciseId: ExerciseId.Custom) : ExerciseResult
+    data class Updated(val exerciseId: ExerciseId.Custom) : ExerciseResult
+    data class Deleted(val exerciseId: ExerciseId.Custom) : ExerciseResult
 }
 
 /**
@@ -22,7 +22,20 @@ class ExerciseEditorCoordinator {
     )
     val events = _events.asSharedFlow()
 
-    fun emit(result: ExerciseResult) {
+    private fun emit(result: ExerciseResult) {
         _events.tryEmit(result)
     }
+
+    fun exerciseCreated(exerciseId: ExerciseId.Custom) {
+        emit(ExerciseResult.Created(exerciseId))
+    }
+
+    fun exerciseUpdated(exerciseId: ExerciseId.Custom) {
+        emit(ExerciseResult.Updated(exerciseId))
+    }
+
+    fun exerciseDeleted(exerciseId: ExerciseId.Custom) {
+        emit(ExerciseResult.Deleted(exerciseId))
+    }
+
 }

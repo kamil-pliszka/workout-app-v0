@@ -53,4 +53,10 @@ class AndroidStorageSupport(
         finalFile.absolutePath
     }
 
+    override suspend fun delete(path: String) {
+        val file = File(path)
+        if (!file.delete()) {
+            Log.e(TAG, "Cannot delete file: $path")
+        }
+    }
 }

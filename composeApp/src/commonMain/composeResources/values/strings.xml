@@ -108,6 +108,23 @@
     <string name="exercise_filters_equipment">Equipment : (%1$d)</string>
     <string name="exercise_filters_exe_type">Type : (%1$d)</string>
 
+    <string name="exercise_editor_muscle_groups">Muscle groups</string>
+    <string name="exercise_editor_equipment">Equipment</string>
+    <string name="exercise_editor_exe_type">Type</string>
+    <string name="exercise_editor_qty_type">Unit of measure</string>
+    <string name="exercise_editor_params">Parameters</string>
+    <string name="exercise_editor_met">MET</string>
+    <string name="exercise_editor_met_info">For example: 6 = moderate intensity</string>
+    <string name="exercise_editor_choose_value">Choose...</string>
+    <string name="exercise_editor_add_exercise">Add exercise</string>
+    <string name="exercise_editor_edit_exercise">Edit exercise</string>
+    <string name="exercise_editor_name">Name</string>
+    <string name="exercise_editor_desc">Description</string>
+    <string name="exercise_editor_choose_image">Choose image</string>
+    <string name="exercise_editor_save_success">Exercise saved succesfully</string>
+    <string name="exercise_editor_save_failed">Error during exercise save %1$s</string>
+
+
     <string name="qty_value_reps">x%1$s</string>
     <string name="qty_value_reps_per_side">x%1$s</string>
 

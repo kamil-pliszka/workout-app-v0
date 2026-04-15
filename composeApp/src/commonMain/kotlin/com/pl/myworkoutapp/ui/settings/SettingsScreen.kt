@@ -21,7 +21,6 @@ import org.koin.compose.koinInject
 @Composable
 fun SettingsScreen(
     state: SettingsUiState,
-    appStateHolder: AppStateHolder = koinInject(),
     onAction: (SettingsAction) -> Unit,
 ) {
     if (state.isLoading) {
@@ -195,11 +194,6 @@ fun SettingsScreen(
         )
     }
 
-
-    // 👇 TU spinamy lokalny + globalny stan
-    LaunchedEffect(state.showCamera) {
-        appStateHolder.setCameraActive(state.showCamera)
-    }
     // 🔴 OVERLAY KAMERY
     if (state.showCamera) {
         Box(
@@ -312,7 +306,6 @@ fun SettingsScreenPreviewPL() {
                 appVersionDate = "2026-03-27",
                 appVersionHash = "43433f"
             ),
-            AppStateHolder(),
             onAction = {}
         )
     }
@@ -328,7 +321,6 @@ fun SettingsScreenPreviewEN() {
                 appVersionDate = "2026-03-27",
                 appVersionHash = "43433f"
             ),
-            AppStateHolder(),
             onAction = {}
         )
     }
@@ -345,7 +337,6 @@ fun SettingsScreenPreviewDeleteConfirm() {
                 appVersionDate = "2026-03-27",
                 appVersionHash = "43433f"
             ),
-            AppStateHolder(),
             onAction = {}
         )
     }
@@ -362,7 +353,6 @@ fun SettingsScreenPreviewLanguageChooser() {
                 appVersionDate = "2026-03-27",
                 appVersionHash = "43433f"
             ),
-            AppStateHolder(),
             onAction = {}
         )
     }

@@ -13,7 +13,7 @@ import com.pl.myworkoutapp.domain.model.workout.asString
 import com.pl.myworkoutapp.ui.common.ObserveAsEvents
 import com.pl.myworkoutapp.ui.execution.WorkoutExecutionScreen
 import com.pl.myworkoutapp.ui.execution.WorkoutExecutionViewModel
-import com.pl.myworkoutapp.ui.exercises.ExerciseEditorDialog
+import com.pl.myworkoutapp.ui.exercises.ExerciseEditorScreen
 import com.pl.myworkoutapp.ui.exercises.ExerciseEditorViewModel
 import com.pl.myworkoutapp.ui.plans.PlansScreen
 import com.pl.myworkoutapp.ui.plans.PlansViewModel
@@ -110,14 +110,14 @@ fun Navigation(
             )
         }
 
-        dialog(
+        composable(
             route = ScreenRoutes.ExerciseEditor.route,
         ) { backStackEntry ->
             val viewModel: ExerciseEditorViewModel =
                 koinViewModel(viewModelStoreOwner = backStackEntry)
             //UiEventConsumer(snackbarHostState, viewModel.events)
             val state by viewModel.state.collectAsStateWithLifecycle()
-            ExerciseEditorDialog(
+            ExerciseEditorScreen(
                 state = state,
                 onAction = viewModel::onAction
             )
@@ -133,7 +133,7 @@ fun Navigation(
             val state by viewModel.state.collectAsStateWithLifecycle()
             WorkoutExecutionScreen(
                 state = state,
-                onFinish = { navController.popBackStack() }
+                onAction = viewModel::onAction,
             )
         }
     }
