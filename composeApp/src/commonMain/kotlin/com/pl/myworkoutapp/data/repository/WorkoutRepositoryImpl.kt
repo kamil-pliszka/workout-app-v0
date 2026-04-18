@@ -9,6 +9,7 @@ import com.pl.myworkoutapp.domain.model.plan.TrainingPlan
 import com.pl.myworkoutapp.domain.model.workout.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 class WorkoutRepositoryImpl(
     private val workoutDao: WorkoutDao,
@@ -91,9 +92,9 @@ class WorkoutRepositoryImpl(
         val flatItems = flatteningMapper.flatten(customWorkout.items)
         println("FLATTEN:")
         flatItems.forEachIndexed { index, item ->
-            println("idx = $index, pos = ${item.position}, parent = ${item.parentIndex} : ${item.itemEntity.type}, ${item.itemEntity.exerciseId}")
+            println("idx = $index, pos = ${item.position}, parent = ${item.parentIndex} : ${item.itemEntity.type}, ${item.itemEntity.builtInExerciseId}:${item.itemEntity.customExerciseId}")
         }
-        if (customWorkout.id == WorkoutId.Custom.NEW) { //insert as Custom
+        if (customWorkout.id.isNew()) { //insert as Custom
             return workoutDao.insertWorkout(customWorkout.toEntity(), flatItems)
         } else { //update Custom
             return workoutDao.updateWorkout(customWorkout.toEntity(), flatItems)
@@ -107,5 +108,11 @@ class WorkoutRepositoryImpl(
             return workoutDao.updateExercise(customExercise.toEntity())
         }
     }
+
+    override fun observeCustomExercises(): Flow<List<CustomExercise>> =
+        workoutDao.observeExercises().map {
+                list -> list.map { it.toDomain() }
+        }
+
 }
 

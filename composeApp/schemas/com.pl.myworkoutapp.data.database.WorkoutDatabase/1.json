@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "bf3bb0fa5724a4e7d4f63dcb0ea3bf11",
+    "identityHash": "a433c5bd073360ca36a3f98a75d389fb",
     "entities": [
       {
         "tableName": "ExerciseEntity",
@@ -237,7 +237,7 @@
       },
       {
         "tableName": "WorkoutItemEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `workoutId` INTEGER NOT NULL, `parentId` INTEGER, `position` INTEGER NOT NULL, `type` TEXT NOT NULL, `exerciseId` TEXT, `quantityValue` INTEGER, `quantityType` TEXT, `phase` TEXT, `name` TEXT, `rounds` INTEGER, `structureType` TEXT, `structureData` TEXT, FOREIGN KEY(`workoutId`) REFERENCES `WorkoutEntity`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`parentId`) REFERENCES `WorkoutItemEntity`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `workoutId` INTEGER NOT NULL, `parentId` INTEGER, `position` INTEGER NOT NULL, `type` TEXT NOT NULL, `builtInExerciseId` TEXT, `customExerciseId` INTEGER, `quantityValue` INTEGER, `quantityType` TEXT, `phase` TEXT, `name` TEXT, `rounds` INTEGER, `structureType` TEXT, `structureData` TEXT, FOREIGN KEY(`workoutId`) REFERENCES `WorkoutEntity`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`parentId`) REFERENCES `WorkoutItemEntity`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`customExerciseId`) REFERENCES `ExerciseEntity`(`id`) ON UPDATE NO ACTION ON DELETE RESTRICT )",
         "fields": [
           {
             "fieldPath": "id",
@@ -269,9 +269,14 @@
             "notNull": true
           },
           {
-            "fieldPath": "exerciseId",
-            "columnName": "exerciseId",
+            "fieldPath": "builtInExerciseId",
+            "columnName": "builtInExerciseId",
             "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "customExerciseId",
+            "columnName": "customExerciseId",
+            "affinity": "INTEGER"
           },
           {
             "fieldPath": "quantityValue",
@@ -333,6 +338,15 @@
             ],
             "orders": [],
             "createSql": "CREATE INDEX IF NOT EXISTS `index_WorkoutItemEntity_parentId` ON `${TABLE_NAME}` (`parentId`)"
+          },
+          {
+            "name": "index_WorkoutItemEntity_customExerciseId",
+            "unique": false,
+            "columnNames": [
+              "customExerciseId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_WorkoutItemEntity_customExerciseId` ON `${TABLE_NAME}` (`customExerciseId`)"
           }
         ],
         "foreignKeys": [
@@ -357,13 +371,24 @@
             "referencedColumns": [
               "id"
             ]
+          },
+          {
+            "table": "ExerciseEntity",
+            "onDelete": "RESTRICT",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "customExerciseId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
           }
         ]
       }
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'bf3bb0fa5724a4e7d4f63dcb0ea3bf11')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'a433c5bd073360ca36a3f98a75d389fb')"
     ]
   }
 }

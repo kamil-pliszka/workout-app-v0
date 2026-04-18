@@ -7,22 +7,23 @@ import com.pl.myworkoutapp.core.exceptionToString
 import com.pl.myworkoutapp.domain.StorageSupport
 import com.pl.myworkoutapp.domain.WorkoutRepository
 import com.pl.myworkoutapp.domain.model.exercise.*
-import com.pl.myworkoutapp.ui.common.MessageCoordinator
 import com.pl.myworkoutapp.ui.common.asUiText
-import com.pl.myworkoutapp.ui.navigation.AppNavigator
+import com.pl.myworkoutapp.ui.common.toUiConfig
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import myworkoutapplication.composeapp.generated.resources.*
+import org.jetbrains.compose.resources.getString
 
 
 class ExerciseEditorViewModel(
     private val repository: WorkoutRepository,
-    private val exerciseCoordinator: ExerciseEditorCoordinator,
-    private val messageCoordinator: MessageCoordinator,
+    //private val exerciseCoordinator: ExerciseEditorCoordinator,
+    //private val messageCoordinator: MessageCoordinator,
     private val storageSupport: StorageSupport,
     savedStateHandle: SavedStateHandle,
-    private val appNavigator: AppNavigator,
-    private val appStateHolder: AppStateHolder,
+    //private val appNavigator: AppNavigator,
+    private val appStateHolder: AppStateHolder,//TODO - zastanowic sie czy potrzebne, moze zrbic eventami
 ) : ViewModel() {
     private val exerciseIdParam: String =
         savedStateHandle["exerciseId"] ?: error("exerciseId is required")
@@ -30,6 +31,14 @@ class ExerciseEditorViewModel(
         ExerciseEditorUiState(isLoading = true)
     )
     val state: StateFlow<ExerciseEditorUiState> = _state
+
+    private val _events = Channel<ExerciseEditorEvent>(Channel.BUFFERED)
+    val events = _events.receiveAsFlow()
+
+    private suspend fun sendEvent(event: ExerciseEditorEvent) {
+        _events.send(event)
+    }
+
 
     init {
         loadExerciseFromParam()
@@ -39,14 +48,14 @@ class ExerciseEditorViewModel(
     fun onScreenEntered() {
         if (!isActive) {
             isActive = true
-            appStateHolder.setHideNavigation(true)
+            appStateHolder.setExerciseEditorActive(true)
         }
     }
 
     fun onScreenExited() {
         if (isActive) {
             isActive = false
-            appStateHolder.setHideNavigation(false)
+            appStateHolder.setExerciseEditorActive(false)
         }
     }
 
@@ -56,10 +65,28 @@ class ExerciseEditorViewModel(
         when (exerciseId) {
             ExerciseId.Custom.NEW -> prepareNewExercise()
             is ExerciseId.Custom -> loadExerciseById(exerciseId)
-            is ExerciseId.BuiltIn -> {
-                //czy taki przypadek wystąpi? co wtedy?
-                TODO()
+            is ExerciseId.BuiltIn -> prepareExeBasedOnBuiltin(exerciseId)
+        }
+    }
+
+    private fun prepareExeBasedOnBuiltin(exerciseId: ExerciseId.BuiltIn) {
+        viewModelScope.launch {
+            println("prepareExeBasedOnBuiltin: $exerciseId")
+            val exercise = repository.getExercise(exerciseId)
+            println("Got exercise: $exercise")
+            require(exercise is BuiltInExercise) {
+                "Expected BuiltInExercise"
             }
+            val configBase = exerciseId.toBuiltInExerciseId().toUiConfig()
+            val exeModel = exercise.toExerciseEditorUiModel().copy(
+                exerciseId = ExerciseId.Custom.NEW,
+                name = getString(configBase.name),
+            )
+            _state.value = ExerciseEditorUiState(
+                exercise = exeModel,
+                initialExe = exeModel,
+                isLoading = false,
+            )
         }
     }
 
@@ -101,9 +128,12 @@ class ExerciseEditorViewModel(
             ExerciseEditorAction.OnDismissRequest -> {
                 //tutaj trzeba sprawdzić czy wprowadzono jakieś zmiany, i jeśli tak, to dodać komunikat/ostrzeżenie
                 if (_state.value.isDirty) {
-                    // TODO: emit event confirm discard
+                    _state.update { it.copy(showConfirmDiscard = true) }
                 } else {
-                    appNavigator.closeDialog()
+                    //appNavigator.closeDialog()
+                    viewModelScope.launch {
+                        sendEvent(ExerciseEditorEvent.Close)
+                    }
                 }
             }
 
@@ -235,6 +265,8 @@ class ExerciseEditorViewModel(
         //https://en.wikipedia.org/wiki/Metabolic_equivalent_of_task
         if (metValue == null || metValue <= 0.0) {
             errors[ExeEditorField.MET] = "Invalid MET"
+        } else if (metValue > 30.0) {
+            errors[ExeEditorField.MET] = "MET too big"
         }
 
         return state.copy(
@@ -285,8 +317,12 @@ class ExerciseEditorViewModel(
                 e.printStackTrace()
                 println("Save failed: ${e.message}")
                 _state.update { it.copy(isSaving = false) }
-                messageCoordinator.error(
-                    Res.string.exercise_editor_save_failed.asUiText(exceptionToString(e))
+                sendEvent(
+                    ExerciseEditorEvent.ShowError(
+                        Res.string.exercise_editor_save_failed.asUiText(
+                            exceptionToString(e)
+                        )
+                    )
                 )
             }
         }
@@ -329,12 +365,10 @@ class ExerciseEditorViewModel(
         val customExercise = validatedState.exercise.toDomain()
         val savedExerciseId = repository.saveCustomExercise(customExercise)
         println("Saved as : $savedExerciseId")
-        //TODO - do zastanowienia jak ogarnac, docelowo wg ai:
-        //_events.send(ExerciseEditorEvent.Saved(id))
-        //_events.send(ExerciseEditorEvent.ShowMessage(...))
-        messageCoordinator.success(Res.string.exercise_editor_save_success.asUiText())
-        exerciseCoordinator.exerciseCreated(savedExerciseId)
-        //TODO - zakończyć aktualną funkcjonalność albo przeładować ćwiczenie, do zastanowienia
+        //messageCoordinator.success(Res.string.exercise_editor_save_success.asUiText())
+        sendEvent(ExerciseEditorEvent.ShowMessage(Res.string.exercise_editor_save_success.asUiText()))
+        //exerciseCoordinator.exerciseCreated(savedExerciseId)
+        sendEvent(ExerciseEditorEvent.Completed(savedExerciseId, validatedState.exercise.exerciseId.isNew()))
     }
 
 }

@@ -3,7 +3,6 @@ package com.pl.myworkoutapp.ui.exercises
 import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
@@ -197,6 +196,11 @@ fun BasicInfoSection(
             label = { Text(stringResource(Res.string.exercise_editor_name)) },
             isError = state.displayError(ExeEditorField.NAME),
             modifier = Modifier.fillMaxWidth(),
+            maxLines = 1,
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Ascii,
+                imeAction = ImeAction.Done
+            ),
         )
 
         OutlinedTextField(
@@ -205,7 +209,12 @@ fun BasicInfoSection(
             label = { Text(stringResource(Res.string.exercise_editor_desc)) },
             isError = state.displayError(ExeEditorField.DESCRIPTION),
             modifier = Modifier.fillMaxWidth(),
-            minLines = 2
+            minLines = 2,
+            supportingText = {
+                if (state.exercise.basedOn != null) {
+                    Text(stringResource(Res.string.exercise_editor_desc_info))
+                }
+            }
         )
     }
 }
@@ -219,13 +228,18 @@ fun ImageSection(
     val imagePicker = rememberImagePicker { path ->
         onAction(ExerciseEditorAction.OnImagePicked(path))
     }
+    val hasError = state.displayError(ExeEditorField.IMAGE)
+    val borderColor = if (hasError)
+        MaterialTheme.colorScheme.error
+    else Color.Transparent
 
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .height(120.dp)
-            .clip(RoundedCornerShape(12.dp))
+            //.clip(RoundedCornerShape(12.dp))
             //.background(MaterialTheme.colorScheme.surfaceVariant)
+            .border(1.dp, borderColor, RoundedCornerShape(8.dp))
             .clickable(
                 indication = null,
                 interactionSource = remember { MutableInteractionSource() }
@@ -237,7 +251,8 @@ fun ImageSection(
             ExerciseImage(
                 modifier = Modifier.fillMaxHeight(),
                 imageRes = state.exercise.imageRes,
-                imagePath = state.exercise.imagePath
+                imagePath = state.exercise.imagePath,
+                isError = hasError,
             )
             Column(
                 modifier = Modifier.fillMaxHeight(),
@@ -265,6 +280,7 @@ fun ExerciseImage(
     modifier: Modifier = Modifier,
     imageRes: DrawableResource?,
     imagePath: String?,
+    isError: Boolean,
 ) {
     Box(
         modifier = modifier
@@ -294,7 +310,10 @@ fun ExerciseImage(
                         contentScale = ContentScale.Crop
                     )
                 } else {
-                    Text(stringResource(Res.string.exercise_editor_choose_image))
+                    Text(
+                        text = stringResource(Res.string.exercise_editor_choose_image),
+                        color = MaterialTheme.colorScheme.error
+                    )
                 }
             }
 
@@ -325,7 +344,10 @@ fun ExerciseImage(
                         painter = painterResource(Res.drawable.ic_exercise),
                         contentDescription = "exe image",
                     )
-                    Text(stringResource(Res.string.exercise_editor_choose_image))
+                    Text(
+                        text = stringResource(Res.string.exercise_editor_choose_image),
+                        color = if (isError) MaterialTheme.colorScheme.error else Color.Unspecified
+                    )
                 }
             }
         }
@@ -549,9 +571,9 @@ private fun ExerciseEditorPreview() {
                 exercise = ExerciseEditorUiModel(
                     exerciseId = ExerciseId.Custom.NEW,
                     name = "nazwa ćwiczenia",
-                    description = "tu będzie opis ćwiczenia",
+                    //description = "tu będzie opis ćwiczenia",
                     imagePath = "url obrazka",
-                    //basedOn = ,
+                    basedOn = BuiltInExerciseId.PUSH_UP_HOLD.asExerciseId(),
                     muscle = null, //MuscleGroup.BACK,
                     exerciseType = ExerciseType.STRENGTH,
                     equipment = Equipment.KETTLEBELL,
@@ -561,7 +583,9 @@ private fun ExerciseEditorPreview() {
                 errors = mapOf(
                     ExeEditorField.MET to "???",
                     ExeEditorField.MUSCLE to "!",
-                )
+                    ExeEditorField.IMAGE to "",
+                ),
+                touchedFields = ExeEditorField.entries.toSet()
             ),
             onAction = { }
         )
@@ -577,16 +601,19 @@ private fun ExerciseImagePreview() {
                 modifier = Modifier.size(120.dp),
                 imageRes = null,
                 imagePath = null,
+                isError = true,
             )
             ExerciseImage(
                 modifier = Modifier.size(120.dp),
                 imageRes = Res.drawable.ic_flying_witch1,
                 imagePath = null,
+                isError = true,
             )
             ExerciseImage(
                 modifier = Modifier.size(120.dp),
                 imageRes = Res.drawable.ic_flying_witch1,
                 imagePath = "/path/",
+                isError = true,
             )
         }
     }

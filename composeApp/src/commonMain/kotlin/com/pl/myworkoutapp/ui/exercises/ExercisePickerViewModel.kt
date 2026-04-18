@@ -18,28 +18,36 @@ import kotlinx.coroutines.flow.*
 class ExercisePickerViewModel(
     private val repository: WorkoutRepository,
     appSettingRepository: AppSettingRepository,
-    exerciseCoordinator: ExerciseEditorCoordinator
+    //exerciseCoordinator: ExerciseEditorCoordinator
 ) : ViewModel() {
     private val _state = MutableStateFlow(
         ExercisePickerUiState(isLoading = true)
     )
     val state: StateFlow<ExercisePickerUiState> = _state
 
-    private val allExercisesRawFlow = flow {
-        emit(repository.getAllExercises())
+    private val builtInExercisesFlow = flow {
+        emit(repository.getBuiltinExercises().map {
+            it.toSearchUi()
+        })
+    }
+    private val customExercisesFlow = repository.observeCustomExercises().map { list ->
+        list.map { it.toSearchUi() }
     }
 
-    val allExercisesFlow = combine(
-        allExercisesRawFlow,
+    //    private val allExercisesRawFlow = flow {
+//        emit(repository.getAllExercises())
+//    }
+    private val allExercisesFlow = combine(
+        builtInExercisesFlow,
+        customExercisesFlow,
         appSettingRepository.languageFlow
-    ) { exercises, lang ->
+    ) { builtin, custom, lang ->
         println("LANG: $lang")
+        //StringComparator uwzględnia locale wewnętrznie, tutaj zapięcie na flow lang żeby był impuls do ponownego sortowania
         val comparator = StringComparator()
-        exercises
-            .map { it.toSearchUi() }
-            //.sortedBy { it.name }
-            .sortedWith { a, b -> comparator.compare(a.name, b.name) }
+        (builtin + custom).sortedWith { a, b -> comparator.compare(a.name, b.name) }
     }
+
     /*private val allExercisesFlow12 = appSettingRepository.languageFlow
         .distinctUntilChanged()
         .mapLatest { lang ->
@@ -114,10 +122,10 @@ class ExercisePickerViewModel(
 
 
     fun initWithCurrentExerciseId(currentExerciseId: ExerciseId?) {
+        println("initWithCurrentExerciseId: $currentExerciseId")
         _state.update {
             it.copy(
                 currentExerciseId = currentExerciseId,
-                selectedExerciseId = null,
             )
         }
     }
@@ -200,6 +208,7 @@ class ExercisePickerViewModel(
             }
 
             is ExercisePickerAction.ExerciseSelectionToggle -> {
+                println("ExerciseSelectionToggle : ${action.exerciseId}")
                 _state.update {
                     it.copy(
                         selectedExerciseId = if (it.selectedExerciseId == action.exerciseId) null else action.exerciseId

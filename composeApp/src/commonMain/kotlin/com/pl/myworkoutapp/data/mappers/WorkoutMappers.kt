@@ -36,7 +36,15 @@ fun WorkoutExercise.toEntity() = WorkoutItemEntity(
     parentId = null,
     position = 0,
     type = "EXERCISE",
-    exerciseId = exerciseId.asString(),
+    //exerciseId = exerciseId.asString(),
+    builtInExerciseId = when (exerciseId) {
+        is ExerciseId.BuiltIn -> exerciseId.id.name
+        else -> null
+    },
+    customExerciseId = when (exerciseId) {
+        is ExerciseId.Custom -> exerciseId.id
+        else -> null
+    },
     quantityValue = quantity.value,
     quantityType = quantity.type.name,
     phase = null,
@@ -54,7 +62,8 @@ fun Circuit.toEntity(): WorkoutItemEntity {
         parentId = null,
         position = 0,
         type = "CIRCUIT",
-        exerciseId = null,
+        builtInExerciseId = null,
+        customExerciseId = null,
         quantityValue = null,
         quantityType = null,
         phase = phase.name,
@@ -120,9 +129,14 @@ fun deserializeStructureNoCrash(type: String, data: String?): CircuitStructure? 
     }.getOrNull()
 }
 
-fun WorkoutItemEntity.toDomain(): WorkoutItem = when(type) {
+fun WorkoutItemEntity.toDomain(): WorkoutItem = when (type) {
     "EXERCISE" -> WorkoutExercise(
-        exerciseId = this.exerciseId?.toExerciseIdOrNull()!!,
+        //exerciseId = this.exerciseId?.toExerciseIdOrNull()!!,
+        exerciseId = when {
+            builtInExerciseId != null -> BuiltInExerciseId.valueOf(builtInExerciseId).asExerciseId()
+            customExerciseId != null -> customExerciseId.asExerciseId()
+            else -> error("empty exerciseId")
+        },
         quantity = Quantity(
             type = QuantityType.valueOf(quantityType!!),
             value = quantityValue!!

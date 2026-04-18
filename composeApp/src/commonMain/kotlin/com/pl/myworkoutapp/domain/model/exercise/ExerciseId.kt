@@ -10,6 +10,7 @@ sealed interface ExerciseId {
         companion object {
             val NEW = Custom(0)
         }
+        fun isNew() = this == NEW
     }
 }
 

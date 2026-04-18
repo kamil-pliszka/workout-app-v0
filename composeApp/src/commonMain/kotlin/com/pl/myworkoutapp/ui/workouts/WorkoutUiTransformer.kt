@@ -51,6 +51,20 @@ val treeColors = listOf(
 
 //TODO - tu jeszcze powinno się uwzględnić odpowiedni kolor, może na razie wystarczy na podstawie level
 fun WorkoutTraversalItem.toTimeline(): List<TimeLineItemType> {
+    val timeline = ancestors.mapIndexed { levelIndex, isParentLast ->
+        val color = treeColors[levelIndex % treeColors.size]
+        // If parent was NOT last, we continue the vertical line down
+        if (isParentLast) TimeLineItemType.None() else TimeLineItemType.Vertical(color)
+    }
+
+    val currentColor = treeColors[level % treeColors.size]
+    val lastItem = if (isLast) TimeLineItemType.End(currentColor)
+    else TimeLineItemType.Triple(currentColor)
+
+    return timeline + lastItem
+}
+/*
+fun WorkoutTraversalItem.toTimeline2(): List<TimeLineItemType> {
     val result = mutableListOf<TimeLineItemType>()
     ancestors.forEachIndexed { levelIndex, ancestor ->
         val color = treeColors[levelIndex % treeColors.size]
@@ -60,19 +74,42 @@ fun WorkoutTraversalItem.toTimeline(): List<TimeLineItemType> {
     result.add(if (isLast) TimeLineItemType.End(color) else TimeLineItemType.Triple(color))
     return result
 }
+*/
 
+/**
+ * Dokouje przekształcenia, ale tylko dla ćwiczeń typu builtin (te nie wymagają dostępu do repo)
+ */
+fun transform(workout: Workout): WorkoutWithExercisesUiModel {
+    val exerciseIds = workout.items.extractExerciseIds()
+    val exercises = exerciseIds.map { id ->
+        when (id) {
+            is ExerciseId.BuiltIn -> BuiltInExerciseRegistry.get((id).id)
+            is ExerciseId.Custom -> error("Custom not supported")
+        }
+    }.toSet()
+    return transform(workout, exercises)
+}
 
-suspend fun transform(workout: Workout, exerciseLoader: suspend (ExerciseId) -> Exercise): WorkoutWithExercisesUiModel {
+fun transform(workout: Workout, exercises: Set<Exercise>): WorkoutWithExercisesUiModel {
+    val exercisesMap = exercises.associateBy { it.id }
     val workoutUiModel = workout.toUi()
     val traversalItems = workout.items.flatten()
 
-    val itemsUiModel =  traversalItems.map { workoutTraversalItem ->
+    //WorkoutItem(Circuit) doesn't have a unique ID, use unique index as key
+    val itemsUiModel = traversalItems.mapIndexed { index, workoutTraversalItem ->
         when (workoutTraversalItem.item) {
             is Circuit -> workoutTraversalItem.item.toUiBase().copy(
-                timeline = workoutTraversalItem.toTimeline()
+                timeline = workoutTraversalItem.toTimeline(),
+                key = index,
             )
-            is WorkoutExercise -> workoutTraversalItem.item.toUiBase(exerciseLoader(workoutTraversalItem.item.exerciseId)).copy(
-                timeline = workoutTraversalItem.toTimeline()
+
+            is WorkoutExercise -> workoutTraversalItem.item.toUiBase(
+                exercisesMap.getValue(
+                    workoutTraversalItem.item.exerciseId
+                )
+            ).copy(
+                timeline = workoutTraversalItem.toTimeline(),
+                key = index,
             )
         }
     }
@@ -137,6 +174,7 @@ fun toDomain(items: List<WorkoutUiItem>): List<WorkoutItem> {
                 )
                 stack.add(builder)
             }
+
             is ExerciseUiItem -> {
                 val exercise = WorkoutExercise(
                     exerciseId = uiItem.exerciseId,

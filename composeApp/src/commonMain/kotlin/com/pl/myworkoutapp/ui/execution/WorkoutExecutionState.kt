@@ -1,8 +1,10 @@
 package com.pl.myworkoutapp.ui.execution
 
 import com.pl.myworkoutapp.domain.model.workout.WorkoutExercise
+import com.pl.myworkoutapp.domain.model.workout.WorkoutId
 
 sealed interface WorkoutExecutionState {
+    //TODO - do konkretnej przebudowy
 
     data class Running(
         val currentExercise: WorkoutExercise,
@@ -13,7 +15,9 @@ sealed interface WorkoutExecutionState {
         val remainingSeconds: Int
     ) : WorkoutExecutionState
 
-    data object Paused : WorkoutExecutionState
+    data class Paused(
+        val workoutId: String
+    ) : WorkoutExecutionState
 
     data object Finished : WorkoutExecutionState
 }

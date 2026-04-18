@@ -1,0 +1,13 @@
+package com.pl.myworkoutapp.ui.workouts
+
+import com.pl.myworkoutapp.domain.model.workout.WorkoutId
+import com.pl.myworkoutapp.ui.common.UiText
+
+sealed interface WorkoutDetailsEvent {
+    data object Close : WorkoutDetailsEvent
+    data class ShowSuccess(val text: UiText) : WorkoutDetailsEvent
+    data class ShowError(val text: UiText) : WorkoutDetailsEvent
+    data class NavToWorkoutExecution(val workoutId: WorkoutId) : WorkoutDetailsEvent
+//    data class Completed(val id: ExerciseId.Custom, val isNew: Boolean) : WorkoutDetailsEvent
+//    data class Deleted(val id: ExerciseId.Custom) : WorkoutDetailsEvent
+}

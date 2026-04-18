@@ -15,12 +15,12 @@ kotlinxDatetime = "0.7.1"
 material3 = "1.10.0-alpha05"
 material = "1.13.0"
 composeBom = "2026.03.01"
-koin = "4.2.0"
+koin = "4.2.1"
 ksp = "2.3.5"
 room = "2.8.4"
 slf4jSimple = "2.0.17"
 sqlite = "2.6.2"
-kotlinSerialization = "1.10.0"
+kotlinSerialization = "1.11.0"
 navigationCompose = "2.9.2"
 #materialIcons = "1.7.3"
 compose-markdown = "0.40.2"
@@ -29,7 +29,7 @@ webcamCapture = "0.3.12"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
-kotlin-testJunit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
+#kotlin-testJunit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
 junit = { module = "junit:junit", version.ref = "junit" }
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
 androidx-testExt-junit = { module = "androidx.test.ext:junit", version.ref = "androidx-testExt" }

@@ -16,11 +16,18 @@ import androidx.room.*
             parentColumns = ["id"],
             childColumns = ["parentId"],
             onDelete = ForeignKey.CASCADE
+        ),
+        ForeignKey(
+            entity = ExerciseEntity::class,
+            parentColumns = ["id"],
+            childColumns = ["customExerciseId"],
+            onDelete = ForeignKey.RESTRICT
         )
     ],
     indices = [
         Index("workoutId"),
-        Index("parentId")
+        Index("parentId"),
+        Index("customExerciseId"),
     ]
 )
 data class WorkoutItemEntity(
@@ -30,7 +37,9 @@ data class WorkoutItemEntity(
     val position: Int,   // kolejność w ramach parenta
     val type: String,    // "EXERCISE" | "CIRCUIT"
     // --- Exercise ---
-    val exerciseId: String?,
+    //val exerciseId: String?,
+    val builtInExerciseId: String?,
+    val customExerciseId: Long?,
     val quantityValue: Int?,
     val quantityType: String?,
     // --- Circuit ---

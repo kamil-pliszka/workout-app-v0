@@ -111,6 +111,25 @@ fun CustomExercise.toExerciseEditorUiModel(): ExerciseEditorUiModel {
     )
 }
 
+
+fun BuiltInExercise.toExerciseEditorUiModel(): ExerciseEditorUiModel {
+    val configBase = id.toBuiltInExerciseId().toUiConfig()
+    return ExerciseEditorUiModel(
+        //exerciseId = id,
+        //name = name,
+        //description = description ?: "",
+        //originalImagePath = imageUri,
+        //imagePath = imageUri,
+        imageRes = configBase.image,
+        basedOn = this.id,
+        muscle = muscle,
+        exerciseType = exerciseType,
+        equipment = equipment,
+        met = met.toString(),
+        quantityType = quantityType
+    )
+}
+
 fun ExerciseEditorUiModel.toDomain() : CustomExercise {
     return CustomExercise(
         id = exerciseId,

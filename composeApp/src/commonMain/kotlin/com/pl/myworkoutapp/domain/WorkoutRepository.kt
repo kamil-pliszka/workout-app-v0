@@ -28,4 +28,5 @@ interface WorkoutRepository {
     suspend fun saveCustomWorkout(customWorkout: CustomWorkout): WorkoutId.Custom
 
     suspend fun saveCustomExercise(customExercise: CustomExercise): ExerciseId.Custom
+    fun observeCustomExercises(): Flow<List<CustomExercise>>
 }

@@ -3,12 +3,15 @@
     <string name="lang_pl">Polski</string>
     <string name="lang_en">Angielski</string>
     <string name="choose_lang">Wybierz język</string>
+    <string name="error_during_processing">Błąd podczas przetwarzania: %1$s</string>
 
     <string name="btn_close">Zamknij</string>
     <string name="btn_cancel">Anuluj</string>
     <string name="btn_save">Zapisz</string>
     <string name="btn_delete">Usuń</string>
     <string name="btn_create">Stwórz</string>
+    <string name="btn_apply">Zastosuj</string>
+    <string name="btn_reset">Wyczyść</string>
 
     <string name="navigation_plans">Zestawy</string>
     <string name="navigation_workouts">Treningi</string>
@@ -78,6 +81,7 @@
     <string name="exercise_exercises_filtered">Filtrowane (%1$d)</string>
     <string name="exercise_editor_name">Nazwa</string>
     <string name="exercise_editor_desc">Opis</string>
+    <string name="exercise_editor_desc_info">Pozostaw puste aby korzystać z bazowego opisu, obrazu</string>
     <string name="exercise_editor_choose_image">Wybierz zdjęcie</string>
     <string name="exercise_editor_save_success">Ćwiczenie zostało zapisane</string>
     <string name="exercise_editor_save_failed">Błąd podczas zapisu ćwiczenia %1$s</string>
@@ -123,5 +127,6 @@
     <string name="exercise_jumping_jacks">PAJACYKI</string>
     <string name="exercise_push_up">POMPKI</string>
     <string name="exercise_plank">DESKA</string>
+
 
 </resources>

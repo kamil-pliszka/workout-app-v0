@@ -28,6 +28,7 @@ data class ExerciseEditorUiState(
     val isValid: Boolean = false,
     val exercise: ExerciseEditorUiModel = ExerciseEditorUiModel(),
     val initialExe: ExerciseEditorUiModel = ExerciseEditorUiModel(),
+    val showConfirmDiscard: Boolean = false,
 ) {
     fun displayError(field: ExeEditorField) =
         touchedFields.contains(field) && errors.containsKey(field)

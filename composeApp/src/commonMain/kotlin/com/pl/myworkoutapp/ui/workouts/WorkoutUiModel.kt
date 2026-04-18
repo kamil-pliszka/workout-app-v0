@@ -39,12 +39,14 @@ sealed interface WorkoutUiItem {
     val isCurrent: Boolean
     val isDone: Boolean
     val timeline: List<TimeLineItemType>
+    val key: Int //klucz dla operacji UI, unikalny id obiektu będącego na liście w workout
 }
 
 data class ExerciseUiItem(
     override val isCurrent: Boolean = false,
     override val isDone: Boolean = false,
     override val timeline: List<TimeLineItemType> = listOf(),
+    override val key: Int = 0,
 
     val exerciseId: ExerciseId,
     //val muscle: MuscleGroup,
@@ -58,6 +60,7 @@ data class CircuitUiItem(
     override val isCurrent: Boolean = false,
     override val isDone: Boolean = false,
     override val timeline: List<TimeLineItemType> = listOf(),
+    override val key: Int = 0,
 
     val phase: Phase,
     val rounds: Int,

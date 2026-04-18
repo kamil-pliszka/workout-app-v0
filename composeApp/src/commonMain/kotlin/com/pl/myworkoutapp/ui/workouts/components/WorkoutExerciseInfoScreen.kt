@@ -177,7 +177,9 @@ private fun RowScope.BottomButtons(
                 colors = buttonColors(containerColor = MaterialTheme.colorScheme.outline),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(stringResource(Res.string.workout_reset))
+                Icon(painter = painterResource(Res.drawable.ic_reset_settings), contentDescription = null)
+                Spacer(Modifier.width(8.dp))
+                Text(stringResource(Res.string.btn_reset))
             }
         } else {
             NextPrev(

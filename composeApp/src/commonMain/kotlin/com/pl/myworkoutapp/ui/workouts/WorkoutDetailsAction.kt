@@ -15,4 +15,11 @@ sealed interface WorkoutDetailsAction {
     object ExerciseNext: WorkoutDetailsAction
     data class ChangeQuantity(val increase: Boolean) : WorkoutDetailsAction
     data class ExercisePicked(val exerciseId: ExerciseId?) : WorkoutDetailsAction
+    object OnBack : WorkoutDetailsAction
+    object OnOpenEditor : WorkoutDetailsAction
+    object OnCloseEditor: WorkoutDetailsAction
+    object OnSaveEditor: WorkoutDetailsAction
+    object OnResetEditor : WorkoutDetailsAction
+    object OnDeleteRequest: WorkoutDetailsAction
+    object OnTuneRequest: WorkoutDetailsAction
 }

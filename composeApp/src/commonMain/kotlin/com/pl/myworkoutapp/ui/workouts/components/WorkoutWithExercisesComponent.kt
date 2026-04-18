@@ -3,7 +3,9 @@ package com.pl.myworkoutapp.ui.workouts.components
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.pl.myworkoutapp.domain.model.Difficulty
@@ -14,15 +16,15 @@ import com.pl.myworkoutapp.domain.model.workout.builtin.AbsWorkouts.MY_WORKOUT_N
 import com.pl.myworkoutapp.domain.model.workout.builtin.withRepsPerSide
 import com.pl.myworkoutapp.ui.common.EmptyUiText
 import com.pl.myworkoutapp.ui.common.asUiText
+import com.pl.myworkoutapp.ui.components.CircleIconButton
 import com.pl.myworkoutapp.ui.theme.*
 import com.pl.myworkoutapp.ui.workouts.*
-import kotlinx.coroutines.runBlocking
 import myworkoutapplication.composeapp.generated.resources.*
 
 @Composable
 fun WorkoutWithExercisesComponent(
     workoutUiModel: WorkoutWithExercisesUiModel,
-    onExerciseClick: (WorkoutUiItem) -> Unit
+    onAction: (WorkoutDetailsAction) -> Unit,
 ) {
     val workout = workoutUiModel.workout
     Column(
@@ -32,32 +34,109 @@ fun WorkoutWithExercisesComponent(
             .padding(horizontal = 4.dp)
             .verticalScroll(rememberScrollState())
     ) {
-        WorkoutHeaderCard(
-            workout = workout,
-            onClick = {}//TODO
-        )
+        Box {
+            WorkoutHeaderCard(
+                workout = workout,
+                onClick = { }, //ale właścwie co robić?
+                //onNameChanged = { onAction(WorkoutDetailsAction.OnNameChanged(it)) },
+                //onDescChanged = { onAction(WorkoutDetailsAction.OnDescChanged(it)) },
+            )
+            WorkoutHeaderActionsBox(
+                isBuiltIn = workoutUiModel.workout.workoutId is WorkoutId.BuiltIn,
+                onBack = { onAction(WorkoutDetailsAction.OnBack) },
+                onEdit = { onAction(WorkoutDetailsAction.OnOpenEditor) },
+                onDelete = { onAction(WorkoutDetailsAction.OnDeleteRequest) },
+                onTune = { onAction(WorkoutDetailsAction.OnTuneRequest) },
+            )
+        }
         println("WorkoutCardComposable: ${workout.workoutId}")
 
         Spacer(Modifier.height(16.dp))
+
         Column(
             //verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             workoutUiModel.items.forEach { item ->
-                when(item) {
-                    is CircuitUiItem -> WorkoutItemCircuit(
-                        item,
-                        workout.themeColor,
-                        onClick = { onExerciseClick(item) }
-                    )
-                    is ExerciseUiItem -> WorkoutItemExercise(
-                        item,
-                        workout.themeColor,
-                        onClick = { onExerciseClick(item) }
-                    )
-                }
+                WorkoutItemRow(
+                    item = item,
+                    themeColor = workout.themeColor,
+                    onAction = onAction
+                )
             }
         }
         Spacer(Modifier.height(80.dp))
+    }
+}
+
+@Composable
+fun WorkoutItemRow(
+    item: WorkoutUiItem,
+    themeColor: Color,
+    onAction: (WorkoutDetailsAction) -> Unit,
+) {
+    val desc = when(item) {
+        is CircuitUiItem -> "${item.title}"
+        is ExerciseUiItem -> "${item.exerciseId}"
+    }
+    println("WorkoutItemRow: ${item.key}, $desc")
+    Row(
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        when (item) {
+            is CircuitUiItem -> WorkoutItemCircuit(
+                item,
+                themeColor,
+                onClick = { onAction(WorkoutDetailsAction.ShowExerciseInfo(item)) }
+            )
+
+            is ExerciseUiItem -> WorkoutItemExercise(
+                item,
+                themeColor,
+                onClick = { onAction(WorkoutDetailsAction.ShowExerciseInfo(item)) }
+            )
+        }
+    }
+}
+
+@Composable
+fun BoxScope.WorkoutHeaderActionsBox(
+    isBuiltIn: Boolean,
+    onBack: () -> Unit,
+    onEdit: () -> Unit,
+    onDelete: () -> Unit,
+    onTune: () -> Unit,
+) {
+    // LEWA IKONA (back)
+    CircleIconButton(
+        icon = Res.drawable.ic_arrow_back,
+        modifier = Modifier
+            .align(Alignment.TopStart)
+            .padding(12.dp),
+        onClick = onBack
+    )
+    // PRAWA GRUPA IKON
+    Row(
+        modifier = Modifier
+            .align(Alignment.TopEnd)
+            .padding(12.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+
+        CircleIconButton(
+            icon = Res.drawable.ic_edit_square,
+            onClick = onEdit
+        )
+
+        if (!isBuiltIn) {
+            CircleIconButton(
+                icon = Res.drawable.ic_delete,
+                onClick = onDelete
+            )
+        }
+        CircleIconButton(
+            icon = Res.drawable.ic_tune,
+            onClick = onTune
+        )
     }
 }
 
@@ -73,7 +152,6 @@ val PREVIEW_WORKOUT = WorkoutUiModel(
     durationText = EmptyUiText,
     kcalText = EmptyUiText,
 )
-
 
 
 val EXE1 = ExerciseUiItem(
@@ -151,6 +229,12 @@ val EXE_CD_2 = ExerciseUiItem(
     icon = Res.drawable.ic_rest_day2,
 )
 
+fun List<WorkoutUiItem>.prepareKeys() = this.mapIndexed { index, item ->
+    when(item) {
+        is CircuitUiItem -> item.copy(key = index)
+        is ExerciseUiItem -> item.copy(key = index)
+    }
+}
 
 @Preview
 @Composable
@@ -160,7 +244,7 @@ fun WorkoutWithExercisesComponentPreviewBasic() {
             workout = PREVIEW_WORKOUT,
             items = listOf()
         ),
-        onExerciseClick = { }
+        onAction = { },
     )
 }
 
@@ -170,9 +254,9 @@ fun WorkoutWithExercisesComponentPreviewFlat() {
     WorkoutWithExercisesComponent(
         workoutUiModel = WorkoutWithExercisesUiModel(
             workout = PREVIEW_WORKOUT,
-            items = listOf(EXE1)
+            items = listOf(EXE1),
         ),
-        onExerciseClick = { }
+        onAction = { },
     )
 }
 
@@ -187,9 +271,9 @@ fun WorkoutWithExercisesComponentPreviewFlatTL() {
                 EXE1.with(TimeLineItemType.Triple(color1)),
                 EXE2.with(TimeLineItemType.Triple(color1)),
                 EXE3.with(TimeLineItemType.End(color1)),
-            )
+            ).prepareKeys()
         ),
-        onExerciseClick = { }
+        onAction = { },
     )
 }
 
@@ -216,12 +300,11 @@ fun WorkoutWithExercisesComponentPreviewCircuit() {
                 COOLDOWN,
                 EXE_CD_1.with(TimeLineItemType.Triple(color3)),
                 EXE_CD_2.with(TimeLineItemType.End(color3)),
-            )
+            ).prepareKeys()
         ),
-        onExerciseClick = { }
+        onAction = { },
     )
 }
-
 
 
 //poniżej testy WorkoutUiTransformer
@@ -274,14 +357,10 @@ fun WorkoutWithExercisesComponentPreviewNested() {//zagnieżdżone wersje
         )
     )
     //val workoutUiModel = transform(workoutDomain)
-    val workoutUiModel = runBlocking {
-        transform(workoutDomain) { exerciseId ->
-            BuiltInExerciseRegistry.get((exerciseId as ExerciseId.BuiltIn).id)
-        }
-    }
+    val workoutUiModel = transform(workoutDomain)
     WorkoutWithExercisesComponent(
         workoutUiModel = workoutUiModel,
-        onExerciseClick = { }
+        onAction = { },
     )
 }
 
@@ -289,14 +368,10 @@ fun WorkoutWithExercisesComponentPreviewNested() {//zagnieżdżone wersje
 @Preview(locale = "pl")
 @Composable
 fun WorkoutWithExercisesComponentPreviewAbsWithSet() {//rozgrzewka, trening, wychłodzenie
-    val workoutUiModel = runBlocking {
-        transform(MY_ABS_WORKOUT_WITH_SET) { exerciseId ->
-            BuiltInExerciseRegistry.get((exerciseId as ExerciseId.BuiltIn).id)
-        }
-    }
+    val workoutUiModel = transform(MY_ABS_WORKOUT_WITH_SET)
     WorkoutWithExercisesComponent(
         workoutUiModel = workoutUiModel,
-        onExerciseClick = { }
+        onAction = { },
     )
 }
 
@@ -304,14 +379,10 @@ fun WorkoutWithExercisesComponentPreviewAbsWithSet() {//rozgrzewka, trening, wyc
 @Preview(locale = "pl")
 @Composable
 fun WorkoutWithExercisesComponentPreviewAbsNoSet() {//pojedyńczy poziom, ok 30 ćwiczeń
-    val workoutUiModel = runBlocking {
-        transform(MY_WORKOUT_NO_SET) { exerciseId ->
-            BuiltInExerciseRegistry.get((exerciseId as ExerciseId.BuiltIn).id)
-        }
-    }
+    val workoutUiModel = transform(MY_WORKOUT_NO_SET)
     WorkoutWithExercisesComponent(
         workoutUiModel = workoutUiModel,
-        onExerciseClick = { }
+        onAction = { },
     )
 }
 

@@ -17,8 +17,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.pl.myworkoutapp.AppStateHolder
 import com.pl.myworkoutapp.domain.model.exercise.*
+import com.pl.myworkoutapp.domain.model.workout.asString
 import com.pl.myworkoutapp.ui.navigation.AppNavigator
 import com.pl.myworkoutapp.ui.theme.AppTheme
 import myworkoutapplication.composeapp.generated.resources.*
@@ -32,7 +32,7 @@ import org.koin.compose.viewmodel.koinViewModel
 fun ExercisePickerScreen(
     currentExerciseId: ExerciseId?,
     onResult: (ExerciseId?) -> Unit,
-    appNavigator: AppNavigator = koinInject(),
+    appNavigator: AppNavigator = koinInject(),//TODO - raczej do pozbycia się
 ) {
     val viewModel = koinViewModel<ExercisePickerViewModel>()
     /*LaunchedEffect(Unit) {
@@ -58,8 +58,8 @@ fun ExercisePickerScreen(
         currentExercise = current,
         onResult = onResult,
         onAction = { action -> viewModel.onAction(action) },
-        onNavToExerciseEditor = {
-            exerciseId -> appNavigator.navigateToExerciseEditor(exerciseId)
+        onNavToExerciseEditor = { exerciseId ->
+            appNavigator.navigateToExerciseEditor(exerciseId)
         }
     )
 }
@@ -73,6 +73,7 @@ fun ExercisePickerContent(
     onAction: (ExercisePickerAction) -> Unit,
     onNavToExerciseEditor: (ExerciseId) -> Unit,
 ) {
+    println("Recomposition ExercisePickerContent, selected : ${state.selectedExerciseId}")
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -86,7 +87,7 @@ fun ExercisePickerContent(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .fillMaxWidth()
-                .fillMaxHeight(0.91f)
+                .fillMaxHeight(0.99f)
                 .clip(RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp))
                 .background(Color.White)
         ) {
@@ -121,6 +122,7 @@ fun ExercisePickerContent(
                     exercises = filteredExercises,
                     selectedExerciseId = state.selectedExerciseId,
                     onAction = onAction,
+                    onNavToExerciseEditor = onNavToExerciseEditor
                 )
             }
         }
@@ -197,8 +199,10 @@ private fun CurrentExerciseBar(
         ) {
             ExerciseItem(
                 item = currentExercise,
-                selected = null,
-                onAction = { }
+                actionsVisible = false,
+                selected = false,
+                onAction = { },
+                onNavToExerciseEditor = { },
             )
             Text(
                 text = stringResource(Res.string.exercise_exchange_with),//"Zamień na...",
@@ -332,15 +336,22 @@ private fun ExerciseList(
     exercises: List<ExercisePickerListItem>,
     selectedExerciseId: ExerciseId?,
     onAction: (ExercisePickerAction) -> Unit,
+    onNavToExerciseEditor: (ExerciseId) -> Unit,
 ) {
+    println("ExerciseList: selected: $selectedExerciseId")
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
-        items(exercises) {
+        items(
+            count = exercises.size,
+            key = { idx -> exercises[idx].exerciseId.asString() }
+        ) { idx ->
             ExerciseItem(
-                item = it,
-                selected = it.exerciseId == selectedExerciseId,
+                item = exercises[idx],
+                actionsVisible = true,
+                selected = exercises[idx].exerciseId == selectedExerciseId,
                 onAction = onAction,
+                onNavToExerciseEditor = onNavToExerciseEditor,
             )
         }
     }
@@ -349,8 +360,10 @@ private fun ExerciseList(
 @Composable
 fun ExerciseItem(
     item: ExercisePickerListItem,
-    selected: Boolean?,
+    actionsVisible: Boolean,
+    selected: Boolean,
     onAction: (ExercisePickerAction) -> Unit,
+    onNavToExerciseEditor: (ExerciseId) -> Unit,
 ) {
     Row(
         modifier = Modifier
@@ -393,7 +406,7 @@ fun ExerciseItem(
             selected = selected,
             onClick = { onAction(ExercisePickerAction.ExerciseSelectionToggle(item)) }
         )*/
-        selected?.let {
+        if (actionsVisible) {
             IconButton(onClick = { onAction(ExercisePickerAction.ExercisePreview(item.exerciseId)) }) {
                 Box(
                     modifier = Modifier
@@ -412,7 +425,50 @@ fun ExerciseItem(
                 }
             }
         }
-        selected?.let {
+        if (actionsVisible) {
+            when (item.exerciseId) {
+                is ExerciseId.BuiltIn -> IconButton(onClick = {
+                    onNavToExerciseEditor(item.exerciseId)
+                }) {
+                    Box(
+                        modifier = Modifier
+                            .width(24.dp)
+                            .aspectRatio(1f)
+                            .clip(CircleShape)
+                            .background(color = MaterialTheme.colorScheme.outlineVariant),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            modifier = Modifier.size(16.dp),
+                            painter = painterResource(Res.drawable.ic_fork_right),
+                            contentDescription = "fork",
+                            //tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                }
+
+                is ExerciseId.Custom -> IconButton(onClick = {
+                    onNavToExerciseEditor(item.exerciseId)
+                }) {
+                    Box(
+                        modifier = Modifier
+                            .width(24.dp)
+                            .aspectRatio(1f)
+                            .clip(CircleShape)
+                            .background(color = MaterialTheme.colorScheme.outlineVariant),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            modifier = Modifier.size(16.dp),
+                            painter = painterResource(Res.drawable.ic_edit),
+                            contentDescription = "edit",
+                            //tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                }
+            }
+        }
+        if (actionsVisible) {
             IconButton(onClick = { onAction(ExercisePickerAction.ExerciseSelectionToggle(item.exerciseId)) }) {
                 Box(
                     modifier = Modifier

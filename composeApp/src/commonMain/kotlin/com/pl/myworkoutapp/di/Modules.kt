@@ -12,6 +12,8 @@ import com.pl.myworkoutapp.data.repository.AppSettingRepositoryImpl
 import com.pl.myworkoutapp.data.repository.WorkoutRepositoryImpl
 import com.pl.myworkoutapp.domain.AppSettingRepository
 import com.pl.myworkoutapp.domain.WorkoutRepository
+import com.pl.myworkoutapp.domain.usecase.GetWorkoutWithExercisesUseCase
+import com.pl.myworkoutapp.domain.usecase.SaveWorkoutUseCase
 import com.pl.myworkoutapp.ui.common.MessageCoordinator
 import com.pl.myworkoutapp.ui.execution.WorkoutExecutionViewModel
 import com.pl.myworkoutapp.ui.exercises.*
@@ -19,9 +21,11 @@ import com.pl.myworkoutapp.ui.navigation.AppNavigator
 import com.pl.myworkoutapp.ui.plans.PlansViewModel
 import com.pl.myworkoutapp.ui.reports.ReportsViewModel
 import com.pl.myworkoutapp.ui.settings.SettingsViewModel
+import com.pl.myworkoutapp.ui.workouts.WorkoutEditorDelegate
 import com.pl.myworkoutapp.ui.workouts.WorkoutDetailsViewModel
 import com.pl.myworkoutapp.ui.workouts.WorkoutsViewModel
 import org.koin.core.module.Module
+import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.bind
@@ -50,6 +54,15 @@ val sharedModule = module {
     singleOf(::AppNavigator)
     singleOf(::MessageCoordinator)
 
+    //UC
+    singleOf(::GetWorkoutWithExercisesUseCase)
+    singleOf(::SaveWorkoutUseCase)
+
+    //jeśli delegate ma stan per ekran wtedy factory, jeśli nie będzie miał stanu wtedy single
+    //na razie nie wiem, zostawiam stanowy
+    factoryOf( :: WorkoutEditorDelegate)
+
+    //VM
     viewModelOf(::LanguageViewModel)
     viewModelOf(::PlansViewModel)
     viewModelOf(::ReportsViewModel)

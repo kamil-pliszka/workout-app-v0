@@ -26,7 +26,7 @@ class WorkoutExecutionViewModel(
     //val effects = _effects.asSharedFlow()
 
     private val _state = MutableStateFlow<WorkoutExecutionState>(
-        WorkoutExecutionState.Paused
+        WorkoutExecutionState.Paused(workoutId)
     )
     val state: StateFlow<WorkoutExecutionState> = _state
 
@@ -83,7 +83,7 @@ class WorkoutExecutionViewModel(
     }
 
     fun pause() {
-        _state.value = WorkoutExecutionState.Paused
+        _state.value = WorkoutExecutionState.Paused("after pause")
     }
 
     fun finish() {

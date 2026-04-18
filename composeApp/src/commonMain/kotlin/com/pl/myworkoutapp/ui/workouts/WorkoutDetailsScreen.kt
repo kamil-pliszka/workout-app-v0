@@ -17,6 +17,7 @@ import com.pl.myworkoutapp.ui.workouts.components.WorkoutExerciseInfoScreen
 import com.pl.myworkoutapp.ui.workouts.components.WorkoutWithExercisesComponent
 import kotlinx.coroutines.runBlocking
 import myworkoutapplication.composeapp.generated.resources.*
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
 
@@ -24,69 +25,37 @@ import org.jetbrains.compose.resources.stringResource
 fun WorkoutDetailsScreen(
     state: WorkoutDetailsUiState,
     onAction: (WorkoutDetailsAction) -> Unit,
+    onEditorAction: (WorkoutEditorAction) -> Unit,
 ) {
-    if (state.isLoading) {
-        CircularProgressIndicator()
-        return
-    }
-
-    if (state.workout == null) {
-        Text("empty")
-        return
-    }
-
-    Box {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            //verticalArrangement = Arrangement.Center,
-            //horizontalAlignment = Alignment.CenterHorizontally,
-
-        ) {
-            WorkoutWithExercisesComponent(
-                workoutUiModel = state.workout,
-                onExerciseClick = { workoutUiItem ->
-                    onAction(WorkoutDetailsAction.ShowExerciseInfo(workoutUiItem))
-                }
-            )
+    if (state.isLoading || state.workout == null) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            CircularProgressIndicator()
         }
+        return
+    }
 
-        Box(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(16.dp)
-        ) {
-            if (state.isDirty) {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    Button(
-                        modifier = Modifier.weight(1f),
-                        colors = buttonColors(containerColor = MaterialTheme.colorScheme.outline),
-                        onClick = {
-                            onAction(WorkoutDetailsAction.OnResetWorkout)
-                        }
-                    ) {
-                        Text(stringResource(Res.string.workout_reset))
-                    }
-                    Button(
-                        modifier = Modifier.weight(1f),
-                        onClick = {
-                            onAction(WorkoutDetailsAction.OnSaveWorkout)
-                        }
-                    ) {
-                        Text(stringResource(Res.string.workout_save))
-                    }
-                }
-            } else {
-                Button(
-                    modifier = Modifier.fillMaxWidth(),
-                    onClick = {
-                        onAction(WorkoutDetailsAction.OnStartWorkout)
-                    }
-                ) {
-                    Text(stringResource(Res.string.workout_start))
-                }
+    if (state.editableWorkout != null) {
+        WorkoutEditorScreen(
+            state = state.editableWorkout,
+            onAction = onAction,
+            onEditorAction = onEditorAction,
+        )
+    } else {
+        Box {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                //verticalArrangement = Arrangement.Center,
+                //horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                WorkoutWithExercisesComponent(
+                    workoutUiModel = state.workout,
+                    onAction = onAction,
+                )
             }
+            WorkoutDetailBottomButtons(
+                state = state,
+                onAction = onAction
+            )
         }
     }
 
@@ -104,22 +73,65 @@ fun WorkoutDetailsScreen(
     }
 }
 
+@Composable
+private fun BoxScope.WorkoutDetailBottomButtons(
+    state: WorkoutDetailsUiState,
+    onAction: (WorkoutDetailsAction) -> Unit,
+) {
+    //pasek przyciskow na dole
+    Box(
+        modifier = Modifier
+            .align(Alignment.BottomCenter)
+            .padding(16.dp)
+    ) {
+        if (state.isDirty) {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                OutlinedButton( // Use Outlined for secondary action
+                    modifier = Modifier.weight(1f),
+                    onClick = { onAction(WorkoutDetailsAction.OnResetWorkout) },
+                    colors = buttonColors(containerColor = MaterialTheme.colorScheme.outline),
+                ) {
+                    Icon(painter = painterResource(Res.drawable.ic_reset_settings), contentDescription = null)
+                    Spacer(Modifier.width(8.dp))
+                    Text(stringResource(Res.string.workout_reset))
+                }
+                Button( // Filled for primary action
+                    modifier = Modifier.weight(1f),
+                    onClick = { onAction(WorkoutDetailsAction.OnSaveWorkout) }
+                ) {
+                    Icon(painter = painterResource(Res.drawable.ic_check), contentDescription = null)
+                    Spacer(Modifier.width(8.dp))
+                    Text(stringResource(Res.string.btn_save))
+                }
+            }
+        } else {
+            Button(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = {
+                    onAction(WorkoutDetailsAction.OnStartWorkout)
+                }
+            ) {
+                Text(stringResource(Res.string.workout_start))
+            }
+        }
+    }
+}
+
 @Preview
 @Composable
 private fun WorkoutDetailsScreenPreviewEN() {
-    val workout = BuiltInWorkoutRegistry.get(BuiltInWorkoutId.MY_ABS_WORKOUT_NO_SET)
-    val workoutUiModel = runBlocking {
-        transform(workout) { exerciseId ->
-            BuiltInExerciseRegistry.get((exerciseId as ExerciseId.BuiltIn).id)
-        }
-    }
+    val workout = BuiltInWorkoutRegistry.get(BuiltInWorkoutId.MY_ABS_WORKOUT_WITH_SET)
+    val workoutUiModel = transform(workout)
     WorkoutDetailsScreen(
         state = WorkoutDetailsUiState(
             isLoading = false,
             workout = workoutUiModel,
             isDirty = true,
         ),
-        onAction = { }
+        onAction = { },
+        onEditorAction = { },
     )
 }
 
@@ -127,16 +139,13 @@ private fun WorkoutDetailsScreenPreviewEN() {
 @Composable
 private fun WorkoutDetailsScreenPreviewPL() {
     val workout = BuiltInWorkoutRegistry.get(BuiltInWorkoutId.MY_ABS_WORKOUT_NO_SET)
-    val workoutUiModel = runBlocking {
-        transform(workout) { exerciseId ->
-            BuiltInExerciseRegistry.get((exerciseId as ExerciseId.BuiltIn).id)
-        }
-    }
+    val workoutUiModel = transform(workout)
     WorkoutDetailsScreen(
         state = WorkoutDetailsUiState(
             isLoading = false,
             workout = workoutUiModel
         ),
-        onAction = { }
+        onAction = { },
+        onEditorAction = { },
     )
 }

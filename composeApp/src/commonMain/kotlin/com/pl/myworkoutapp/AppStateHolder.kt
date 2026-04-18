@@ -19,8 +19,16 @@ class AppStateHolder {
         _state.update { it.copy(isCameraActive = active) }
     }
 
-    fun setHideNavigation(hidden: Boolean) {
-        _state.update { it.copy(isHiddenNavigation = hidden) }
+    fun setWorkoutExerciseInfoActive(active: Boolean) {
+        _state.update { it.copy(isWorkoutExerciseInfoActive = active) }
+    }
+
+    fun setExerciseEditorActive(active: Boolean) {
+        _state.update { it.copy(isExerciseEditorActive = active) }
+    }
+
+    fun setWorkoutEditorActive(active: Boolean) {
+        _state.update { it.copy(isWorkoutEditorActive = active) }
     }
 
 }
