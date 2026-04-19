@@ -205,6 +205,14 @@ class ExerciseEditorViewModel(
                     )
                 }
             }
+            is ExerciseEditorAction.DefaultQuantityValueChanged -> {
+                updateAndValidate {
+                    copy(
+                        exercise = exercise.copy(defaultQuantityValue = action.value),
+                        touchedFields = touchedFields + ExeEditorField.DEFAULT_QUANTITY_VALUE
+                    )
+                }
+            }
 
             ExerciseEditorAction.RemoveImage -> TODO()
             is ExerciseEditorAction.OnImagePicked -> {
@@ -251,6 +259,12 @@ class ExerciseEditorViewModel(
 
         if (state.exercise.quantityType == null) {
             errors[ExeEditorField.QUANTITY_TYPE] = "Required"
+        }
+        val qtyValue = state.exercise.defaultQuantityValue.toIntOrNull()
+        if (qtyValue == null) {
+            errors[ExeEditorField.DEFAULT_QUANTITY_VALUE] = "Required"
+        } else if (qtyValue < 1) {
+            errors[ExeEditorField.DEFAULT_QUANTITY_VALUE] = "Invalid"
         }
         if (state.exercise.muscle == null) {
             errors[ExeEditorField.MUSCLE] = "Required"

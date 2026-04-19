@@ -102,7 +102,8 @@ fun Navigation(
                 WorkoutDetailsScreen(
                     state = state,
                     onAction = viewModel::onAction,
-                    onEditorAction = viewModel::onEditorAction
+                    onEditorAction = viewModel::onEditorAction,
+                    onCircuitEditorAction = viewModel::onCircuitEditorAction
                 )
             }
         }

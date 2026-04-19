@@ -21,13 +21,9 @@ import com.pl.myworkoutapp.ui.navigation.AppNavigator
 import com.pl.myworkoutapp.ui.plans.PlansViewModel
 import com.pl.myworkoutapp.ui.reports.ReportsViewModel
 import com.pl.myworkoutapp.ui.settings.SettingsViewModel
-import com.pl.myworkoutapp.ui.workouts.WorkoutEditorDelegate
-import com.pl.myworkoutapp.ui.workouts.WorkoutDetailsViewModel
-import com.pl.myworkoutapp.ui.workouts.WorkoutsViewModel
+import com.pl.myworkoutapp.ui.workouts.*
 import org.koin.core.module.Module
-import org.koin.core.module.dsl.factoryOf
-import org.koin.core.module.dsl.singleOf
-import org.koin.core.module.dsl.viewModelOf
+import org.koin.core.module.dsl.*
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
@@ -61,6 +57,7 @@ val sharedModule = module {
     //jeśli delegate ma stan per ekran wtedy factory, jeśli nie będzie miał stanu wtedy single
     //na razie nie wiem, zostawiam stanowy
     factoryOf( :: WorkoutEditorDelegate)
+    factoryOf( :: CircuitEditorDelegate)
 
     //VM
     viewModelOf(::LanguageViewModel)

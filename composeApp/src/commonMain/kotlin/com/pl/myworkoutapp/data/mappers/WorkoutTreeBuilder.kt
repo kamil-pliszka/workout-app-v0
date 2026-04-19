@@ -1,11 +1,11 @@
 package com.pl.myworkoutapp.data.mappers
 
-import com.pl.myworkoutapp.data.database.WorkoutItemEntity
+import com.pl.myworkoutapp.data.database.CustomWorkoutItemEntity
 import com.pl.myworkoutapp.domain.model.workout.*
 
 class WorkoutTreeBuilder {
 
-    fun build(flatItems: List<WorkoutItemEntity>): List<WorkoutItem> {
+    fun build(flatItems: List<CustomWorkoutItemEntity>): List<WorkoutItem> {
         val id2Children = mutableMapOf<Long, MutableList<Long>>()
         val id2Item = mutableMapOf<Long, WorkoutItem>()
 

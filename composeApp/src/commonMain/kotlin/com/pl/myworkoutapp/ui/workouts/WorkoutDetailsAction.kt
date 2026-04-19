@@ -8,7 +8,7 @@ sealed interface WorkoutDetailsAction {
     object OnResetWorkout : WorkoutDetailsAction
     data class ShowExerciseInfo(val exercise: WorkoutUiItem) : WorkoutDetailsAction
     object CloseExerciseInfo : WorkoutDetailsAction
-    object ExerciseExchange : WorkoutDetailsAction
+    object ShowExercisePicker : WorkoutDetailsAction
     object ExerciseSave : WorkoutDetailsAction
     object ExerciseReset: WorkoutDetailsAction
     object ExercisePrev: WorkoutDetailsAction
@@ -22,4 +22,9 @@ sealed interface WorkoutDetailsAction {
     object OnResetEditor : WorkoutDetailsAction
     object OnDeleteRequest: WorkoutDetailsAction
     object OnTuneRequest: WorkoutDetailsAction
+
+    object OnAddCircuit : WorkoutDetailsAction
+    data class OnEditCircuit(val circuit: CircuitUiItem) : WorkoutDetailsAction
+    object OnSaveCircuitEditor : WorkoutDetailsAction
+    object OnCancelCircuitEditor : WorkoutDetailsAction
 }

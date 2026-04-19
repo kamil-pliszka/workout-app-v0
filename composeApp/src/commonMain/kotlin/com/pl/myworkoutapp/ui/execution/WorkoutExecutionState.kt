@@ -1,7 +1,6 @@
 package com.pl.myworkoutapp.ui.execution
 
 import com.pl.myworkoutapp.domain.model.workout.WorkoutExercise
-import com.pl.myworkoutapp.domain.model.workout.WorkoutId
 
 sealed interface WorkoutExecutionState {
     //TODO - do konkretnej przebudowy

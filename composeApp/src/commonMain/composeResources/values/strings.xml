@@ -13,6 +13,9 @@
     <string name="btn_apply">Apply</string>
     <string name="btn_reset">Reset</string>
     <string name="btn_drag_handle">Drag</string>
+    <string name="btn_add">Add</string>
+    <string name="btn_choose">Choose</string>
+    <string name="btn_back">Back</string>
 
     <string name="navigation_plans">Plans</string>
     <string name="navigation_workouts">Workouts</string>
@@ -94,6 +97,25 @@
     <string name="workout_reset">Reset</string>
     <string name="workout_save">Save</string>
     <string name="workout_saved_success">Workout saved succesfully</string>
+    <string name="workout_add_exercise">Exercise</string>
+    <string name="workout_add_circuit">Circuit</string>
+
+    <string name="circuit_label">Circuit</string>
+    <string name="circuit_label_new">Circuit (new)</string>
+    <string name="circuit_label_edit">Circuit (edit)</string>
+    <string name="circuit_phase">Phase</string>
+    <string name="circuit_name_label">Name (optional)</string>
+    <string name="circuit_structure">Structure</string>
+    <string name="circuit_structure_standard">Standard</string>
+    <string name="circuit_structure_emom">EMOM</string>
+    <string name="circuit_structure_amrap">AMRAP</string>
+    <string name="circuit_structure_tabata">Tabata</string>
+    <string name="circuit_rounds">Rounds</string>
+    <string name="circuit_emom_minutes">Minutes</string>
+    <string name="circuit_amrap_minutes">Duration (min)</string>
+    <string name="circuit_tabata_worksec">Work (sec)</string>
+    <string name="circuit_tabata_restsec">Rest (sec)</string>
+    <string name="circuit_error_numer_must_be_greater_zero">Must be greater than 0</string>
 
     <string name="exercise_description_label">Description</string>
     <string name="exercise_qty_reps">Repeat</string>
@@ -116,6 +138,7 @@
     <string name="exercise_editor_equipment">Equipment</string>
     <string name="exercise_editor_exe_type">Type</string>
     <string name="exercise_editor_qty_type">Unit of measure</string>
+    <string name="exercise_editor_qty_value">Default measure</string>
     <string name="exercise_editor_params">Parameters</string>
     <string name="exercise_editor_met">MET</string>
     <string name="exercise_editor_met_info">For example: 6 = moderate intensity</string>

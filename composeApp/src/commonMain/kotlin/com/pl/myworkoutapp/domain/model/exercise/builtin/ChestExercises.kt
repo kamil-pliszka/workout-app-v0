@@ -10,5 +10,6 @@ val CHEST_EXERCISES = listOf(
         equipment = Equipment.BODYWEIGHT,
         met = 7.0,
         quantityType = QuantityType.REPS,
+        defaultQuantityValue = 10,
     ),
 )

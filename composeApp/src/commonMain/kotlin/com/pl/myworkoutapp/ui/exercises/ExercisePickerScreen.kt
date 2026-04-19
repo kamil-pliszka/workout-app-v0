@@ -4,7 +4,6 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -18,7 +17,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.pl.myworkoutapp.domain.model.exercise.*
-import com.pl.myworkoutapp.domain.model.workout.asString
 import com.pl.myworkoutapp.ui.navigation.AppNavigator
 import com.pl.myworkoutapp.ui.theme.AppTheme
 import myworkoutapplication.composeapp.generated.resources.*
@@ -147,7 +145,7 @@ fun ExercisePickerContent(
                     //colors = buttonColors(containerColor = MaterialTheme.colorScheme.outline),
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text(stringResource(Res.string.exercise_exchange))
+                    Text(stringResource(Res.string.btn_choose))
                 }
             }
         } else {

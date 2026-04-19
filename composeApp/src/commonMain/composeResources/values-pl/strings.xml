@@ -12,6 +12,9 @@
     <string name="btn_create">Stwórz</string>
     <string name="btn_apply">Zastosuj</string>
     <string name="btn_reset">Wyczyść</string>
+    <string name="btn_add">Dodaj</string>
+    <string name="btn_choose">Wybierz</string>
+    <string name="btn_back">Wstecz</string>
 
     <string name="navigation_plans">Zestawy</string>
     <string name="navigation_workouts">Treningi</string>
@@ -67,6 +70,25 @@
     <string name="workout_reset">Wyczyść</string>
     <string name="workout_save">Zapisz</string>
     <string name="workout_saved_success">Zestaw ćwiczeń został zapisany</string>
+    <string name="workout_add_exercise">Ćwiczenie</string>
+    <string name="workout_add_circuit">Obwód</string>
+
+    <string name="circuit_label">Obwód</string>
+    <string name="circuit_label_new">Obwód (nowy)</string>
+    <string name="circuit_label_edit">Obwód (edycja)</string>
+    <string name="circuit_phase">Faza</string>
+    <string name="circuit_name_label">Nazwa (opcjonalna)</string>
+    <string name="circuit_structure">Struktura</string>
+    <string name="circuit_structure_standard">Zwykła</string>
+    <string name="circuit_structure_emom">EMOM</string>
+    <string name="circuit_structure_amrap">AMRAP</string>
+    <string name="circuit_structure_tabata">Tabata</string>
+    <string name="circuit_rounds">Powtórzenia</string>
+    <string name="circuit_emom_minutes">Minuty</string>
+    <string name="circuit_amrap_minutes">Czas trwania (min)</string>
+    <string name="circuit_tabata_worksec">Trening (sek)</string>
+    <string name="circuit_tabata_restsec">Odpoczynek (sek)</string>
+    <string name="circuit_error_numer_must_be_greater_zero">Musi być większy niż 0</string>
 
     <string name="exercise_description_label">Opis ćwiczenia</string>
     <string name="exercise_qty_reps">Powtórzenia</string>
@@ -95,6 +117,7 @@
     <string name="exercise_editor_equipment">Wyposażenie</string>
     <string name="exercise_editor_exe_type">Typ ćwiczenia</string>
     <string name="exercise_editor_qty_type">Jednostka miary</string>
+    <string name="exercise_editor_qty_value">Domyślna wartość</string>
     <string name="exercise_editor_params">Parametry</string>
     <string name="exercise_editor_met">MET</string>
     <string name="exercise_editor_met_info">Np. 6 = średnia intensywność</string>

@@ -108,6 +108,7 @@ private fun WorkoutsScreenPreview() {
             },
             currentPage = 0,
         ),
-        onAction = { }
+        onAction = { },
+        appNavigator = AppNavigator()
     )
 }

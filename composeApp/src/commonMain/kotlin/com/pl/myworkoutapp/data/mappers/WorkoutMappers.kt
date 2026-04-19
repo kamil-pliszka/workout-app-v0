@@ -1,7 +1,7 @@
 package com.pl.myworkoutapp.data.mappers
 
-import com.pl.myworkoutapp.data.database.WorkoutEntity
-import com.pl.myworkoutapp.data.database.WorkoutItemEntity
+import com.pl.myworkoutapp.data.database.CustomWorkoutEntity
+import com.pl.myworkoutapp.data.database.CustomWorkoutItemEntity
 import com.pl.myworkoutapp.domain.model.Difficulty
 import com.pl.myworkoutapp.domain.model.exercise.*
 import com.pl.myworkoutapp.domain.model.workout.*
@@ -11,7 +11,7 @@ fun WorkoutId.BuiltIn.asRawString() = this.id.name
 //fun String.toBuiltInWorkoutId(): WorkoutId.BuiltIn = BuiltInWorkoutId.entries.first { it.name == this }.asWorkoutId()
 fun String.toBuiltInWorkoutId(): WorkoutId.BuiltIn = BuiltInWorkoutId.valueOf(this).asWorkoutId()
 
-fun CustomWorkout.toEntity() = WorkoutEntity(
+fun CustomWorkout.toEntity() = CustomWorkoutEntity(
     id = id.toLong(),
     name = name,
     description = description,
@@ -20,7 +20,7 @@ fun CustomWorkout.toEntity() = WorkoutEntity(
     difficulty = difficulty.name,
 )
 
-fun WorkoutEntity.toDomain() = CustomWorkout(
+fun CustomWorkoutEntity.toDomain() = CustomWorkout(
     id = id.asWorkoutId(),
     name = name,
     description = description,
@@ -30,7 +30,7 @@ fun WorkoutEntity.toDomain() = CustomWorkout(
     items = emptyList()
 )
 
-fun WorkoutExercise.toEntity() = WorkoutItemEntity(
+fun WorkoutExercise.toEntity() = CustomWorkoutItemEntity(
     id = 0,
     workoutId = 0,
     parentId = null,
@@ -54,9 +54,9 @@ fun WorkoutExercise.toEntity() = WorkoutItemEntity(
     structureData = null,
 )
 
-fun Circuit.toEntity(): WorkoutItemEntity {
+fun Circuit.toEntity(): CustomWorkoutItemEntity {
     val (structureType, structureData) = serializeStructure(structure)
-    return WorkoutItemEntity(
+    return CustomWorkoutItemEntity(
         id = 0,
         workoutId = 0,
         parentId = null,
@@ -74,7 +74,7 @@ fun Circuit.toEntity(): WorkoutItemEntity {
     )
 }
 
-fun WorkoutItem.toEntity(): WorkoutItemEntity = when (this) {
+fun WorkoutItem.toEntity(): CustomWorkoutItemEntity = when (this) {
     is Circuit -> this.toEntity()
     is WorkoutExercise -> this.toEntity()
 }
@@ -129,7 +129,7 @@ fun deserializeStructureNoCrash(type: String, data: String?): CircuitStructure? 
     }.getOrNull()
 }
 
-fun WorkoutItemEntity.toDomain(): WorkoutItem = when (type) {
+fun CustomWorkoutItemEntity.toDomain(): WorkoutItem = when (type) {
     "EXERCISE" -> WorkoutExercise(
         //exerciseId = this.exerciseId?.toExerciseIdOrNull()!!,
         exerciseId = when {

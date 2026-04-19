@@ -10,6 +10,7 @@ val CORE_EXERCISES = listOf(
         equipment = Equipment.BODYWEIGHT,
         met = 3.5,
         quantityType = QuantityType.DURATION,
+        defaultQuantityValue = 45,
     ),
 
     BuiltInExercise (
@@ -19,6 +20,7 @@ val CORE_EXERCISES = listOf(
         equipment = Equipment.BODYWEIGHT,
         met = 1.0,
         quantityType = QuantityType.DURATION,
+        defaultQuantityValue = 40,
     ),
 
     BuiltInExercise (
@@ -28,6 +30,7 @@ val CORE_EXERCISES = listOf(
         equipment = Equipment.BODYWEIGHT,
         met = 1.0,
         quantityType = QuantityType.DURATION,
+        defaultQuantityValue = 40,
     ),
 
     BuiltInExercise (
@@ -37,6 +40,7 @@ val CORE_EXERCISES = listOf(
         equipment = Equipment.BODYWEIGHT,
         met = 1.0,
         quantityType = QuantityType.REPS_PER_SIDE,
+        defaultQuantityValue = 10,
     ),
 
     BuiltInExercise (
@@ -46,6 +50,7 @@ val CORE_EXERCISES = listOf(
         equipment = Equipment.BODYWEIGHT,
         met = 1.0,
         quantityType = QuantityType.REPS,
+        defaultQuantityValue = 20,
     ),
 
     BuiltInExercise (
@@ -55,6 +60,7 @@ val CORE_EXERCISES = listOf(
         equipment = Equipment.BODYWEIGHT,
         met = 1.0,
         quantityType = QuantityType.REPS,
+        defaultQuantityValue = 20,
     ),
 
     BuiltInExercise (
@@ -64,6 +70,7 @@ val CORE_EXERCISES = listOf(
         equipment = Equipment.BODYWEIGHT,
         met = 1.0,
         quantityType = QuantityType.DURATION,
+        defaultQuantityValue = 30,
     ),
 
     BuiltInExercise (
@@ -73,6 +80,7 @@ val CORE_EXERCISES = listOf(
         equipment = Equipment.BODYWEIGHT,
         met = 1.0,
         quantityType = QuantityType.DURATION,
+        defaultQuantityValue = 30,
     ),
 
     BuiltInExercise (
@@ -82,6 +90,7 @@ val CORE_EXERCISES = listOf(
         equipment = Equipment.BODYWEIGHT,
         met = 1.0,
         quantityType = QuantityType.DURATION,
+        defaultQuantityValue = 30,
     ),
 
 

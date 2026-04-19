@@ -6,6 +6,7 @@ import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.material3.ButtonDefaults.buttonColors
@@ -66,7 +67,7 @@ fun WorkoutEditorScreen(
                     interactionSource = remember { MutableInteractionSource() }
                 ) { /* Consume clicks to prevent closing */ }
         ) {
-            EditorHeader(
+            WorkoutEditorHeader(
                 title = state.workout.workoutId.asString(),
                 onClose = { onAction(WorkoutDetailsAction.OnCloseEditor) }
             )
@@ -83,14 +84,16 @@ fun WorkoutEditorScreen(
 
             WorkoutEditorBottomButtons(
                 onReset = { onAction(WorkoutDetailsAction.OnResetEditor) },
-                onSave = { onAction(WorkoutDetailsAction.OnSaveEditor) }
+                onSave = { onAction(WorkoutDetailsAction.OnSaveEditor) },
+                onAddExercise = { onAction(WorkoutDetailsAction.ShowExercisePicker) },
+                onAddCircuit = { onAction(WorkoutDetailsAction.OnAddCircuit) },
             )
         }
     }
 }
 
 @Composable
-private fun EditorHeader(
+private fun WorkoutEditorHeader(
     title: String,
     onClose: () -> Unit
 ) {
@@ -122,33 +125,80 @@ private fun EditorHeader(
 fun WorkoutEditorBottomButtons(
     onReset: () -> Unit,
     onSave: () -> Unit,
+    onAddExercise: () -> Unit, // Zmienione: konkretna akcja
+    onAddCircuit: () -> Unit,  // Zmienione: konkretna akcja
     saveEnabled: Boolean = true
 ) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)
-            .navigationBarsPadding(), // Ensures buttons are above system nav bar
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
-    ) {
-        OutlinedButton(
-            onClick = onReset,
-            modifier = Modifier.weight(1f),
-            colors = buttonColors(containerColor = MaterialTheme.colorScheme.outline),
+    // Stan menu
+    var menuExpanded by remember { mutableStateOf(false) }
+
+    Box {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+                .navigationBarsPadding(),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            Icon(painter = painterResource(Res.drawable.ic_reset_settings), contentDescription = null)
-            Spacer(Modifier.width(8.dp))
-            Text(stringResource(Res.string.btn_reset))
+            OutlinedButton(
+                onClick = onReset,
+                modifier = Modifier.weight(1f),
+                colors = buttonColors(containerColor = MaterialTheme.colorScheme.outline),
+            ) {
+                Icon(painter = painterResource(Res.drawable.ic_reset_settings), contentDescription = null)
+                Spacer(Modifier.width(8.dp))
+                Text(stringResource(Res.string.btn_reset))
+            }
+
+            Button(
+                onClick = onSave,
+                modifier = Modifier.weight(1f),
+                enabled = saveEnabled
+            ) {
+                Icon(painter = painterResource(Res.drawable.ic_check), contentDescription = null)
+                Spacer(Modifier.width(8.dp))
+                Text(stringResource(Res.string.btn_save))
+            }
         }
 
-        Button(
-            onClick = onSave,
-            modifier = Modifier.weight(1f),
-            enabled = saveEnabled
+        // FAB z Menu
+        Box(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .offset(y = (-56).dp)
         ) {
-            Icon(painter = painterResource(Res.drawable.ic_check), contentDescription = null)
-            Spacer(Modifier.width(8.dp))
-            Text(stringResource(Res.string.btn_save))
+            FloatingActionButton(
+                onClick = { menuExpanded = true },
+                shape = CircleShape
+            ) {
+                Icon(
+                    painter = painterResource(Res.drawable.ic_add),
+                    contentDescription = stringResource(Res.string.btn_add)
+                )
+            }
+
+            // Menu wyboru
+            DropdownMenu(
+                expanded = menuExpanded,
+                onDismissRequest = { menuExpanded = false }
+            ) {
+                DropdownMenuItem(
+                    text = { Text(stringResource(Res.string.workout_add_exercise)) },
+                    leadingIcon = { Icon(painterResource(Res.drawable.ic_exercise), contentDescription = null) },
+                    onClick = {
+                        menuExpanded = false
+                        onAddExercise()
+                    }
+                )
+                DropdownMenuItem(
+                    text = { Text(stringResource(Res.string.workout_add_circuit)) },
+                    leadingIcon = { Icon(painterResource(Res.drawable.ic_cycle), contentDescription = null) },
+                    onClick = {
+                        menuExpanded = false
+                        onAddCircuit()
+                    }
+                )
+            }
         }
     }
 }

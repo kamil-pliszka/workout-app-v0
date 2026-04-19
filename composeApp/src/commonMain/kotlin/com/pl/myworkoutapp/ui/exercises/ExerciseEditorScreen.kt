@@ -15,6 +15,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.pl.myworkoutapp.domain.model.exercise.*
@@ -405,17 +406,40 @@ fun ParametersSection(
             text = stringResource(Res.string.exercise_editor_params),
             style = MaterialTheme.typography.titleMedium
         )*/
-
-        val quantityTypeValues = remember { QuantityType.entries.toList() }
-        EnumDropdown(
-            label = stringResource(Res.string.exercise_editor_qty_type),
-            value = state.exercise.quantityType,
-            values = quantityTypeValues,
-            text = { it.asUiText() },
-            image = { it.getImageResource() },
-            onSelected = { onAction(ExerciseEditorAction.QuantityTypeChanged(it)) },
-            isError = state.displayError(ExeEditorField.QUANTITY_TYPE),
-        )
+        Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+            Box(modifier = Modifier.weight(1.5f)) {
+                val quantityTypeValues = remember { QuantityType.entries.toList() }
+                EnumDropdown(
+                    label = stringResource(Res.string.exercise_editor_qty_type),
+                    value = state.exercise.quantityType,
+                    values = quantityTypeValues,
+                    text = { it.asUiText() },
+                    image = { it.getImageResource() },
+                    onSelected = { onAction(ExerciseEditorAction.QuantityTypeChanged(it)) },
+                    isError = state.displayError(ExeEditorField.QUANTITY_TYPE),
+                )
+            }
+            Box(modifier = Modifier.weight(1f)) {
+                OutlinedTextField(
+                    value = state.exercise.defaultQuantityValue,
+                    onValueChange = { onAction(ExerciseEditorAction.DefaultQuantityValueChanged(it)) },
+                    label = {
+                        Text(
+                            text = stringResource(Res.string.exercise_editor_qty_value),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            )
+                    },
+                    isError = state.displayError(ExeEditorField.DEFAULT_QUANTITY_VALUE),
+                    maxLines = 1,
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Number,
+                        imeAction = ImeAction.Done
+                    ),
+                )
+            }
+        }
 
         val muscleValues = remember { MuscleGroup.entries.toList() }
         EnumDropdown(
@@ -459,7 +483,7 @@ fun ParametersSection(
                 maxLines = 1,
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Number,
+                    keyboardType = KeyboardType.Decimal,
                     imeAction = ImeAction.Done
                 ),
                 modifier = Modifier.fillMaxWidth(),

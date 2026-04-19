@@ -3,8 +3,8 @@ package com.pl.myworkoutapp.data.database
 import androidx.room.*
 
 @Database(
-    entities = [ExerciseEntity::class, WorkoutPlanEntity::class, WorkoutSessionEntity::class,
-        WorkoutEntity::class, WorkoutItemEntity::class],
+    entities = [CustomExerciseEntity::class, CustomWorkoutPlanEntity::class, WorkoutSessionEntity::class,
+        CustomWorkoutEntity::class, CustomWorkoutItemEntity::class],
     version = 1
 )
 @TypeConverters(

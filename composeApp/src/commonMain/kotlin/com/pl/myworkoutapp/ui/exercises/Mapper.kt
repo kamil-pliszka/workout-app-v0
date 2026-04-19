@@ -142,5 +142,6 @@ fun ExerciseEditorUiModel.toDomain() : CustomExercise {
         equipment = requireNotNull(equipment),
         met = met.toDouble(),
         quantityType = requireNotNull(quantityType),
+        defaultQuantityValue = defaultQuantityValue.toInt(),
     )
 }

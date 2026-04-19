@@ -8,14 +8,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.pl.myworkoutapp.domain.model.exercise.BuiltInExerciseRegistry
-import com.pl.myworkoutapp.domain.model.exercise.ExerciseId
 import com.pl.myworkoutapp.domain.model.workout.BuiltInWorkoutId
 import com.pl.myworkoutapp.domain.model.workout.BuiltInWorkoutRegistry
 import com.pl.myworkoutapp.ui.exercises.ExercisePickerScreen
 import com.pl.myworkoutapp.ui.workouts.components.WorkoutExerciseInfoScreen
 import com.pl.myworkoutapp.ui.workouts.components.WorkoutWithExercisesComponent
-import kotlinx.coroutines.runBlocking
 import myworkoutapplication.composeapp.generated.resources.*
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -26,6 +23,7 @@ fun WorkoutDetailsScreen(
     state: WorkoutDetailsUiState,
     onAction: (WorkoutDetailsAction) -> Unit,
     onEditorAction: (WorkoutEditorAction) -> Unit,
+    onCircuitEditorAction: (CircuitEditorAction) -> Unit,
 ) {
     if (state.isLoading || state.workout == null) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -57,6 +55,15 @@ fun WorkoutDetailsScreen(
                 onAction = onAction
             )
         }
+    }
+
+    if (state.editableCircuit != null) {
+        CircuitEditorScreen(
+            state = state.editableCircuit,
+            onEditorAction = onCircuitEditorAction,
+            onSave = { onAction(WorkoutDetailsAction.OnSaveCircuitEditor) },
+            onCancel = { onAction(WorkoutDetailsAction.OnCancelCircuitEditor) },
+        )
     }
 
     if (state.exerciseInfo != null) {
@@ -132,6 +139,7 @@ private fun WorkoutDetailsScreenPreviewEN() {
         ),
         onAction = { },
         onEditorAction = { },
+        onCircuitEditorAction = { },
     )
 }
 
@@ -147,5 +155,6 @@ private fun WorkoutDetailsScreenPreviewPL() {
         ),
         onAction = { },
         onEditorAction = { },
+        onCircuitEditorAction = { },
     )
 }

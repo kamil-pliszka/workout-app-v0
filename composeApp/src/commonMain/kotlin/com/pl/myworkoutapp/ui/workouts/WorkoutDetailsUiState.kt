@@ -11,4 +11,6 @@ data class WorkoutDetailsUiState(
     val showExercisePicker: Boolean = false,
     //val isEditorMode: Boolean = false,
     val editableWorkout: WorkoutWithExercisesUiModel? = null,
+    val editableCircuit: CircuitEditorUiState? = null,
+    val editingCircuitItem: CircuitUiItem? = null,
 )

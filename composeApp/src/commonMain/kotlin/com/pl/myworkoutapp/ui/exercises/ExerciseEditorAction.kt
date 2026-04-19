@@ -1,9 +1,6 @@
 package com.pl.myworkoutapp.ui.exercises
 
-import com.pl.myworkoutapp.domain.model.exercise.Equipment
-import com.pl.myworkoutapp.domain.model.exercise.ExerciseType
-import com.pl.myworkoutapp.domain.model.exercise.MuscleGroup
-import com.pl.myworkoutapp.domain.model.exercise.QuantityType
+import com.pl.myworkoutapp.domain.model.exercise.*
 
 sealed interface ExerciseEditorAction {
     object OnDismissRequest: ExerciseEditorAction
@@ -24,5 +21,6 @@ sealed interface ExerciseEditorAction {
     data class EquipmentChanged(val value: Equipment): ExerciseEditorAction
     data class QuantityTypeChanged(val value: QuantityType): ExerciseEditorAction
     data class MetChanged(val value: String): ExerciseEditorAction
+    data class DefaultQuantityValueChanged(val value: String): ExerciseEditorAction
 
 }

@@ -6,12 +6,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.LineHeightStyle
-import com.pl.myworkoutapp.AppStateHolder
 import com.pl.myworkoutapp.ui.execution.components.*
-import com.pl.myworkoutapp.ui.exercises.ExerciseEditorAction
-import com.pl.myworkoutapp.ui.theme.PearlOpalGreen
-import org.koin.compose.koinInject
 
 @Composable
 fun WorkoutExecutionScreen(

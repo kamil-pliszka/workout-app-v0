@@ -1,6 +1,5 @@
 package com.pl.myworkoutapp.ui.exercises
 
-import com.pl.myworkoutapp.domain.model.exercise.Equipment
 import com.pl.myworkoutapp.domain.model.exercise.QuantityType
 import com.pl.myworkoutapp.ui.common.*
 import myworkoutapplication.composeapp.generated.resources.*

@@ -11,6 +11,7 @@ val BACK_EXERCISES = listOf(
         equipment = Equipment.BODYWEIGHT,
         met = 1.0,
         quantityType = QuantityType.DURATION,
+        defaultQuantityValue = 30,
     ),
 
     BuiltInExercise (
@@ -20,6 +21,7 @@ val BACK_EXERCISES = listOf(
         equipment = Equipment.BODYWEIGHT,
         met = 1.0,
         quantityType = QuantityType.REPS,
+        defaultQuantityValue = 15,
     ),
 
     BuiltInExercise (
@@ -29,6 +31,7 @@ val BACK_EXERCISES = listOf(
         equipment = Equipment.BODYWEIGHT,
         met = 1.0,
         quantityType = QuantityType.DURATION,
+        defaultQuantityValue = 30,
     ),
 
 
@@ -39,5 +42,6 @@ val BACK_EXERCISES = listOf(
         equipment = Equipment.BODYWEIGHT,
         met = 1.0,
         quantityType = QuantityType.DURATION,
+        defaultQuantityValue = 30,
     ),
 )

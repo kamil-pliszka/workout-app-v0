@@ -2,9 +2,7 @@ package com.pl.myworkoutapp.domain.usecase
 
 import com.pl.myworkoutapp.domain.WorkoutRepository
 import com.pl.myworkoutapp.domain.model.Difficulty
-import com.pl.myworkoutapp.domain.model.workout.CustomWorkout
-import com.pl.myworkoutapp.domain.model.workout.WorkoutId
-import com.pl.myworkoutapp.domain.model.workout.WorkoutItem
+import com.pl.myworkoutapp.domain.model.workout.*
 
 class SaveWorkoutUseCase(
     private val repository: WorkoutRepository

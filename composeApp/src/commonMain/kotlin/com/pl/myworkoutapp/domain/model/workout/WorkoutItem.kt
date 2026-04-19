@@ -24,21 +24,29 @@ data class WorkoutExercise(
 }
 
 enum class Phase {
-    WARMUP, COOLDOWN, MAIN
+    WARMUP, MAIN, COOLDOWN
 }
 
 sealed interface CircuitStructure {
     data object Standard : CircuitStructure
 
     data class EMOM(//Every Minute On Minute
+        // The goal of an EMOM workout is to complete a certain number of reps of a
+        // particular exercise within 60 seconds and to use whatever time is left in that minute
+        // to rest before moving on to the next set
         val minutes: Int
     ) : CircuitStructure
 
-    data class AMRAP(//As Many Rounds As Possible
+    data class AMRAP(//As Many Reps/Rounds As Possible
+        // The goal is to do as many reps of one specific exercise — or as many rounds of a circuit
+        // — in a designated amount of time
         val durationSec: Int
     ) : CircuitStructure
 
     data class Tabata(
+        // trening interwałowy (HIIT), trwający zazwyczaj 4 minuty. Polega na wykonywaniu ćwiczeń
+        // przez 20 sekund w maksymalnym tempie, po których następuje 10 sekund przerwy,
+        // powtarzając cykl 8 razy
         val workSec: Int,
         val restSec: Int,
     ) : CircuitStructure
@@ -46,7 +54,6 @@ sealed interface CircuitStructure {
 
 //zbiór ćwiczeń w ramach tzw SET/Obwód
 data class Circuit(
-    //override val order: Int = 0,
     val phase: Phase,
     val name: String? = null,              // np "warm-up", "cool-down", "Core finisher", "AMRAP 10 min"
     val rounds: Int = 1,

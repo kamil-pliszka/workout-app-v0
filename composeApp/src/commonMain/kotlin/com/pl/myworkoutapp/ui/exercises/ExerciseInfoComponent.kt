@@ -251,7 +251,8 @@ val EXE_C = CustomExercise(
     exerciseType = ExerciseType.CARDIO,
     equipment = Equipment.BODYWEIGHT,
     met = 1.23,
-    quantityType = QuantityType.DURATION
+    quantityType = QuantityType.DURATION,
+    defaultQuantityValue = 12,
 )
 
 @Preview
@@ -276,7 +277,8 @@ val EXE_CB = CustomExercise(
     exerciseType = ExerciseType.CARDIO,
     equipment = Equipment.BODYWEIGHT,
     met = 1.23,
-    quantityType = QuantityType.DURATION
+    quantityType = QuantityType.DURATION,
+    defaultQuantityValue = 12,
 )
 
 @Preview

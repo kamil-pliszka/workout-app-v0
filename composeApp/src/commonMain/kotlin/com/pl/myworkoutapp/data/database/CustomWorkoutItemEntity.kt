@@ -6,19 +6,19 @@ import androidx.room.*
 @Entity(
     foreignKeys = [
         ForeignKey(
-            entity = WorkoutEntity::class,
+            entity = CustomWorkoutEntity::class,
             parentColumns = ["id"],
             childColumns = ["workoutId"],
             onDelete = ForeignKey.CASCADE
         ),
         ForeignKey(
-            entity = WorkoutItemEntity::class,
+            entity = CustomWorkoutItemEntity::class,
             parentColumns = ["id"],
             childColumns = ["parentId"],
             onDelete = ForeignKey.CASCADE
         ),
         ForeignKey(
-            entity = ExerciseEntity::class,
+            entity = CustomExerciseEntity::class,
             parentColumns = ["id"],
             childColumns = ["customExerciseId"],
             onDelete = ForeignKey.RESTRICT
@@ -30,7 +30,7 @@ import androidx.room.*
         Index("customExerciseId"),
     ]
 )
-data class WorkoutItemEntity(
+data class CustomWorkoutItemEntity(
     @PrimaryKey(autoGenerate = true) val id: Long,
     val workoutId: Long,
     val parentId: Long?, // null = root

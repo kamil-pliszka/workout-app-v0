@@ -117,3 +117,17 @@ fun Circuit.toUiBase(): CircuitUiItem {
         title = if (!name.isNullOrBlank()) name.asUiText() else phase.asUiText(),
     )
 }
+
+fun CircuitStructure.toStructureType() = when(this) {
+    CircuitStructure.Standard -> CircuitStructureType.Standard
+    is CircuitStructure.AMRAP -> CircuitStructureType.AMRAP
+    is CircuitStructure.EMOM -> CircuitStructureType.EMOM
+    is CircuitStructure.Tabata -> CircuitStructureType.Tabata
+}
+
+fun CircuitStructureType.asUiText() : UiText = when(this) {
+    CircuitStructureType.Standard -> Res.string.circuit_structure_standard.asUiText()
+    CircuitStructureType.EMOM -> Res.string.circuit_structure_emom.asUiText()
+    CircuitStructureType.AMRAP -> Res.string.circuit_structure_amrap.asUiText()
+    CircuitStructureType.Tabata -> Res.string.circuit_structure_tabata.asUiText()
+}

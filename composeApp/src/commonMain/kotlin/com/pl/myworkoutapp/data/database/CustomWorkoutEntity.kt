@@ -8,7 +8,7 @@ import androidx.room.*
         Index("basedOn"),
     ]
 )
-data class WorkoutEntity(
+data class CustomWorkoutEntity(
     @PrimaryKey(autoGenerate = true) val id: Long,
     val name: String?,
     val description: String?,

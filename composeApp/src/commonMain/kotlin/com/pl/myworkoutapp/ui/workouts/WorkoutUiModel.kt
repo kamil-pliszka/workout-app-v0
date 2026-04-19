@@ -56,6 +56,10 @@ data class ExerciseUiItem(
     val icon: DrawableResource
 ) : WorkoutUiItem
 
+enum class CircuitStructureType {
+    Standard, EMOM, AMRAP, Tabata
+}
+
 data class CircuitUiItem(
     override val isCurrent: Boolean = false,
     override val isDone: Boolean = false,

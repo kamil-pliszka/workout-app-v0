@@ -11,6 +11,7 @@ val ABS_EXERCISES = listOf(
         equipment = Equipment.BODYWEIGHT,
         met = 1.0,
         quantityType = QuantityType.REPS_PER_SIDE,
+        defaultQuantityValue = 15,
     ),
 
     BuiltInExercise (
@@ -20,6 +21,7 @@ val ABS_EXERCISES = listOf(
         equipment = Equipment.BODYWEIGHT,
         met = 1.0,
         quantityType = QuantityType.DURATION,
+        defaultQuantityValue = 30,
     ),
 
     BuiltInExercise (
@@ -29,6 +31,7 @@ val ABS_EXERCISES = listOf(
         equipment = Equipment.BODYWEIGHT,
         met = 1.0,
         quantityType = QuantityType.REPS,
+        defaultQuantityValue = 20,
     ),
 
     BuiltInExercise (
@@ -38,6 +41,7 @@ val ABS_EXERCISES = listOf(
         equipment = Equipment.BODYWEIGHT,
         met = 1.0,
         quantityType = QuantityType.REPS_PER_SIDE,
+        defaultQuantityValue = 15,
     ),
 
     BuiltInExercise (
@@ -47,6 +51,7 @@ val ABS_EXERCISES = listOf(
         equipment = Equipment.BODYWEIGHT,
         met = 1.0,
         quantityType = QuantityType.REPS_PER_SIDE,
+        defaultQuantityValue = 10,
     ),
 
     BuiltInExercise (
@@ -56,6 +61,7 @@ val ABS_EXERCISES = listOf(
         equipment = Equipment.BODYWEIGHT,
         met = 1.0,
         quantityType = QuantityType.REPS,
+        defaultQuantityValue = 15,
     ),
 
 

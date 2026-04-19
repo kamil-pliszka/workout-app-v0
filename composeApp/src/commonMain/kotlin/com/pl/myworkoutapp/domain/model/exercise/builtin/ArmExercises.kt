@@ -11,6 +11,7 @@ val ARM_EXERCISES = listOf(
         equipment = Equipment.DUMBBELLS,
         met = 3.5,
         quantityType = QuantityType.REPS,
+        defaultQuantityValue = 10,
     ),
 
     BuiltInExercise(
@@ -20,5 +21,6 @@ val ARM_EXERCISES = listOf(
         equipment = Equipment.BODYWEIGHT,
         met = 6.0,
         quantityType = QuantityType.REPS,
+        defaultQuantityValue = 10,
     ),
 )

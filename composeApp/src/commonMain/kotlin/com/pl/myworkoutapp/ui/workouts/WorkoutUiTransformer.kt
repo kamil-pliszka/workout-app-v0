@@ -147,7 +147,7 @@ fun toDomain(items: List<WorkoutUiItem>): List<WorkoutItem> {
 
     items.forEach { uiItem ->
         val level = uiItem.timeline.size - 1
-//        println("level: $level, stack: ${stack.size}")
+        println("level: $level, stack: ${stack.size}")
 //        when(uiItem) {
 //            is CircuitUiItem -> println("circuit: ${uiItem.phase}")
 //            is ExerciseUiItem -> println("exercise: ${uiItem.exerciseId}")

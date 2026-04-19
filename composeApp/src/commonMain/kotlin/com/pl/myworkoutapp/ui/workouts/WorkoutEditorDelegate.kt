@@ -1,21 +1,35 @@
 package com.pl.myworkoutapp.ui.workouts
 
+import androidx.compose.ui.graphics.Color
 import com.pl.myworkoutapp.ui.common.asUiText
 
 sealed interface WorkoutEditorAction {
     data class OnNameChanged(val value: String) : WorkoutEditorAction
     data class OnDescChanged(val value: String) : WorkoutEditorAction
     data class OnMove(val from: Int, val to: Int) : WorkoutEditorAction
+    data class ExercisePicked(val exerciseUiItem: ExerciseUiItem) : WorkoutEditorAction
+    data class AddCircuit(val circuit: CircuitUiItem) : WorkoutEditorAction
+    data class ModifyCircuit(val current: CircuitUiItem, val modified: CircuitUiItem) :
+        WorkoutEditorAction
 }
-//🔥 To NIE jest ViewModel, to NIE jest “ciężki serwis”
-//To jest:
-//👉 stateless service / use-case / reducer provider
+
+/**
+ * Stateless delegate for handling workout editing logic.
+ */
 class WorkoutEditorDelegate {
 
     private fun WorkoutWithExercisesUiModel.updateWorkout(
         block: (WorkoutUiModel) -> WorkoutUiModel
-    ) : WorkoutWithExercisesUiModel {
+    ): WorkoutWithExercisesUiModel {
         return copy(workout = block(this.workout))
+    }
+
+    private fun WorkoutWithExercisesUiModel.updateItems(
+        block: (MutableList<WorkoutUiItem>) -> Unit
+    ): WorkoutWithExercisesUiModel {
+        val mutableItems = items.toMutableList()
+        block(mutableItems)
+        return copy(items = mutableItems)
     }
 
     fun reduce(
@@ -24,17 +38,28 @@ class WorkoutEditorDelegate {
     ): WorkoutWithExercisesUiModel {
         return when (action) {
             is WorkoutEditorAction.OnMove -> {
-                val items = state.items.toMutableList().apply {
-                    moveWorkoutItem(action.from, action.to)
-                }
-                state.copy(items = items)
+                state.updateItems { moveWorkoutItem(it, action.from, action.to) }
             }
-            is WorkoutEditorAction.OnDescChanged -> state.copy(workout = state.workout.copy(
-                desc = action.value.asUiText()
-            ))
-            is WorkoutEditorAction.OnNameChanged -> state.copy(workout = state.workout.copy(
-                name = action.value.asUiText()
-            ))
+
+            is WorkoutEditorAction.OnDescChanged -> {
+                state.updateWorkout { it.copy(desc = action.value.asUiText()) }
+            }
+
+            is WorkoutEditorAction.OnNameChanged -> {
+                state.updateWorkout { it.copy(name = action.value.asUiText()) }
+            }
+
+            is WorkoutEditorAction.ExercisePicked -> {
+                state.updateItems { addExercise(it, action.exerciseUiItem) }
+            }
+
+            is WorkoutEditorAction.AddCircuit -> {
+                state.updateItems { addCircuit(it, action.circuit) }
+            }
+
+            is WorkoutEditorAction.ModifyCircuit -> {
+                state.updateItems { modifyCircuit(it, action.current, action.modified) }
+            }
         }
     }
 
@@ -48,10 +73,10 @@ class WorkoutEditorDelegate {
     }
     */
 
-    private fun MutableList<WorkoutUiItem>.moveWorkoutItem(from: Int, to: Int) {
+    private fun moveWorkoutItem(items: MutableList<WorkoutUiItem>, from: Int, to: Int) {
         //TODO - tutaj trzeba sie zastanowic co z timeline + circuit elementami
-        val item = removeAt(from)
-        add(to, item)
+        val item = items.removeAt(from)
+        items.add(to, item)
         /* docelowo coś w stylu:
             val item = this[from]
             when (item) {
@@ -60,6 +85,43 @@ class WorkoutEditorDelegate {
             }
             normalizeTimeline()
          */
+    }
+
+    private fun addExercise(items: MutableList<WorkoutUiItem>, exercise: ExerciseUiItem) {
+        println("addExercise : ${exercise.exerciseId}")
+        val maxKey = items.maxOf { it.key }
+        items.add(
+            exercise.copy(
+                key = maxKey + 1,
+                timeline = listOf(TimeLineItemType.End(Color.Red))
+            )
+        )
+    }
+
+    private fun addCircuit(items: MutableList<WorkoutUiItem>, circuit: CircuitUiItem) {
+        println("addCircuit : $circuit")
+        val maxKey = items.maxOf { it.key }
+        items.add(
+            circuit.copy(
+                key = maxKey + 1,
+                timeline = listOf(TimeLineItemType.End(Color.Red))
+            )
+        )
+    }
+
+
+    private fun modifyCircuit(
+        items: MutableList<WorkoutUiItem>,
+        current: CircuitUiItem, modified: CircuitUiItem
+    ) {
+        val index = items.indexOf(current)
+        require(index >= 0)
+        items[index] = current.copy(
+            phase = modified.phase,
+            rounds = modified.rounds,
+            structure = modified.structure,
+            title = modified.title,
+        )
     }
 
 }

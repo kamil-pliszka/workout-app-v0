@@ -11,43 +11,43 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface WorkoutDao {
     @Upsert
-    suspend fun upsert(entity: ExerciseEntity)
-    @Query("SELECT * FROM ExerciseEntity")
-    fun observeExercises(): Flow<List<ExerciseEntity>>
-    @Query("SELECT * FROM ExerciseEntity")
-    suspend fun getAllExercises(): List<ExerciseEntity>
-    @Query("SELECT * FROM ExerciseEntity WHERE id = :id")
-    suspend fun getExerciseById(id: Long): ExerciseEntity?
-    @Query("DELETE FROM ExerciseEntity WHERE id = :id")
+    suspend fun upsert(entity: CustomExerciseEntity)
+    @Query("SELECT * FROM CustomExerciseEntity")
+    fun observeExercises(): Flow<List<CustomExerciseEntity>>
+    @Query("SELECT * FROM CustomExerciseEntity")
+    suspend fun getAllExercises(): List<CustomExerciseEntity>
+    @Query("SELECT * FROM CustomExerciseEntity WHERE id = :id")
+    suspend fun getExerciseById(id: Long): CustomExerciseEntity?
+    @Query("DELETE FROM CustomExerciseEntity WHERE id = :id")
     suspend fun deleteExerciseById(id: Long)
 
-    @Query("SELECT * FROM WorkoutEntity WHERE id = :id")
-    suspend fun getWorkoutById(id: Long): WorkoutEntity?
+    @Query("SELECT * FROM CustomWorkoutEntity WHERE id = :id")
+    suspend fun getWorkoutById(id: Long): CustomWorkoutEntity?
     @Insert//(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(workout: WorkoutEntity) : Long
+    suspend fun insert(workout: CustomWorkoutEntity) : Long
     @Update
-    suspend fun update(workout: WorkoutEntity): Int
+    suspend fun update(workout: CustomWorkoutEntity): Int
     @Delete
-    suspend fun delete(workout: WorkoutEntity): Int
+    suspend fun delete(workout: CustomWorkoutEntity): Int
 
     @Insert
-    suspend fun insert(items: List<WorkoutItemEntity>): List<Long>
+    suspend fun insert(items: List<CustomWorkoutItemEntity>): List<Long>
     @Insert
-    suspend fun insert(item: WorkoutItemEntity): Long
+    suspend fun insert(item: CustomWorkoutItemEntity): Long
 
-    @Query("DELETE FROM WorkoutItemEntity WHERE workoutId = :workoutId")
+    @Query("DELETE FROM CustomWorkoutItemEntity WHERE workoutId = :workoutId")
     suspend fun deleteItemsByWorkoutId(workoutId: Long): Int
 
-    @Query("SELECT * FROM WorkoutItemEntity WHERE workoutId = :workoutId ORDER BY parentId, position")
-    suspend fun getSortedItemsByWorkoutId(workoutId: Long): List<WorkoutItemEntity>
+    @Query("SELECT * FROM CustomWorkoutItemEntity WHERE workoutId = :workoutId ORDER BY parentId, position")
+    suspend fun getSortedItemsByWorkoutId(workoutId: Long): List<CustomWorkoutItemEntity>
 
 
     @Insert//(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(exercise: ExerciseEntity) : Long
+    suspend fun insert(exercise: CustomExerciseEntity) : Long
     @Update
-    suspend fun update(exercise: ExerciseEntity): Int
+    suspend fun update(exercise: CustomExerciseEntity): Int
     @Delete
-    suspend fun delete(exercise: ExerciseEntity): Int
+    suspend fun delete(exercise: CustomExerciseEntity): Int
 
 
 
@@ -70,14 +70,14 @@ interface WorkoutDao {
     }
 
     @Transaction
-    suspend fun insertWorkout(customWorkout: WorkoutEntity, items : List<FlatWorkoutItem>) : WorkoutId.Custom {
+    suspend fun insertWorkout(customWorkout: CustomWorkoutEntity, items : List<FlatWorkoutItem>) : WorkoutId.Custom {
         val workoutId : Long = insert(customWorkout.copy(updatedAt = currentTimeMilliseconds()))
         saveItems(workoutId, items)
         return workoutId.asWorkoutId()
     }
 
     @Transaction
-    suspend fun updateWorkout(customWorkout: WorkoutEntity, items : List<FlatWorkoutItem>) : WorkoutId.Custom {
+    suspend fun updateWorkout(customWorkout: CustomWorkoutEntity, items : List<FlatWorkoutItem>) : WorkoutId.Custom {
         //elementy treningu w ramach workout nie mają ID,
         // wiec najpierw usuwamy wszystkie WorkoutItemEntity
         // a potem tworzymy je na nowo
@@ -91,12 +91,12 @@ interface WorkoutDao {
         return customWorkout.id.asWorkoutId()
     }
 
-    suspend fun insertExercise(customExercise: ExerciseEntity) : ExerciseId.Custom {
+    suspend fun insertExercise(customExercise: CustomExerciseEntity) : ExerciseId.Custom {
         val exerciseId : Long = insert(customExercise.copy(updatedAt = currentTimeMilliseconds()))
         return exerciseId.asExerciseId()
     }
 
-    suspend fun updateExercise(customExercise: ExerciseEntity) : ExerciseId.Custom {
+    suspend fun updateExercise(customExercise: CustomExerciseEntity) : ExerciseId.Custom {
         val updated = update(customExercise.copy(updatedAt = currentTimeMilliseconds()))
         require(updated > 0) {
             "Exercise not found for update: ${customExercise.id}"

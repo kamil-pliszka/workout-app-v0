@@ -17,6 +17,7 @@ data class ExerciseEditorUiModel(
     val equipment: Equipment? = null,
     val met: String = "", // string → łatwiejsza edycja
     val quantityType: QuantityType? = null,
+    val defaultQuantityValue: String = "",// string → łatwiejsza edycja
 )
 
 data class ExerciseEditorUiState(
@@ -43,4 +44,5 @@ enum class ExeEditorField {
     MET,
     QUANTITY_TYPE,
     IMAGE,
+    DEFAULT_QUANTITY_VALUE,
 }

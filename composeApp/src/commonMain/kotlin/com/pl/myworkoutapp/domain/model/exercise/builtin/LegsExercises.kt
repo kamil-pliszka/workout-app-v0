@@ -10,6 +10,7 @@ val LEGS_EXERCISES = listOf(
         equipment = Equipment.BODYWEIGHT,
         met = 8.0,
         quantityType = QuantityType.DURATION,
+        defaultQuantityValue = 30,
     ),
 
     BuiltInExercise (
@@ -19,6 +20,7 @@ val LEGS_EXERCISES = listOf(
         equipment = Equipment.BODYWEIGHT,
         met = 5.0,
         quantityType = QuantityType.REPS,
+        defaultQuantityValue = 15,
     ),
 
     BuiltInExercise (
@@ -28,6 +30,7 @@ val LEGS_EXERCISES = listOf(
         equipment = Equipment.BODYWEIGHT,
         met = 1.0,
         quantityType = QuantityType.DISTANCE,//albo DURATION
+        defaultQuantityValue = 1000,
     ),
 
     BuiltInExercise (
@@ -37,6 +40,7 @@ val LEGS_EXERCISES = listOf(
         equipment = Equipment.BODYWEIGHT,
         met = 1.0,
         quantityType = QuantityType.DURATION,
+        defaultQuantityValue = 10 * 60,//10 min
     ),
 
     BuiltInExercise (
@@ -46,5 +50,6 @@ val LEGS_EXERCISES = listOf(
         equipment = Equipment.BODYWEIGHT,
         met = 0.5,
         quantityType = QuantityType.DISTANCE,//albo DURATION
+        defaultQuantityValue = 30 * 60,//30 min
     ),
 )

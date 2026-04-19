@@ -157,9 +157,17 @@ object AbsWorkouts {
                 name = "cool-down",
                 rounds = 1,
                 items = listOf(
-                    BuiltInExerciseId.COBRA_STRETCH.withDuration(30),
+                    Circuit(
+                        phase = Phase.MAIN,
+                        name = "cd-level2",
+                        rounds = 3,
+                        items = listOf(
+                            BuiltInExerciseId.COBRA_STRETCH.withDuration(30),
+                        )
+                    ),
                 )
             ),
+            BuiltInExerciseId.COBRA_STRETCH.withDuration(30),
         ),
     )
 

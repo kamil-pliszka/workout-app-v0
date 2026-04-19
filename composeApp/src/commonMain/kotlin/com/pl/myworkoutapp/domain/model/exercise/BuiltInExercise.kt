@@ -6,5 +6,6 @@ data class BuiltInExercise(
     override val exerciseType: ExerciseType,
     override val equipment: Equipment,
     override val met: Double,
-    override val quantityType: QuantityType
+    override val quantityType: QuantityType,
+    override val defaultQuantityValue: Int,
 ) : Exercise

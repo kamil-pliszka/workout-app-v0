@@ -9,6 +9,7 @@ import kotlin.time.Instant
 data class WorkoutSessionEntity(
     @PrimaryKey(autoGenerate = false) val id: Long,
     val planId: Long,
+    val workoutId: String,
     val startTime: Instant?,
     val endTime: Instant?,
     val calories: Double?,

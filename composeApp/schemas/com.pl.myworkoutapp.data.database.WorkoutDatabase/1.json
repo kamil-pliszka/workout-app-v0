@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "a433c5bd073360ca36a3f98a75d389fb",
+    "identityHash": "e2ba7a23b909422a32e78a0436ac666a",
     "entities": [
       {
-        "tableName": "ExerciseEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `description` TEXT, `imageUri` TEXT, `basedOn` TEXT, `muscle` TEXT NOT NULL, `exerciseType` TEXT NOT NULL, `equipment` TEXT NOT NULL, `met` REAL NOT NULL, `quantityType` TEXT NOT NULL, `updatedAt` INTEGER NOT NULL)",
+        "tableName": "CustomExerciseEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `description` TEXT, `imageUri` TEXT, `basedOn` TEXT, `muscle` TEXT NOT NULL, `exerciseType` TEXT NOT NULL, `equipment` TEXT NOT NULL, `met` REAL NOT NULL, `quantityType` TEXT NOT NULL, `updatedAt` INTEGER NOT NULL, `defaultQuantityVal` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -70,6 +70,12 @@
             "columnName": "updatedAt",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "defaultQuantityVal",
+            "columnName": "defaultQuantityVal",
+            "affinity": "INTEGER",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -80,27 +86,27 @@
         },
         "indices": [
           {
-            "name": "index_ExerciseEntity_basedOn",
+            "name": "index_CustomExerciseEntity_basedOn",
             "unique": false,
             "columnNames": [
               "basedOn"
             ],
             "orders": [],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_ExerciseEntity_basedOn` ON `${TABLE_NAME}` (`basedOn`)"
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_CustomExerciseEntity_basedOn` ON `${TABLE_NAME}` (`basedOn`)"
           },
           {
-            "name": "index_ExerciseEntity_name",
+            "name": "index_CustomExerciseEntity_name",
             "unique": false,
             "columnNames": [
               "name"
             ],
             "orders": [],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_ExerciseEntity_name` ON `${TABLE_NAME}` (`name`)"
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_CustomExerciseEntity_name` ON `${TABLE_NAME}` (`name`)"
           }
         ]
       },
       {
-        "tableName": "WorkoutPlanEntity",
+        "tableName": "CustomWorkoutPlanEntity",
         "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `name` TEXT NOT NULL, `difficulty` TEXT NOT NULL, `exerciseIds` TEXT NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
@@ -137,7 +143,7 @@
       },
       {
         "tableName": "WorkoutSessionEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `planId` INTEGER NOT NULL, `startTime` INTEGER, `endTime` INTEGER, `calories` REAL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `planId` INTEGER NOT NULL, `workoutId` TEXT NOT NULL, `startTime` INTEGER, `endTime` INTEGER, `calories` REAL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -149,6 +155,12 @@
             "fieldPath": "planId",
             "columnName": "planId",
             "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "workoutId",
+            "columnName": "workoutId",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
@@ -175,7 +187,7 @@
         }
       },
       {
-        "tableName": "WorkoutEntity",
+        "tableName": "CustomWorkoutEntity",
         "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT, `description` TEXT, `imageUri` TEXT, `basedOn` TEXT, `difficulty` TEXT NOT NULL, `updatedAt` INTEGER NOT NULL)",
         "fields": [
           {
@@ -225,19 +237,19 @@
         },
         "indices": [
           {
-            "name": "index_WorkoutEntity_basedOn",
+            "name": "index_CustomWorkoutEntity_basedOn",
             "unique": false,
             "columnNames": [
               "basedOn"
             ],
             "orders": [],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_WorkoutEntity_basedOn` ON `${TABLE_NAME}` (`basedOn`)"
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_CustomWorkoutEntity_basedOn` ON `${TABLE_NAME}` (`basedOn`)"
           }
         ]
       },
       {
-        "tableName": "WorkoutItemEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `workoutId` INTEGER NOT NULL, `parentId` INTEGER, `position` INTEGER NOT NULL, `type` TEXT NOT NULL, `builtInExerciseId` TEXT, `customExerciseId` INTEGER, `quantityValue` INTEGER, `quantityType` TEXT, `phase` TEXT, `name` TEXT, `rounds` INTEGER, `structureType` TEXT, `structureData` TEXT, FOREIGN KEY(`workoutId`) REFERENCES `WorkoutEntity`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`parentId`) REFERENCES `WorkoutItemEntity`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`customExerciseId`) REFERENCES `ExerciseEntity`(`id`) ON UPDATE NO ACTION ON DELETE RESTRICT )",
+        "tableName": "CustomWorkoutItemEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `workoutId` INTEGER NOT NULL, `parentId` INTEGER, `position` INTEGER NOT NULL, `type` TEXT NOT NULL, `builtInExerciseId` TEXT, `customExerciseId` INTEGER, `quantityValue` INTEGER, `quantityType` TEXT, `phase` TEXT, `name` TEXT, `rounds` INTEGER, `structureType` TEXT, `structureData` TEXT, FOREIGN KEY(`workoutId`) REFERENCES `CustomWorkoutEntity`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`parentId`) REFERENCES `CustomWorkoutItemEntity`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`customExerciseId`) REFERENCES `CustomExerciseEntity`(`id`) ON UPDATE NO ACTION ON DELETE RESTRICT )",
         "fields": [
           {
             "fieldPath": "id",
@@ -322,36 +334,36 @@
         },
         "indices": [
           {
-            "name": "index_WorkoutItemEntity_workoutId",
+            "name": "index_CustomWorkoutItemEntity_workoutId",
             "unique": false,
             "columnNames": [
               "workoutId"
             ],
             "orders": [],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_WorkoutItemEntity_workoutId` ON `${TABLE_NAME}` (`workoutId`)"
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_CustomWorkoutItemEntity_workoutId` ON `${TABLE_NAME}` (`workoutId`)"
           },
           {
-            "name": "index_WorkoutItemEntity_parentId",
+            "name": "index_CustomWorkoutItemEntity_parentId",
             "unique": false,
             "columnNames": [
               "parentId"
             ],
             "orders": [],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_WorkoutItemEntity_parentId` ON `${TABLE_NAME}` (`parentId`)"
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_CustomWorkoutItemEntity_parentId` ON `${TABLE_NAME}` (`parentId`)"
           },
           {
-            "name": "index_WorkoutItemEntity_customExerciseId",
+            "name": "index_CustomWorkoutItemEntity_customExerciseId",
             "unique": false,
             "columnNames": [
               "customExerciseId"
             ],
             "orders": [],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_WorkoutItemEntity_customExerciseId` ON `${TABLE_NAME}` (`customExerciseId`)"
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_CustomWorkoutItemEntity_customExerciseId` ON `${TABLE_NAME}` (`customExerciseId`)"
           }
         ],
         "foreignKeys": [
           {
-            "table": "WorkoutEntity",
+            "table": "CustomWorkoutEntity",
             "onDelete": "CASCADE",
             "onUpdate": "NO ACTION",
             "columns": [
@@ -362,7 +374,7 @@
             ]
           },
           {
-            "table": "WorkoutItemEntity",
+            "table": "CustomWorkoutItemEntity",
             "onDelete": "CASCADE",
             "onUpdate": "NO ACTION",
             "columns": [
@@ -373,7 +385,7 @@
             ]
           },
           {
-            "table": "ExerciseEntity",
+            "table": "CustomExerciseEntity",
             "onDelete": "RESTRICT",
             "onUpdate": "NO ACTION",
             "columns": [
@@ -388,7 +400,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'a433c5bd073360ca36a3f98a75d389fb')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'e2ba7a23b909422a32e78a0436ac666a')"
     ]
   }
 }
