@@ -23,8 +23,8 @@ import androidx.compose.ui.unit.dp
 import com.pl.myworkoutapp.domain.model.workout.*
 import com.pl.myworkoutapp.ui.common.*
 import com.pl.myworkoutapp.ui.theme.AppTheme
+import com.pl.myworkoutapp.ui.workouts.components.WorkoutEditableItemCircuit
 import com.pl.myworkoutapp.ui.workouts.components.WorkoutEditableItemExercise
-import com.pl.myworkoutapp.ui.workouts.components.WorkoutItemCircuit
 import kotlinx.coroutines.launch
 import myworkoutapplication.composeapp.generated.resources.*
 import org.jetbrains.compose.resources.painterResource
@@ -76,6 +76,7 @@ fun WorkoutEditorScreen(
             Box(modifier = Modifier.weight(1f)) {
                 WorkoutEditorContent(
                     state = state,
+                    onAction = onAction,
                     onEditorAction = onEditorAction
                 )
             }
@@ -206,7 +207,9 @@ fun WorkoutEditorBottomButtons(
 @Composable
 fun WorkoutEditorContent(
     state: WorkoutWithExercisesUiModel,
+    onAction: (WorkoutDetailsAction) -> Unit,
     onEditorAction: (WorkoutEditorAction) -> Unit,
+
 ) {
     val listState = rememberLazyListState()
     val scope = rememberCoroutineScope()
@@ -220,6 +223,11 @@ fun WorkoutEditorContent(
             }
         }
     )
+    LaunchedEffect(state.scrollToIdx) {
+        state.scrollToIdx?.let {
+            listState.animateScrollToItem(state.scrollToIdx)
+        }
+    }
 
     LazyColumn(
         state = listState,
@@ -237,7 +245,7 @@ fun WorkoutEditorContent(
                     dragDropState = dragDropState,
                     index = index,
                     isDragging = dragDropState.draggingIndex == index,
-                    onAction = onEditorAction
+                    onAction = onAction
                 )
             }
         }
@@ -251,7 +259,7 @@ fun WorkoutEditableItemRow(
     dragDropState: DragDropState,
     index: Int,
     isDragging: Boolean,
-    onAction: (WorkoutEditorAction) -> Unit,
+    onAction: (WorkoutDetailsAction) -> Unit,
 ) {
     Row(
         modifier = Modifier
@@ -292,7 +300,13 @@ fun WorkoutEditableItemRow(
         // Item Content
         Box(modifier = Modifier.weight(1f)) {
             when (item) {
-                is CircuitUiItem -> WorkoutItemCircuit(item, themeColor, onClick = {})
+                is CircuitUiItem -> WorkoutEditableItemCircuit(
+                    item,
+                    themeColor,
+                    onClick = {},
+                    onEditClick = { onAction(WorkoutDetailsAction.OnEditCircuit(item)) },
+                    onDeleteClick = { onAction(WorkoutDetailsAction.OnDeleteCircuit(item)) }
+                )
                 is ExerciseUiItem -> WorkoutEditableItemExercise(item, themeColor, onClick = {})
             }
         }

@@ -24,6 +24,7 @@ data class WorkoutUiModel(
 data class WorkoutWithExercisesUiModel(
     val workout: WorkoutUiModel,
     val items: List<WorkoutUiItem>,
+    val scrollToIdx: Int? = null,
 )
 
 sealed interface TimeLineItemType {
@@ -67,9 +68,8 @@ data class CircuitUiItem(
     override val key: Int = 0,
 
     val phase: Phase,
-    val rounds: Int,
-    //trochę przenika, ale nie chce mi się robić kopii, bo jeszcze nie wiem jak to wykorzystam
-    val structure: CircuitStructure = CircuitStructure.Standard,
+    //TODO - trochę przenika, ale nie chce mi się robić kopii, bo jeszcze nie wiem jak to wykorzystam
+    val structure: CircuitStructure = CircuitStructure.Standard(2),
     val title: UiText,
     val progress: Float? = null,
 ) : WorkoutUiItem

@@ -112,14 +112,13 @@ fun Circuit.toUiBase(): CircuitUiItem {
         timeline = emptyList(), //na tym poziomie nie mamy wiedzy
         progress = null, //na tym poziomie nie mamy wiedzy
         phase = this.phase,
-        rounds = this.rounds,
         structure = this.structure,
         title = if (!name.isNullOrBlank()) name.asUiText() else phase.asUiText(),
     )
 }
 
 fun CircuitStructure.toStructureType() = when(this) {
-    CircuitStructure.Standard -> CircuitStructureType.Standard
+    is CircuitStructure.Standard -> CircuitStructureType.Standard
     is CircuitStructure.AMRAP -> CircuitStructureType.AMRAP
     is CircuitStructure.EMOM -> CircuitStructureType.EMOM
     is CircuitStructure.Tabata -> CircuitStructureType.Tabata
@@ -130,4 +129,11 @@ fun CircuitStructureType.asUiText() : UiText = when(this) {
     CircuitStructureType.EMOM -> Res.string.circuit_structure_emom.asUiText()
     CircuitStructureType.AMRAP -> Res.string.circuit_structure_amrap.asUiText()
     CircuitStructureType.Tabata -> Res.string.circuit_structure_tabata.asUiText()
+}
+
+fun CircuitStructure.getStructureDesc() : UiText = when(this) {
+    is CircuitStructure.AMRAP -> Res.string.circuit_structure_desc_amrap.asUiText(durationSec)
+    is CircuitStructure.EMOM -> Res.string.circuit_structure_desc_emom.asUiText(minutes)
+    is CircuitStructure.Standard -> Res.string.circuit_structure_desc_standard.asUiText(rounds)
+    is CircuitStructure.Tabata -> Res.string.circuit_structure_desc_tabata.asUiText(rounds, workSec, restSec)
 }

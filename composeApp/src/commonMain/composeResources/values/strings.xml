@@ -110,9 +110,14 @@
     <string name="circuit_structure_emom">EMOM</string>
     <string name="circuit_structure_amrap">AMRAP</string>
     <string name="circuit_structure_tabata">Tabata</string>
+    <string name="circuit_structure_desc_standard">Circuit x%1$d</string>
+    <string name="circuit_structure_desc_emom">EMOM %1$d minutes</string>
+    <string name="circuit_structure_desc_amrap">AMRAP %1$d seconds</string>
+    <string name="circuit_structure_desc_tabata">Tabata x%1$d %2$d/%3$d</string>
     <string name="circuit_rounds">Rounds</string>
     <string name="circuit_emom_minutes">Minutes</string>
     <string name="circuit_amrap_minutes">Duration (min)</string>
+    <string name="circuit_tabata_rounds">Rounds/Cycles</string>
     <string name="circuit_tabata_worksec">Work (sec)</string>
     <string name="circuit_tabata_restsec">Rest (sec)</string>
     <string name="circuit_error_numer_must_be_greater_zero">Must be greater than 0</string>

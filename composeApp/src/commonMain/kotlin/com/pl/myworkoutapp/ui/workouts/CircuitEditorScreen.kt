@@ -387,20 +387,30 @@ fun CircuitEditorContent(
                         ) {
                             AssistChip(
                                 onClick = {
+                                    onEditorAction(CircuitEditorAction.TabataRoundsChanged("8"))
                                     onEditorAction(CircuitEditorAction.TabataWorksecChanged("20"))
                                     onEditorAction(CircuitEditorAction.TabataRestsecChanged("10"))
                                 },
-                                label = { Text("20/10") }
+                                label = { Text("8/20/10") }
                             )
                             AssistChip(
                                 onClick = {
+                                    onEditorAction(CircuitEditorAction.TabataRoundsChanged("6"))
                                     onEditorAction(CircuitEditorAction.TabataWorksecChanged("30"))
                                     onEditorAction(CircuitEditorAction.TabataRestsecChanged("15"))
                                 },
-                                label = { Text("30/15") }
+                                label = { Text("6/30/15") }
                             )
                         }
                         val restFocus = remember { FocusRequester() }
+                        CircuitNumberField(
+                            label = stringResource(Res.string.circuit_tabata_rounds),
+                            value = state.tabataRounds,
+                            onChange = { onEditorAction(CircuitEditorAction.TabataRoundsChanged(it)) },
+                            imeAction = ImeAction.Next,
+                            keyboardActions = KeyboardActions(onNext = { restFocus.requestFocus() }),
+                            modifier = Modifier.focusRequester(firstAttrFocus)
+                        )
                         CircuitNumberField(
                             label = stringResource(Res.string.circuit_tabata_worksec),
                             value = state.tabataWorkSec,

@@ -38,8 +38,15 @@ fun WorkoutItemCircuit(
     themeColor: Color,
     onClick: () -> Unit
 ) {
+    val crounds = when (circuit.structure) {
+        is CircuitStructure.AMRAP -> 1
+        is CircuitStructure.EMOM -> 1
+        is CircuitStructure.Standard -> circuit.structure.rounds
+        is CircuitStructure.Tabata -> circuit.structure.rounds
+    }
     Row(
-        modifier = Modifier.fillMaxWidth().background(color = DesertWhite).height(IntrinsicSize.Min).clickable { onClick() },
+        modifier = Modifier.fillMaxWidth().background(color = DesertWhite).height(IntrinsicSize.Min)
+            .clickable { onClick() },
         verticalAlignment = Alignment.CenterVertically
     ) {
         // 🔹 LEWA STRONA (timeline)
@@ -47,17 +54,30 @@ fun WorkoutItemCircuit(
             types = circuit.timeline,
             itemWidth = 24.dp
         )
-        Text(
-            text = circuit.title.asString(),
-            style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.Bold,
-        )
-        if (circuit.rounds > 1) {
-            Text(
-                text = " : x${circuit.rounds}",
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold,
-            )
+        Column {
+            Row {
+                Text(
+                    text = circuit.phase.asUiText().asString(),
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                )
+                Spacer(Modifier.width(20.dp))
+                Text(
+                    text = circuit.structure.getStructureDesc().asString(),
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Medium,
+                )
+            }
+            val title = circuit.title.asString()
+            if (title.isNotBlank()) {
+                Row {
+                    Text(
+                        text = title,
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                    )
+                }
+            }
         }
         Spacer(modifier = Modifier.weight(1f))
         println("circuit: $circuit")
@@ -71,16 +91,16 @@ fun WorkoutItemCircuit(
         } else {
             println("progress: ${circuit.progress}")
             circuit.progress?.let {
-                if (circuit.rounds <= 8) {
+                if (crounds <= 8) {
                     println("jestem tu")
                     SegmentedProgressIndicator(
                         progress = circuit.progress,
-                        modifier = Modifier.width((16 * circuit.rounds).dp)
+                        modifier = Modifier.width((16 * crounds).dp)
                             .padding(end = 8.dp), //.fillMaxWidth(),
                         color = themeColor,
                         //backgroundColor = Color.LightGray,
                         progressHeight = 6.dp,
-                        numberOfSegments = circuit.rounds,
+                        numberOfSegments = crounds,
                         segmentGap = 4.dp
                     )
                 } else {//zbyt wiele żeby pokazać
@@ -94,19 +114,15 @@ fun WorkoutItemCircuit(
                 }
             }
         }
-        //TODO - phase?
-        //TODO - structure?
     }
 }
-
 
 
 val CIRCUIT_ITEM_WM = CircuitUiItem(
     isCurrent = false,
     isDone = true,
     phase = Phase.WARMUP,
-    rounds = 2,
-    structure = CircuitStructure.Standard,
+    structure = CircuitStructure.Standard(2),
     title = "ROZGRZEWECZKA".asUiText(),
 )
 
@@ -115,7 +131,9 @@ val CIRCUIT_ITEM_WM = CircuitUiItem(
 @Composable
 fun CircuitPreviewBasic() {
     WorkoutItemCircuit(
-        circuit = CIRCUIT_ITEM_WM,
+        circuit = CIRCUIT_ITEM_WM.copy(
+            structure = CircuitStructure.AMRAP(300)
+        ),
         themeColor = PureGreen,
         onClick = { }
     )
@@ -125,7 +143,9 @@ fun CircuitPreviewBasic() {
 @Composable
 fun CircuitPreviewTimeLine() {
     WorkoutItemCircuit(
-        circuit = CIRCUIT_ITEM_WM.with(
+        circuit = CIRCUIT_ITEM_WM.copy(
+            structure = CircuitStructure.EMOM(12)
+        ).with(
             TimeLineItemType.Vertical(Color.Green),
             TimeLineItemType.Triple(Color.Magenta),
             TimeLineItemType.End(Color.Red),
@@ -139,7 +159,11 @@ fun CircuitPreviewTimeLine() {
 @Composable
 fun CircuitPreviewProgress1() {
     WorkoutItemCircuit(
-        circuit = CIRCUIT_ITEM_WM.copy(rounds = 8, isDone = false, progress = 0.4f).with(
+        circuit = CIRCUIT_ITEM_WM.copy(
+            structure = CircuitStructure.Standard(7),
+            isDone = false,
+            progress = 0.4f
+        ).with(
             TimeLineItemType.End(Color.Red),
         ),
         themeColor = PureGreen,
@@ -151,7 +175,15 @@ fun CircuitPreviewProgress1() {
 @Composable
 fun CircuitPreviewProgress2() {
     WorkoutItemCircuit(
-        circuit = CIRCUIT_ITEM_WM.copy(rounds = 9, isDone = false, progress = 0.4f).with(
+        circuit = CIRCUIT_ITEM_WM.copy(
+            structure = CircuitStructure.Tabata(
+                rounds = 8,
+                workSec = 30,
+                restSec = 15
+            ),
+            isDone = false,
+            progress = 0.4f
+        ).with(
             TimeLineItemType.End(Color.Red),
         ),
         themeColor = PureGreen,

@@ -13,10 +13,10 @@ object TabataWorkouts {
                 phase = Phase.MAIN,
                 name = "tabata set",
                 structure = CircuitStructure.Tabata(
+                    rounds = 4,
                     workSec = 20,
                     restSec = 10,
                 ),
-                rounds = 8,
                 items = listOf(
                     BuiltInExerciseId.PLANK.withDuration(20),
                 )

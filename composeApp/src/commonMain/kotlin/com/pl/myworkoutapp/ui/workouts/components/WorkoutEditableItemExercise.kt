@@ -68,7 +68,7 @@ val EDITABLE_EXERCISE_ITEM = ExerciseUiItem(
 @Preview
 @Composable
 fun ExerciseEditablePreviewBasic() {
-    WorkoutItemExercise(
+    WorkoutEditableItemExercise(
         exercise = EDITABLE_EXERCISE_ITEM,
         themeColor = PureGreen,
         onClick = { }
@@ -78,7 +78,7 @@ fun ExerciseEditablePreviewBasic() {
 @Preview
 @Composable
 fun ExerciseEditablePreviewTimeLine() {
-    WorkoutItemExercise(
+    WorkoutEditableItemExercise(
         exercise = EDITABLE_EXERCISE_ITEM.with(
             TimeLineItemType.Vertical(Color.Green),
             TimeLineItemType.None(),

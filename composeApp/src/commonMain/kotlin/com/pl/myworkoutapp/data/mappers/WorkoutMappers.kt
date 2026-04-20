@@ -49,7 +49,6 @@ fun WorkoutExercise.toEntity() = CustomWorkoutItemEntity(
     quantityType = quantity.type.name,
     phase = null,
     name = null,
-    rounds = null,
     structureType = null,
     structureData = null,
 )
@@ -68,7 +67,6 @@ fun Circuit.toEntity(): CustomWorkoutItemEntity {
         quantityType = null,
         phase = phase.name,
         name = name,
-        rounds = rounds,
         structureType = structureType,
         structureData = structureData,
     )
@@ -82,7 +80,7 @@ fun WorkoutItem.toEntity(): CustomWorkoutItemEntity = when (this) {
 
 fun serializeStructure(structure: CircuitStructure): Pair<String, String?> =
     when (structure) {
-        CircuitStructure.Standard -> "STANDARD" to null
+        is CircuitStructure.Standard -> "STANDARD" to structure.rounds.toString()
         is CircuitStructure.EMOM -> "EMOM" to structure.minutes.toString()
         is CircuitStructure.AMRAP -> "AMRAP" to structure.durationSec.toString()
         is CircuitStructure.Tabata -> "TABATA" to "${structure.workSec},${structure.restSec}"
@@ -90,7 +88,11 @@ fun serializeStructure(structure: CircuitStructure): Pair<String, String?> =
 
 fun deserializeStructure(type: String, data: String?): CircuitStructure {
     return when (type) {
-        "STANDARD" -> CircuitStructure.Standard
+        "STANDARD" -> {
+            val rounds = data?.toIntOrNull() ?: error("Invalid Standard data: $data")
+            CircuitStructure.Standard(rounds)
+        }
+
         "EMOM" -> {
             val minutes = data?.toIntOrNull() ?: error("Invalid EMOM data: $data")
             CircuitStructure.EMOM(minutes)
@@ -103,10 +105,11 @@ fun deserializeStructure(type: String, data: String?): CircuitStructure {
 
         "TABATA" -> {
             val parts = data?.split(",") ?: error("Missing TABATA data")
-            require(parts.size == 2) { "Invalid TABATA format: $data" }
-            val work = parts[0].toIntOrNull() ?: error("Invalid TABATA workSec: ${parts[0]}")
-            val rest = parts[1].toIntOrNull() ?: error("Invalid TABATA restSec: ${parts[1]}")
-            CircuitStructure.Tabata(workSec = work, restSec = rest)
+            require(parts.size == 3) { "Invalid TABATA format: $data" }
+            val rounds = parts[0].toIntOrNull() ?: error("Invalid TABATA rounds: ${parts[0]}")
+            val work = parts[1].toIntOrNull() ?: error("Invalid TABATA workSec: ${parts[1]}")
+            val rest = parts[2].toIntOrNull() ?: error("Invalid TABATA restSec: ${parts[2]}")
+            CircuitStructure.Tabata(rounds = rounds, workSec = work, restSec = rest)
         }
 
         else -> error("Unknown structureType: $type")
@@ -116,12 +119,12 @@ fun deserializeStructure(type: String, data: String?): CircuitStructure {
 fun deserializeStructureNoCrash(type: String, data: String?): CircuitStructure? {
     return runCatching {
         when (type) {
-            "STANDARD" -> CircuitStructure.Standard
+            "STANDARD" -> CircuitStructure.Standard(data!!.toInt())
             "EMOM" -> CircuitStructure.EMOM(data!!.toInt())
             "AMRAP" -> CircuitStructure.AMRAP(data!!.toInt())
             "TABATA" -> {
-                val (w, r) = data!!.split(",")
-                CircuitStructure.Tabata(w.toInt(), r.toInt())
+                val (rounds, w, r) = data!!.split(",")
+                CircuitStructure.Tabata(rounds.toInt(), w.toInt(), r.toInt())
             }
 
             else -> return null
@@ -146,7 +149,6 @@ fun CustomWorkoutItemEntity.toDomain(): WorkoutItem = when (type) {
     "CIRCUIT" -> Circuit(
         phase = Phase.valueOf(this.phase!!),
         name = this.name,
-        rounds = rounds!!,
         structure = deserializeStructure(structureType!!, structureData),
         items = emptyList()
     )

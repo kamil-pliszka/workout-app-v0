@@ -1,40 +1,41 @@
 package com.pl.myworkoutapp.ui.common
 
 import androidx.compose.runtime.Composable
-import org.jetbrains.compose.resources.StringResource
-import org.jetbrains.compose.resources.stringResource
+import androidx.compose.runtime.Immutable
+import org.jetbrains.compose.resources.*
 
-
+@Immutable
 sealed interface UiText {
-    data class DynamicString(val value: String): UiText
+    data class DynamicString(val value: String) : UiText
+
     data class StringResourceId(
         val id: StringResource,
         val args: List<Any> = emptyList()
-    ): UiText {
-        override fun toString(): String {
-            return when {
-                args.isEmpty() -> "StringResourceId(key=${id.key})"
-                else -> "StringResourceId(key=${id.key}, args=$args)"
-            }
-        }
-    }
+    ) : UiText
+
+    object Empty : UiText
 
     @Composable
     fun asString(): String {
-        return when(this) {
+        return when (this) {
             is DynamicString -> value
-            is StringResourceId -> stringResource(resource = id, formatArgs = args.toTypedArray())
+            is StringResourceId -> {
+                val resolvedArgs = args.map { if (it is UiText) it.asString() else it }
+                stringResource(resource = id, formatArgs = resolvedArgs.toTypedArray())
+            }
+            is Empty -> ""
         }
     }
 }
 
-fun StringResource.asUiText(vararg args: Any) = UiText.StringResourceId(this, listOf(*args))
+/**
+ * Extension to easily wrap a StringResource into UiText.
+ */
+fun StringResource.asUiText(vararg args: Any) = UiText.StringResourceId(this, args.toList())
 
+/**
+ * Extension for raw strings (use sparingly, mostly for API/Error data).
+ */
+fun String?.asUiText() = this?.let { UiText.DynamicString(it) } ?: UiText.Empty
 
-// funkcja raczej nie powinna normalnie być użyta,
-// jedyne zastosowanie jakie przychodzi mi na myśl to gdy będziemy chcieli pokazać
-// jakiś tekst "z zewnątrz", np z wyjątku lub z wywołania api
-// normalnie powinny być prezentowane teksty podlegające tlumaczeniom czyli z użyciem StringResourceId
-fun String.asUiText() = UiText.DynamicString(this)
-
-val EmptyUiText = "".asUiText()
+val EmptyUiText = UiText.Empty

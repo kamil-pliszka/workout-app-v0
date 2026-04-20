@@ -180,21 +180,21 @@ val EXE3 = ExerciseUiItem(
 
 val WARMUP = CircuitUiItem(
     phase = Phase.WARMUP,
-    rounds = 2,
+    structure = CircuitStructure.Standard(2),
     title = "na rozruch".asUiText(),
     progress = 0.47f
 )
 
 val TRAINING = CircuitUiItem(
     phase = Phase.MAIN,
-    rounds = 3,
+    structure = CircuitStructure.Standard(3),
     title = "trening właściwy".asUiText(),
     progress = 0.17f
 )
 
 val COOLDOWN = CircuitUiItem(
     phase = Phase.COOLDOWN,
-    rounds = 3,
+    structure = CircuitStructure.Standard(3),
     title = "na uspokojenie".asUiText(),
     progress = 0.71f
 )
@@ -313,7 +313,7 @@ fun WorkoutWithExercisesComponentPreviewCircuit() {
 fun circuitWith(name: String, vararg items: WorkoutItem): Circuit {
     return Circuit(
         name = name,
-        rounds = 3,
+        structure = CircuitStructure.Standard(3),
         phase = Phase.WARMUP,
         items = listOf(*items)
     )

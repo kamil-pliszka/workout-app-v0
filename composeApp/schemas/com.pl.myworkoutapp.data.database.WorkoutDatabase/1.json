@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "e2ba7a23b909422a32e78a0436ac666a",
+    "identityHash": "31e9bf762528c025a5575545f7368ff6",
     "entities": [
       {
         "tableName": "CustomExerciseEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `description` TEXT, `imageUri` TEXT, `basedOn` TEXT, `muscle` TEXT NOT NULL, `exerciseType` TEXT NOT NULL, `equipment` TEXT NOT NULL, `met` REAL NOT NULL, `quantityType` TEXT NOT NULL, `updatedAt` INTEGER NOT NULL, `defaultQuantityVal` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `description` TEXT, `imageUri` TEXT, `basedOn` TEXT, `muscle` TEXT NOT NULL, `exerciseType` TEXT NOT NULL, `equipment` TEXT NOT NULL, `met` REAL NOT NULL, `quantityType` TEXT NOT NULL, `defaultQuantityVal` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -66,14 +66,14 @@
             "notNull": true
           },
           {
-            "fieldPath": "updatedAt",
-            "columnName": "updatedAt",
+            "fieldPath": "defaultQuantityVal",
+            "columnName": "defaultQuantityVal",
             "affinity": "INTEGER",
             "notNull": true
           },
           {
-            "fieldPath": "defaultQuantityVal",
-            "columnName": "defaultQuantityVal",
+            "fieldPath": "updatedAt",
+            "columnName": "updatedAt",
             "affinity": "INTEGER",
             "notNull": true
           }
@@ -249,7 +249,7 @@
       },
       {
         "tableName": "CustomWorkoutItemEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `workoutId` INTEGER NOT NULL, `parentId` INTEGER, `position` INTEGER NOT NULL, `type` TEXT NOT NULL, `builtInExerciseId` TEXT, `customExerciseId` INTEGER, `quantityValue` INTEGER, `quantityType` TEXT, `phase` TEXT, `name` TEXT, `rounds` INTEGER, `structureType` TEXT, `structureData` TEXT, FOREIGN KEY(`workoutId`) REFERENCES `CustomWorkoutEntity`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`parentId`) REFERENCES `CustomWorkoutItemEntity`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`customExerciseId`) REFERENCES `CustomExerciseEntity`(`id`) ON UPDATE NO ACTION ON DELETE RESTRICT )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `workoutId` INTEGER NOT NULL, `parentId` INTEGER, `position` INTEGER NOT NULL, `type` TEXT NOT NULL, `builtInExerciseId` TEXT, `customExerciseId` INTEGER, `quantityValue` INTEGER, `quantityType` TEXT, `phase` TEXT, `name` TEXT, `structureType` TEXT, `structureData` TEXT, FOREIGN KEY(`workoutId`) REFERENCES `CustomWorkoutEntity`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`parentId`) REFERENCES `CustomWorkoutItemEntity`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`customExerciseId`) REFERENCES `CustomExerciseEntity`(`id`) ON UPDATE NO ACTION ON DELETE RESTRICT )",
         "fields": [
           {
             "fieldPath": "id",
@@ -309,11 +309,6 @@
             "fieldPath": "name",
             "columnName": "name",
             "affinity": "TEXT"
-          },
-          {
-            "fieldPath": "rounds",
-            "columnName": "rounds",
-            "affinity": "INTEGER"
           },
           {
             "fieldPath": "structureType",
@@ -400,7 +395,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'e2ba7a23b909422a32e78a0436ac666a')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '31e9bf762528c025a5575545f7368ff6')"
     ]
   }
 }

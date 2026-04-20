@@ -54,7 +54,8 @@ class WorkoutEditorDelegate {
             }
 
             is WorkoutEditorAction.AddCircuit -> {
-                state.updateItems { addCircuit(it, action.circuit) }
+                val newState = state.updateItems { addCircuit(it, action.circuit) }
+                newState.copy(scrollToIdx = newState.items.lastIndex)
             }
 
             is WorkoutEditorAction.ModifyCircuit -> {
@@ -118,7 +119,6 @@ class WorkoutEditorDelegate {
         require(index >= 0)
         items[index] = current.copy(
             phase = modified.phase,
-            rounds = modified.rounds,
             structure = modified.structure,
             title = modified.title,
         )

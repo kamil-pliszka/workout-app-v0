@@ -161,6 +161,9 @@ class WorkoutDetailsViewModel(
             WorkoutDetailsAction.OnAddCircuit -> startCircuitEditor(null)
             is WorkoutDetailsAction.OnEditCircuit -> startCircuitEditor(action.circuit)
             WorkoutDetailsAction.OnSaveCircuitEditor -> saveCircuitEditor()
+            is WorkoutDetailsAction.OnDeleteCircuit -> {
+                println("OnDeleteCircuit: $action") //TODO
+            }
         }
     }
 

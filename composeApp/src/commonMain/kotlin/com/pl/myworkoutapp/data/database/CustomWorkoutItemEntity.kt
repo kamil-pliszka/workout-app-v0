@@ -45,7 +45,6 @@ data class CustomWorkoutItemEntity(
     // --- Circuit ---
     val phase: String?,
     val name: String?,
-    val rounds: Int?,
     val structureType: String?,
     val structureData: String?, // np JSON dla EMOM/AMRAP
 )

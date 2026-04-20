@@ -122,7 +122,6 @@ fun transform(workout: Workout, exercises: Set<Exercise>): WorkoutWithExercisesU
 private class CircuitBuilder(
     val phase: Phase,
     val name: String?,
-    val rounds: Int,
     val structure: CircuitStructure,
 ) {
     val items = mutableListOf<WorkoutItem>()
@@ -134,7 +133,6 @@ private class CircuitBuilder(
         return Circuit(
             phase = phase,
             name = name,
-            rounds = rounds,
             structure = structure,
             items = items.toList()
         )
@@ -169,7 +167,6 @@ fun toDomain(items: List<WorkoutUiItem>): List<WorkoutItem> {
                 val builder = CircuitBuilder(
                     phase = uiItem.phase,
                     name = null, //TODO - name = uiItem.title.asString(), // dostosuj
-                    rounds = uiItem.rounds,
                     structure = uiItem.structure
                 )
                 stack.add(builder)

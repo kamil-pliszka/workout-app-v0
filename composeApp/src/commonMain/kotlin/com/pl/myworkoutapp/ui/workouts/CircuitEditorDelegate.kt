@@ -11,6 +11,7 @@ sealed interface CircuitEditorAction {
     data class RoundsChanged(val value: String) : CircuitEditorAction
     data class EmomMinutesChanged(val value: String) : CircuitEditorAction
     data class AmrapMinutesChanged(val value: String) : CircuitEditorAction
+    data class TabataRoundsChanged(val value: String) : CircuitEditorAction
     data class TabataWorksecChanged(val value: String) : CircuitEditorAction
     data class TabataRestsecChanged(val value: String) : CircuitEditorAction
 }
@@ -27,6 +28,7 @@ class CircuitEditorDelegate {
             is CircuitEditorAction.RoundsChanged -> state.copy(rounds = action.value)
             is CircuitEditorAction.EmomMinutesChanged -> state.copy(emomMinutes = action.value)
             is CircuitEditorAction.AmrapMinutesChanged -> state.copy(amrapMinutes = action.value)
+            is CircuitEditorAction.TabataRoundsChanged -> state.copy(tabataRounds = action.value)
             is CircuitEditorAction.TabataWorksecChanged -> state.copy(tabataWorkSec = action.value)
             is CircuitEditorAction.TabataRestsecChanged -> state.copy(tabataRestSec = action.value)
         }
@@ -48,7 +50,8 @@ class CircuitEditorDelegate {
                 state.amrapMinutes.toIntOrNull()?.let { it > 0 } == true
 
             CircuitStructureType.Tabata ->
-                state.tabataWorkSec.toIntOrNull()?.let { it > 0 } == true &&
+                state.tabataRounds.toIntOrNull()?.let { it > 0 } == true &&
+                        state.tabataWorkSec.toIntOrNull()?.let { it > 0 } == true &&
                         state.tabataRestSec.toIntOrNull()?.let { it > 0 } == true
         }
     }

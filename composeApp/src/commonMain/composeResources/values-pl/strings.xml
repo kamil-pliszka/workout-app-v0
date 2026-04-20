@@ -83,9 +83,14 @@
     <string name="circuit_structure_emom">EMOM</string>
     <string name="circuit_structure_amrap">AMRAP</string>
     <string name="circuit_structure_tabata">Tabata</string>
+    <string name="circuit_structure_desc_standard">Obwód x%1$d</string>
+    <string name="circuit_structure_desc_emom">EMOM %1$d minut</string>
+    <string name="circuit_structure_desc_amrap">AMRAP %1$d sekund</string>
+    <string name="circuit_structure_desc_tabata">Tabata x%1$d %2$d/%3$d</string>
     <string name="circuit_rounds">Powtórzenia</string>
     <string name="circuit_emom_minutes">Minuty</string>
     <string name="circuit_amrap_minutes">Czas trwania (min)</string>
+    <string name="circuit_tabata_rounds">Rundy/Cykle</string>
     <string name="circuit_tabata_worksec">Trening (sek)</string>
     <string name="circuit_tabata_restsec">Odpoczynek (sek)</string>
     <string name="circuit_error_numer_must_be_greater_zero">Musi być większy niż 0</string>

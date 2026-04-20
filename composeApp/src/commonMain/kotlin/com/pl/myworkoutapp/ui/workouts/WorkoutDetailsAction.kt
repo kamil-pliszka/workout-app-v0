@@ -25,6 +25,7 @@ sealed interface WorkoutDetailsAction {
 
     object OnAddCircuit : WorkoutDetailsAction
     data class OnEditCircuit(val circuit: CircuitUiItem) : WorkoutDetailsAction
+    data class OnDeleteCircuit(val circuit: CircuitUiItem) : WorkoutDetailsAction
     object OnSaveCircuitEditor : WorkoutDetailsAction
     object OnCancelCircuitEditor : WorkoutDetailsAction
 }

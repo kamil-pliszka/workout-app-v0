@@ -62,7 +62,7 @@ object AbsWorkouts {
             Circuit(
                 phase = Phase.WARMUP,
                 name = "warm-up",
-                rounds = 1,
+                structure = CircuitStructure.Standard(2),
                 items = listOf(
                     BuiltInExerciseId.JUMPING_JACKS.withDuration(30),
                     BuiltInExerciseId.BENT_LEG_TWIST.withRepsPerSide(10),
@@ -73,7 +73,7 @@ object AbsWorkouts {
             Circuit(
                 phase = Phase.MAIN,
                 name = "abs set",
-                rounds = 2,
+                structure = CircuitStructure.Standard(2),
                 items = listOf(
                     BuiltInExerciseId.RUSSIAN_TWIST.withRepsPerSide(16),
                     BuiltInExerciseId.FLUTTER_KICKS.withDuration(45),
@@ -94,7 +94,7 @@ object AbsWorkouts {
             Circuit(
                 phase = Phase.COOLDOWN,
                 name = "cool-down",
-                rounds = 1,
+                structure = CircuitStructure.Standard(1),
                 items = listOf(
                     BuiltInExerciseId.COBRA_STRETCH.withDuration(30),
                 )
@@ -110,7 +110,7 @@ object AbsWorkouts {
             Circuit(
                 phase = Phase.WARMUP,
                 name = "warm-up",
-                rounds = 1,
+                structure = CircuitStructure.Standard(1),
                 items = listOf(
                     BuiltInExerciseId.JUMPING_JACKS.withDuration(30),
                     BuiltInExerciseId.BENT_LEG_TWIST.withRepsPerSide(10),
@@ -121,12 +121,12 @@ object AbsWorkouts {
             Circuit(
                 phase = Phase.MAIN,
                 name = "super set",
-                rounds = 2,
+                structure = CircuitStructure.Standard(2),
                 items = listOf(
                     Circuit(
                         phase = Phase.MAIN,
                         name = "klata set",
-                        rounds = 2,
+                        structure = CircuitStructure.Standard(2),
                         items = listOf(
                             BuiltInExerciseId.PUSH_UP.withReps(15),
                             BuiltInExerciseId.V_HOLD.withDuration(40),
@@ -135,7 +135,7 @@ object AbsWorkouts {
                     Circuit(
                         phase = Phase.MAIN,
                         name = "brzuch set",
-                        rounds = 1,
+                        structure = CircuitStructure.Standard(1),
                         items = listOf(
                             BuiltInExerciseId.HEEL_TOUCH.withRepsPerSide(15),
                             BuiltInExerciseId.DEAD_BUG.withRepsPerSide(20),
@@ -144,7 +144,7 @@ object AbsWorkouts {
                     Circuit(
                         phase = Phase.MAIN,
                         name = "nogi set",
-                        rounds = 3,
+                        structure = CircuitStructure.Standard(3),
                         items = listOf(
                             BuiltInExerciseId.SQUATS.withReps(15),
                             BuiltInExerciseId.V_HOLD.withDuration(40),
@@ -155,12 +155,12 @@ object AbsWorkouts {
             Circuit(
                 phase = Phase.COOLDOWN,
                 name = "cool-down",
-                rounds = 1,
+                structure = CircuitStructure.Standard(1),
                 items = listOf(
                     Circuit(
                         phase = Phase.MAIN,
                         name = "cd-level2",
-                        rounds = 3,
+                        structure = CircuitStructure.Standard(3),
                         items = listOf(
                             BuiltInExerciseId.COBRA_STRETCH.withDuration(30),
                         )
