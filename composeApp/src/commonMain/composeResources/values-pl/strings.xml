@@ -73,6 +73,9 @@
     <string name="workout_add_exercise">Ćwiczenie</string>
     <string name="workout_add_circuit">Obwód</string>
 
+    <string name="workout_editor_delete_title">Usunięcie elementu</string>
+    <string name="workout_editor_delete_question">Czy na pewno chcesz usunąć element?</string>
+
     <string name="circuit_label">Obwód</string>
     <string name="circuit_label_new">Obwód (nowy)</string>
     <string name="circuit_label_edit">Obwód (edycja)</string>

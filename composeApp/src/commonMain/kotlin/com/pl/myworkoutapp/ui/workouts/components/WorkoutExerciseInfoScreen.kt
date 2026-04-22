@@ -18,22 +18,30 @@ import com.pl.myworkoutapp.domain.model.exercise.BuiltInExerciseId
 import com.pl.myworkoutapp.domain.model.exercise.BuiltInExerciseRegistry
 import com.pl.myworkoutapp.ui.exercises.*
 import com.pl.myworkoutapp.ui.theme.AppTheme
-import com.pl.myworkoutapp.ui.workouts.WorkoutDetailsAction
 import myworkoutapplication.composeapp.generated.resources.*
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
-@OptIn(ExperimentalMaterial3Api::class)
+sealed interface WorkoutExerciseInfoAction {
+    object ShowExercisePicker : WorkoutExerciseInfoAction
+    data class ChangeQuantity(val increase: Boolean) : WorkoutExerciseInfoAction
+    object ExercisePrev: WorkoutExerciseInfoAction
+    object ExerciseNext: WorkoutExerciseInfoAction
+    object ExerciseReset: WorkoutExerciseInfoAction
+    object ExerciseSave: WorkoutExerciseInfoAction
+    object CloseExerciseInfo: WorkoutExerciseInfoAction
+}
+
 @Composable
 fun WorkoutExerciseInfoScreen(
     exerciseInfo: ExerciseInfoUiModel,
-    onAction: (WorkoutDetailsAction) -> Unit,
+    onAction: (WorkoutExerciseInfoAction) -> Unit,
 ) {
 //    val sheetState = rememberModalBottomSheetState(
 //        skipPartiallyExpanded = true // od razu full
 //    )
 //    ModalBottomSheet(
-//        onDismissRequest = { onAction(WorkoutDetailsAction.CloseExerciseInfo) },
+//        onDismissRequest = { onAction(WorkoutExerciseInfoAction.CloseExerciseInfo) },
 //        sheetState = sheetState,
 //        shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
 //        //dragHandle = null // opcjonalnie ukrycie kreski
@@ -53,7 +61,7 @@ fun WorkoutExerciseInfoScreen(
 @Composable
 private fun WorkoutExerciseInfoContent(
     exerciseInfo: ExerciseInfoUiModel,
-    onAction: (WorkoutDetailsAction) -> Unit,
+    onAction: (WorkoutExerciseInfoAction) -> Unit,
 ) {
     Box(
         modifier = Modifier
@@ -83,7 +91,7 @@ private fun WorkoutExerciseInfoContent(
                     modifier = Modifier.weight(1f)
                 )
 
-                TextButton(onClick = { onAction(WorkoutDetailsAction.ShowExercisePicker) }) {
+                TextButton(onClick = { onAction(WorkoutExerciseInfoAction.ShowExercisePicker) }) {
                     Text(stringResource(Res.string.workout_change))
                 }
             }
@@ -102,7 +110,7 @@ private fun WorkoutExerciseInfoContent(
                     changeQtyButtons = true,
                     quantityChangeAction = { increase ->
                         onAction(
-                            WorkoutDetailsAction.ChangeQuantity(
+                            WorkoutExerciseInfoAction.ChangeQuantity(
                                 increase
                             )
                         )
@@ -133,7 +141,7 @@ private fun WorkoutExerciseInfoContent(
 fun NextPrev(
     current: Int,
     total: Int,
-    onAction: (WorkoutDetailsAction) -> Unit,
+    onAction: (WorkoutExerciseInfoAction) -> Unit,
 ) {
     // LEWA CZĘŚĆ (strzałki + licznik)
     Row(
@@ -145,7 +153,7 @@ fun NextPrev(
         //.padding(horizontal = 12.dp, vertical = 8.dp)
     ) {
         IconButton(
-            onClick = { onAction(WorkoutDetailsAction.ExercisePrev)},
+            onClick = { onAction(WorkoutExerciseInfoAction.ExercisePrev)},
             enabled = current > 1,
         ) {
             Icon(
@@ -157,7 +165,7 @@ fun NextPrev(
         Text("$current/$total")
 
         IconButton(
-            onClick = { onAction(WorkoutDetailsAction.ExerciseNext)},
+            onClick = { onAction(WorkoutExerciseInfoAction.ExerciseNext)},
             enabled = current < total
         ) {
             Icon(painter = painterResource(Res.drawable.ic_skip_next), contentDescription = "Next")
@@ -168,13 +176,13 @@ fun NextPrev(
 @Composable
 private fun RowScope.BottomButtons(
     exerciseInfo: ExerciseInfoUiModel,
-    onAction: (WorkoutDetailsAction) -> Unit,
+    onAction: (WorkoutExerciseInfoAction) -> Unit,
 ) {
     //NEXT//PREV // RESET
     Box(modifier = Modifier.weight(4f)) {
         if (exerciseInfo.quantityDirty) {
             Button(
-                onClick = { onAction(WorkoutDetailsAction.ExerciseReset)},
+                onClick = { onAction(WorkoutExerciseInfoAction.ExerciseReset)},
                 colors = buttonColors(containerColor = MaterialTheme.colorScheme.outline),
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -194,7 +202,7 @@ private fun RowScope.BottomButtons(
         // 🔒 STICKY BUTTON
         if (exerciseInfo.quantityDirty) {
             Button(
-                onClick = { onAction(WorkoutDetailsAction.ExerciseSave) },
+                onClick = { onAction(WorkoutExerciseInfoAction.ExerciseSave) },
                 modifier = Modifier.fillMaxWidth()
 
             ) {
@@ -202,7 +210,7 @@ private fun RowScope.BottomButtons(
             }
         } else {
             Button(
-                onClick = { onAction(WorkoutDetailsAction.CloseExerciseInfo) },
+                onClick = { onAction(WorkoutExerciseInfoAction.CloseExerciseInfo) },
                 modifier = Modifier.fillMaxWidth()
 
             ) {

@@ -100,6 +100,9 @@
     <string name="workout_add_exercise">Exercise</string>
     <string name="workout_add_circuit">Circuit</string>
 
+    <string name="workout_editor_delete_title">Delete element</string>
+    <string name="workout_editor_delete_question">Are you sure you want to delete element?</string>
+
     <string name="circuit_label">Circuit</string>
     <string name="circuit_label_new">Circuit (new)</string>
     <string name="circuit_label_edit">Circuit (edit)</string>

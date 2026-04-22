@@ -25,7 +25,16 @@ data class WorkoutWithExercisesUiModel(
     val workout: WorkoutUiModel,
     val items: List<WorkoutUiItem>,
     val scrollToIdx: Int? = null,
-)
+    val editableCircuit: CircuitEditorUiState? = null,
+    val editingCircuitItem: CircuitUiItem? = null,
+    //val showDeleteConfirm: Boolean = false,
+    val deletingWorkoutItem: WorkoutUiItem? = null,
+    val exchangingExerciseItem: ExerciseUiItem? = null,
+    ) {
+    fun isDirty(original : WorkoutWithExercisesUiModel) : Boolean {
+        return !(workout == original.workout && items == original.items)
+    }
+}
 
 sealed interface TimeLineItemType {
     val color: Color

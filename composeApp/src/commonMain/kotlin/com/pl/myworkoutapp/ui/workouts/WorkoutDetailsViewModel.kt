@@ -1,6 +1,5 @@
 package com.pl.myworkoutapp.ui.workouts
 
-import androidx.compose.ui.text.intl.Locale
 import androidx.lifecycle.*
 import com.pl.myworkoutapp.AppStateHolder
 import com.pl.myworkoutapp.core.Log
@@ -11,7 +10,6 @@ import com.pl.myworkoutapp.domain.model.workout.*
 import com.pl.myworkoutapp.domain.usecase.GetWorkoutWithExercisesUseCase
 import com.pl.myworkoutapp.domain.usecase.SaveWorkoutUseCase
 import com.pl.myworkoutapp.ui.common.asUiText
-import com.pl.myworkoutapp.ui.common.loadExerciseDescription
 import com.pl.myworkoutapp.ui.exercises.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
@@ -25,7 +23,6 @@ class WorkoutDetailsViewModel(
     //private val messageCoordinator : MessageCoordinator,
     private val appStateHolder: AppStateHolder,
     private val editDelegate: WorkoutEditorDelegate,
-    private val circuitDelegate: CircuitEditorDelegate,
     private val saveWorkoutUseCase: SaveWorkoutUseCase,
     private val getWorkoutWithExercisesUseCase: GetWorkoutWithExercisesUseCase
 ) : ViewModel() {
@@ -151,19 +148,6 @@ class WorkoutDetailsViewModel(
             WorkoutDetailsAction.OnDeleteRequest -> TODO()
             WorkoutDetailsAction.OnTuneRequest -> TODO()
 
-            WorkoutDetailsAction.OnCancelCircuitEditor -> _state.update {
-                it.copy(
-                    editableCircuit = null,
-                    editingCircuitItem = null
-                )
-            }
-
-            WorkoutDetailsAction.OnAddCircuit -> startCircuitEditor(null)
-            is WorkoutDetailsAction.OnEditCircuit -> startCircuitEditor(action.circuit)
-            WorkoutDetailsAction.OnSaveCircuitEditor -> saveCircuitEditor()
-            is WorkoutDetailsAction.OnDeleteCircuit -> {
-                println("OnDeleteCircuit: $action") //TODO
-            }
         }
     }
 
@@ -176,11 +160,12 @@ class WorkoutDetailsViewModel(
         }
     }
 
+    //TODO - a może upakowaćw akcję WorkoutEditorAction ?
     fun onCircuitEditorAction(circuitEditorAction: CircuitEditorAction) {
-        val current = _state.value.editableCircuit ?: return
+        val current = _state.value.editableWorkout?: return
         _state.update {
             it.copy(
-                editableCircuit = circuitDelegate.reduce(current, circuitEditorAction)
+                editableWorkout = editDelegate.reduce(current, circuitEditorAction)
             )
         }
     }
@@ -189,15 +174,7 @@ class WorkoutDetailsViewModel(
         //TODO - coś z tym zrobić
         val exercise: Exercise = repository.getExercise(exerciseId)
         val exerciseInfo = exercise.toUi()
-        val exerciseMarkdown = exerciseInfo
-            .takeIf { it.customDesc == null }
-            ?.descExerciseId
-            ?.let { id ->
-                loadExerciseDescription(
-                    exerciseId = id,
-                    lang = Locale.current.language
-                )
-            }
+        val exerciseMarkdown = exerciseInfo.loadExerciseDescription()
         return exerciseInfo.copy(descriptionMarkdown = exerciseMarkdown)
     }
 
@@ -411,9 +388,20 @@ class WorkoutDetailsViewModel(
     private fun saveWorkoutEditor() {
         appStateHolder.setWorkoutEditorActive(false)
         val currentEditable = _state.value.editableWorkout ?: return
+        val originalWorkout = _state.value.workout ?: return
+        println(".workout : " + (originalWorkout.workout == currentEditable.workout))
+        println(".items : " + (originalWorkout.items == currentEditable.items))
+        originalWorkout.items.forEachIndexed { index, orig ->
+            val curr = currentEditable.items.getOrNull(index)
+            if (orig != curr) {
+                println("Not equal at position: $index")
+                println("orig: $orig")
+                println("curr: $curr")
+            }
+        }
         _state.update {
             it.copy(
-                isDirty = currentEditable != it.workout,
+                isDirty = currentEditable.isDirty(originalWorkout),
                 workout = currentEditable,
                 editableWorkout = null,
             )
@@ -438,38 +426,5 @@ class WorkoutDetailsViewModel(
             onEditorAction(WorkoutEditorAction.ExercisePicked(exerciseUiItem))
         }
     }
-
-    private fun startCircuitEditor(circuit: CircuitUiItem?) {
-        val editableCircuit = circuit?.toCircuitEditorUiState() ?: CircuitEditorUiState(isNew = true)
-        _state.update {
-            it.copy(
-                editableCircuit = editableCircuit.copy(isValid = circuitDelegate.validate(editableCircuit)),
-                editingCircuitItem = circuit,
-            )
-        }
-    }
-
-    private fun saveCircuitEditor() {
-        val current = _state.value.editableCircuit ?: return
-        val currentCircuit = _state.value.editingCircuitItem
-        if (currentCircuit == null) {
-            //NEW CIRCUIT
-            onEditorAction(WorkoutEditorAction.AddCircuit(current.toCircuitUiItem()))
-        } else {
-            onEditorAction(
-                WorkoutEditorAction.ModifyCircuit(
-                    currentCircuit,
-                    current.toCircuitUiItem()
-                )
-            )
-        }
-        _state.update {
-            it.copy(
-                editableCircuit = null,
-                editingCircuitItem = null,
-            )
-        }
-    }
-
 
 }

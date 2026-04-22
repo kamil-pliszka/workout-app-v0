@@ -37,6 +37,7 @@ fun WorkoutDetailsScreen(
             state = state.editableWorkout,
             onAction = onAction,
             onEditorAction = onEditorAction,
+            onCircuitEditorAction = onCircuitEditorAction,
         )
     } else {
         Box {
@@ -47,7 +48,7 @@ fun WorkoutDetailsScreen(
             ) {
                 WorkoutWithExercisesComponent(
                     workoutUiModel = state.workout,
-                    onAction = onAction,
+                    onAction = { onAction(it.toWorkoutDetailsAction()) },
                 )
             }
             WorkoutDetailBottomButtons(
@@ -57,19 +58,11 @@ fun WorkoutDetailsScreen(
         }
     }
 
-    if (state.editableCircuit != null) {
-        CircuitEditorScreen(
-            state = state.editableCircuit,
-            onEditorAction = onCircuitEditorAction,
-            onSave = { onAction(WorkoutDetailsAction.OnSaveCircuitEditor) },
-            onCancel = { onAction(WorkoutDetailsAction.OnCancelCircuitEditor) },
-        )
-    }
 
     if (state.exerciseInfo != null) {
         WorkoutExerciseInfoScreen(
             exerciseInfo = state.exerciseInfo,
-            onAction = onAction
+            onAction = { onAction(it.toWorkoutDetailsAction()) }
         )
     }
     if (state.showExercisePicker) {

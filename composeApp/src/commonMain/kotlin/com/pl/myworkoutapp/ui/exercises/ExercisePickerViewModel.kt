@@ -2,7 +2,6 @@
 
 package com.pl.myworkoutapp.ui.exercises
 
-import androidx.compose.ui.text.intl.Locale
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pl.myworkoutapp.core.StringComparator
@@ -10,7 +9,6 @@ import com.pl.myworkoutapp.domain.AppSettingRepository
 import com.pl.myworkoutapp.domain.WorkoutRepository
 import com.pl.myworkoutapp.domain.model.exercise.Exercise
 import com.pl.myworkoutapp.domain.model.exercise.ExerciseId
-import com.pl.myworkoutapp.ui.common.loadExerciseDescription
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 
@@ -233,15 +231,7 @@ class ExercisePickerViewModel(
             println("Exe preview clicked: $exerciseId")
             val exercise: Exercise = repository.getExercise(exerciseId)
             val exerciseInfo = exercise.toUi()
-            val exerciseMarkdown = exerciseInfo
-                .takeIf { it.customDesc == null }
-                ?.descExerciseId
-                ?.let { id ->
-                    loadExerciseDescription(
-                        exerciseId = id,
-                        lang = Locale.current.language
-                    )
-                }
+            val exerciseMarkdown = exerciseInfo.loadExerciseDescription()
             _state.update {
                 it.copy(
                     exercisePreview = exerciseInfo.copy(

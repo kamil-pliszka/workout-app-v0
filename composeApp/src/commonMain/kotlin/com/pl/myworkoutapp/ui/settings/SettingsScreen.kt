@@ -178,7 +178,7 @@ fun SettingsScreen(
                 onAction(SettingsAction.OnDeleteAllDataConfirm)
             },
             confirmText = stringResource(Res.string.settings_delete_all_data_delete_button),
-            confirmColor = MaterialTheme.colorScheme.error,
+            confirmButtonColors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.error),
             onCancel = {
                 onAction(SettingsAction.OnDeleteAllDataCancel)
             },

@@ -41,6 +41,7 @@ fun WorkoutEditorScreen(
     state: WorkoutWithExercisesUiModel,
     onAction: (WorkoutDetailsAction) -> Unit,
     onEditorAction: (WorkoutEditorAction) -> Unit,
+    onCircuitEditorAction: (CircuitEditorAction) -> Unit,
 ) {
     // Backdrop / Scrim
     Box(
@@ -76,8 +77,16 @@ fun WorkoutEditorScreen(
             Box(modifier = Modifier.weight(1f)) {
                 WorkoutEditorContent(
                     state = state,
-                    onAction = onAction,
-                    onEditorAction = onEditorAction
+                    onEditorAction = onEditorAction,
+                    onExchangeAction = { exerciseUiItem ->
+                        //wygląda podejrzanie
+                        onEditorAction(WorkoutEditorAction.OnExerciseExchangeStart(exerciseUiItem))
+                        onAction(WorkoutDetailsAction.ShowExercisePicker)
+                    },
+                    onExerciseClick = { exe ->
+                        //TODO - to nie tutaj powinno iść, bo operuje na złym modelu
+                        onAction(WorkoutDetailsAction.ShowExerciseInfo(exe))
+                    }
                 )
             }
 
@@ -87,10 +96,36 @@ fun WorkoutEditorScreen(
                 onReset = { onAction(WorkoutDetailsAction.OnResetEditor) },
                 onSave = { onAction(WorkoutDetailsAction.OnSaveEditor) },
                 onAddExercise = { onAction(WorkoutDetailsAction.ShowExercisePicker) },
-                onAddCircuit = { onAction(WorkoutDetailsAction.OnAddCircuit) },
+                onAddCircuit = { onEditorAction(WorkoutEditorAction.OnAddCircuit) },
             )
         }
     }
+
+
+    if (state.editableCircuit != null) {
+        CircuitEditorScreen(
+            state = state.editableCircuit,
+            onEditorAction = onCircuitEditorAction,
+            onSave = { onEditorAction(WorkoutEditorAction.OnSaveCircuitEditor) },
+            onCancel = { onEditorAction(WorkoutEditorAction.OnCancelCircuitEditor) },
+        )
+    }
+
+    if (state.deletingWorkoutItem != null) {
+        ConfirmationDialog(
+            title = stringResource(Res.string.workout_editor_delete_title),
+            text = stringResource(Res.string.workout_editor_delete_question),
+            onConfirm = {
+                onEditorAction(WorkoutEditorAction.OnDeleteElementConfirm)
+            },
+            confirmText = stringResource(Res.string.btn_delete),
+            confirmButtonColors = buttonColors(MaterialTheme.colorScheme.error),
+            onCancel = {
+                onEditorAction(WorkoutEditorAction.OnDeleteElementCancel)
+            },
+        )
+    }
+
 }
 
 @Composable
@@ -146,7 +181,10 @@ fun WorkoutEditorBottomButtons(
                 modifier = Modifier.weight(1f),
                 colors = buttonColors(containerColor = MaterialTheme.colorScheme.outline),
             ) {
-                Icon(painter = painterResource(Res.drawable.ic_reset_settings), contentDescription = null)
+                Icon(
+                    painter = painterResource(Res.drawable.ic_reset_settings),
+                    contentDescription = null
+                )
                 Spacer(Modifier.width(8.dp))
                 Text(stringResource(Res.string.btn_reset))
             }
@@ -185,7 +223,12 @@ fun WorkoutEditorBottomButtons(
             ) {
                 DropdownMenuItem(
                     text = { Text(stringResource(Res.string.workout_add_exercise)) },
-                    leadingIcon = { Icon(painterResource(Res.drawable.ic_exercise), contentDescription = null) },
+                    leadingIcon = {
+                        Icon(
+                            painterResource(Res.drawable.ic_exercise),
+                            contentDescription = "add exe"
+                        )
+                    },
                     onClick = {
                         menuExpanded = false
                         onAddExercise()
@@ -193,7 +236,12 @@ fun WorkoutEditorBottomButtons(
                 )
                 DropdownMenuItem(
                     text = { Text(stringResource(Res.string.workout_add_circuit)) },
-                    leadingIcon = { Icon(painterResource(Res.drawable.ic_cycle), contentDescription = null) },
+                    leadingIcon = {
+                        Icon(
+                            painterResource(Res.drawable.ic_cycle),
+                            contentDescription = "add circuit"
+                        )
+                    },
                     onClick = {
                         menuExpanded = false
                         onAddCircuit()
@@ -207,10 +255,10 @@ fun WorkoutEditorBottomButtons(
 @Composable
 fun WorkoutEditorContent(
     state: WorkoutWithExercisesUiModel,
-    onAction: (WorkoutDetailsAction) -> Unit,
     onEditorAction: (WorkoutEditorAction) -> Unit,
-
-) {
+    onExchangeAction: (ExerciseUiItem) -> Unit,
+    onExerciseClick: (ExerciseUiItem) -> Unit,
+    ) {
     val listState = rememberLazyListState()
     val scope = rememberCoroutineScope()
 
@@ -245,7 +293,9 @@ fun WorkoutEditorContent(
                     dragDropState = dragDropState,
                     index = index,
                     isDragging = dragDropState.draggingIndex == index,
-                    onAction = onAction
+                    onEditorAction = onEditorAction,
+                    onExchangeAction = onExchangeAction,
+                    onExerciseClick = onExerciseClick,
                 )
             }
         }
@@ -259,7 +309,9 @@ fun WorkoutEditableItemRow(
     dragDropState: DragDropState,
     index: Int,
     isDragging: Boolean,
-    onAction: (WorkoutDetailsAction) -> Unit,
+    onEditorAction: (WorkoutEditorAction) -> Unit,
+    onExchangeAction: (ExerciseUiItem) -> Unit,
+    onExerciseClick: (ExerciseUiItem) -> Unit,
 ) {
     Row(
         modifier = Modifier
@@ -304,15 +356,29 @@ fun WorkoutEditableItemRow(
                     item,
                     themeColor,
                     onClick = {},
-                    onEditClick = { onAction(WorkoutDetailsAction.OnEditCircuit(item)) },
-                    onDeleteClick = { onAction(WorkoutDetailsAction.OnDeleteCircuit(item)) }
+                    onEditClick = { onEditorAction(WorkoutEditorAction.OnEditCircuit(item)) },
+                    onDeleteClick = { onEditorAction(WorkoutEditorAction.OnDeleteCircuit(item)) }
                 )
-                is ExerciseUiItem -> WorkoutEditableItemExercise(item, themeColor, onClick = {})
+
+                is ExerciseUiItem -> WorkoutEditableItemExercise(
+                    item,
+                    themeColor,
+                    onClick = { onExerciseClick(item) },
+                    onExchangeClick = { onExchangeAction(item) },
+                    onDeleteClick = { onEditorAction(WorkoutEditorAction.OnDeleteExercise(item)) },
+                    quantityChangeAction = { increase ->
+                        onEditorAction(
+                            WorkoutEditorAction.OnChangeQuantity(
+                                item,
+                                increase
+                            )
+                        )
+                    },
+                )
             }
         }
     }
 }
-
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -327,6 +393,7 @@ private fun WorkoutEditorScreenPreviewNoSet() {
             state = workoutUiModel,
             onAction = { },
             onEditorAction = { },
+            onCircuitEditorAction = { },
         )
     }
 }
@@ -341,6 +408,7 @@ private fun WorkoutEditorScreenPreviewWithSet() {
             state = workoutUiModel,
             onAction = { },
             onEditorAction = { },
+            onCircuitEditorAction = { },
         )
     }
 }

@@ -21,10 +21,19 @@ import com.pl.myworkoutapp.ui.theme.*
 import com.pl.myworkoutapp.ui.workouts.*
 import myworkoutapplication.composeapp.generated.resources.*
 
+
+sealed interface WorkoutWithExercisesAction {
+    object OnBack : WorkoutWithExercisesAction
+    object OnOpenEditor : WorkoutWithExercisesAction
+    object OnDeleteRequest : WorkoutWithExercisesAction
+    object OnTuneRequest : WorkoutWithExercisesAction
+    data class ShowExerciseInfo(val exercise: WorkoutUiItem) : WorkoutWithExercisesAction
+}
+
 @Composable
 fun WorkoutWithExercisesComponent(
     workoutUiModel: WorkoutWithExercisesUiModel,
-    onAction: (WorkoutDetailsAction) -> Unit,
+    onAction: (WorkoutWithExercisesAction) -> Unit,
 ) {
     val workout = workoutUiModel.workout
     Column(
@@ -38,15 +47,15 @@ fun WorkoutWithExercisesComponent(
             WorkoutHeaderCard(
                 workout = workout,
                 onClick = { }, //ale właścwie co robić?
-                //onNameChanged = { onAction(WorkoutDetailsAction.OnNameChanged(it)) },
-                //onDescChanged = { onAction(WorkoutDetailsAction.OnDescChanged(it)) },
+                //onNameChanged = { onAction(WorkoutWithExercisesAction.OnNameChanged(it)) },
+                //onDescChanged = { onAction(WorkoutWithExercisesAction.OnDescChanged(it)) },
             )
             WorkoutHeaderActionsBox(
                 isBuiltIn = workoutUiModel.workout.workoutId is WorkoutId.BuiltIn,
-                onBack = { onAction(WorkoutDetailsAction.OnBack) },
-                onEdit = { onAction(WorkoutDetailsAction.OnOpenEditor) },
-                onDelete = { onAction(WorkoutDetailsAction.OnDeleteRequest) },
-                onTune = { onAction(WorkoutDetailsAction.OnTuneRequest) },
+                onBack = { onAction(WorkoutWithExercisesAction.OnBack) },
+                onEdit = { onAction(WorkoutWithExercisesAction.OnOpenEditor) },
+                onDelete = { onAction(WorkoutWithExercisesAction.OnDeleteRequest) },
+                onTune = { onAction(WorkoutWithExercisesAction.OnTuneRequest) },
             )
         }
         println("WorkoutCardComposable: ${workout.workoutId}")
@@ -72,7 +81,7 @@ fun WorkoutWithExercisesComponent(
 fun WorkoutItemRow(
     item: WorkoutUiItem,
     themeColor: Color,
-    onAction: (WorkoutDetailsAction) -> Unit,
+    onAction: (WorkoutWithExercisesAction) -> Unit,
 ) {
     val desc = when(item) {
         is CircuitUiItem -> "${item.title}"
@@ -86,13 +95,13 @@ fun WorkoutItemRow(
             is CircuitUiItem -> WorkoutItemCircuit(
                 item,
                 themeColor,
-                onClick = { onAction(WorkoutDetailsAction.ShowExerciseInfo(item)) }
+                onClick = { onAction(WorkoutWithExercisesAction.ShowExerciseInfo(item)) }
             )
 
             is ExerciseUiItem -> WorkoutItemExercise(
                 item,
                 themeColor,
-                onClick = { onAction(WorkoutDetailsAction.ShowExerciseInfo(item)) }
+                onClick = { onAction(WorkoutWithExercisesAction.ShowExerciseInfo(item)) }
             )
         }
     }

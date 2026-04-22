@@ -8,16 +8,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mikepenz.markdown.m3.Markdown
 import com.mikepenz.markdown.m3.markdownTypography
 import com.pl.myworkoutapp.domain.model.exercise.*
-import com.pl.myworkoutapp.ui.common.loadExerciseDescription
 import com.pl.myworkoutapp.ui.common.loadImageBitmap
 import com.pl.myworkoutapp.ui.theme.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.runBlocking
 import myworkoutapplication.composeapp.generated.resources.*
 import org.jetbrains.compose.resources.painterResource
@@ -38,7 +38,7 @@ fun ExerciseInfoComponent(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp)
-                //.verticalScroll(rememberScrollState())
+            //.verticalScroll(rememberScrollState())
         ) {
             Text(
                 text = exerciseInfo.name.asString(),
@@ -74,7 +74,8 @@ fun ExerciseInfoComponent(
             if (exerciseInfo.quantityValue != null) {
                 QuantityPicker(
                     label = exerciseInfo.quantityType.asUiText().asString(),
-                    value = exerciseInfo.quantityValue.qtyValueAsUiText(exerciseInfo.quantityType).asString(),
+                    value = exerciseInfo.quantityValue.qtyValueAsUiText(exerciseInfo.quantityType)
+                        .asString(),
                     showButtons = changeQtyButtons,
                     onValueChange = quantityChangeAction
                 )
@@ -162,7 +163,8 @@ private fun DescriptionSection(exerciseInfo: ExerciseInfoUiModel) {
             }
         }*/
         exerciseInfo.descriptionMarkdown?.let { markdown ->
-            val bodyLarge = MaterialTheme.typography.bodyLarge.copy(fontFamily = RobotoItalicVariable)
+            val bodyLarge =
+                MaterialTheme.typography.bodyLarge.copy(fontFamily = RobotoItalicVariable)
             Markdown(
                 content = markdown,
                 typography = markdownTypography(
@@ -186,18 +188,8 @@ private fun DescriptionSection(exerciseInfo: ExerciseInfoUiModel) {
 }
 
 val EXE_B = BuiltInExerciseRegistry.get(BuiltInExerciseId.BENT_LEG_TWIST)
-fun ExerciseInfoUiModel.loadExerciseMarkdownForPreview(): String? = this
-    .takeIf { it.customDesc == null }
-    ?.descExerciseId
-    ?.let { id ->
-        runBlocking {
-            //error("lang=" + Locale.current.language)
-            loadExerciseDescription(
-                exerciseId = id,
-                lang = Locale.current.language
-            )
-        }
-    }
+fun ExerciseInfoUiModel.loadExerciseMarkdownForPreview(): String? =
+    runBlocking(Dispatchers.IO) { loadExerciseDescription() }
 
 
 @Preview(locale = "pl")
@@ -231,7 +223,6 @@ fun ExerciseInfoComponentBuiltinEN() {
         )
     }
 }
-
 
 
 val EXE_C = CustomExercise(

@@ -9,8 +9,5 @@ data class WorkoutDetailsUiState(
     val selectedItem : WorkoutUiItem? = null,//TODO - zmienić na index wybranego elementu
     val exerciseInfo: ExerciseInfoUiModel? = null,
     val showExercisePicker: Boolean = false,
-    //val isEditorMode: Boolean = false,
     val editableWorkout: WorkoutWithExercisesUiModel? = null,
-    val editableCircuit: CircuitEditorUiState? = null,
-    val editingCircuitItem: CircuitUiItem? = null,
 )

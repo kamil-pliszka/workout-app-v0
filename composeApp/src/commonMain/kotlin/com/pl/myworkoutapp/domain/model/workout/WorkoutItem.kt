@@ -63,9 +63,9 @@ data class Circuit(
     val structure: CircuitStructure, // = CircuitStructure.Standard(1),
     val items: List<WorkoutItem>,
 ) : WorkoutItem {
-    init {
+    /*init {
         require(items.isNotEmpty()) {
             "items must be not empty"
         }
-    }
+    }*/
 }
