@@ -8,17 +8,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mikepenz.markdown.m3.Markdown
 import com.mikepenz.markdown.m3.markdownTypography
 import com.pl.myworkoutapp.domain.model.exercise.*
+import com.pl.myworkoutapp.ui.common.loadExerciseDescription
 import com.pl.myworkoutapp.ui.common.loadImageBitmap
 import com.pl.myworkoutapp.ui.theme.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import myworkoutapplication.composeapp.generated.resources.*
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -26,7 +26,7 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun ExerciseInfoComponent(
     exerciseInfo: ExerciseInfoUiModel,
-    changeQtyButtons: Boolean = true,
+    showQuantity: Boolean = true,
     quantityChangeAction: (increase: Boolean) -> Unit
 ) {
     Surface(
@@ -71,12 +71,12 @@ fun ExerciseInfoComponent(
                 }
             }
 
-            if (exerciseInfo.quantityValue != null) {
+            if (showQuantity) {
                 QuantityPicker(
                     label = exerciseInfo.quantityType.asUiText().asString(),
                     value = exerciseInfo.quantityValue.qtyValueAsUiText(exerciseInfo.quantityType)
                         .asString(),
-                    showButtons = changeQtyButtons,
+                    //showButtons = true,
                     onValueChange = quantityChangeAction
                 )
             }
@@ -90,7 +90,7 @@ fun ExerciseInfoComponent(
 private fun QuantityPicker(
     label: String,
     value: String,
-    showButtons: Boolean,
+    //showButtons: Boolean,
     onValueChange: (Boolean) -> Unit
 ) {
     Row(
@@ -105,31 +105,31 @@ private fun QuantityPicker(
             fontSize = 20.sp,
             modifier = Modifier.weight(1f)
         )
-        if (showButtons) {
-            IconButton(onClick = { onValueChange(false) }) {
-                Icon(
-                    //imageVector = Icons.Filled.IndeterminateCheckBox,
-                    painter = painterResource(Res.drawable.ic_outline_indeterminate_check_box_24),
-                    contentDescription = "Decrease",
-                    tint = LuminousGreen.copy(alpha = 0.5f),
-                )
-            }
+
+        IconButton(onClick = { onValueChange(false) }) {
+            Icon(
+                //imageVector = Icons.Filled.IndeterminateCheckBox,
+                painter = painterResource(Res.drawable.ic_outline_indeterminate_check_box_24),
+                contentDescription = "Decrease",
+                tint = LuminousGreen.copy(alpha = 0.5f),
+            )
         }
+
         Text(
             text = value,
             style = MaterialTheme.typography.bodyLarge,
             fontFamily = RobotoItalicVariable,
         )
-        if (showButtons) {
-            IconButton(onClick = { onValueChange(true) }) {
-                Icon(
-                    //imageVector = Icons.Filled.AddBox,
-                    painter = painterResource(Res.drawable.ic_outline_add_box_24),
-                    contentDescription = "Increase",
-                    tint = LuminousGreen.copy(alpha = 0.5f),
-                )
-            }
+
+        IconButton(onClick = { onValueChange(true) }) {
+            Icon(
+                //imageVector = Icons.Filled.AddBox,
+                painter = painterResource(Res.drawable.ic_outline_add_box_24),
+                contentDescription = "Increase",
+                tint = LuminousGreen.copy(alpha = 0.5f),
+            )
         }
+
     }
 }
 
@@ -189,7 +189,14 @@ private fun DescriptionSection(exerciseInfo: ExerciseInfoUiModel) {
 
 val EXE_B = BuiltInExerciseRegistry.get(BuiltInExerciseId.BENT_LEG_TWIST)
 fun ExerciseInfoUiModel.loadExerciseMarkdownForPreview(): String? =
-    runBlocking(Dispatchers.IO) { loadExerciseDescription() }
+    runBlocking(Dispatchers.IO) {
+        this@loadExerciseMarkdownForPreview.descExerciseId?.let {
+            loadExerciseDescription(
+                exerciseId = it,
+                lang = Locale.current.language
+            )
+        }
+    }
 
 
 @Preview(locale = "pl")

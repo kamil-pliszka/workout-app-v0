@@ -4,6 +4,7 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -26,6 +27,7 @@ import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
 //wybieraczka ćwiczenia
+//OVERLAY SCREEN
 @Composable
 fun ExercisePickerScreen(
     currentExerciseId: ExerciseId?,
@@ -119,6 +121,7 @@ fun ExercisePickerContent(
                 ExerciseList(
                     exercises = filteredExercises,
                     selectedExerciseId = state.selectedExerciseId,
+                    scrollToIdx = state.scrollToIdx,
                     onAction = onAction,
                     onNavToExerciseEditor = onNavToExerciseEditor
                 )
@@ -333,11 +336,20 @@ fun FiltersSection(
 private fun ExerciseList(
     exercises: List<ExercisePickerListItem>,
     selectedExerciseId: ExerciseId?,
+    scrollToIdx: Int?,
     onAction: (ExercisePickerAction) -> Unit,
     onNavToExerciseEditor: (ExerciseId) -> Unit,
 ) {
     println("ExerciseList: selected: $selectedExerciseId")
+    val listState = rememberLazyListState()
+
+    LaunchedEffect(scrollToIdx) {
+        scrollToIdx?.let {
+            listState.animateScrollToItem(scrollToIdx)
+        }
+    }
     LazyColumn(
+        state = listState,
         verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
         items(

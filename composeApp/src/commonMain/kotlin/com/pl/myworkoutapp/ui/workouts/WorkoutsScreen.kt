@@ -20,6 +20,7 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 
+//NAV SCREEN
 @Composable
 fun WorkoutsScreen(
     state: WorkoutsUiState,

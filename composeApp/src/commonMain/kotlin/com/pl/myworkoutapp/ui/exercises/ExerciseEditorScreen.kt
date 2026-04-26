@@ -24,6 +24,7 @@ import com.pl.myworkoutapp.ui.theme.AppTheme
 import myworkoutapplication.composeapp.generated.resources.*
 import org.jetbrains.compose.resources.*
 
+//NAV SCREEN
 @Composable
 fun ExerciseEditorScreen(
     state: ExerciseEditorUiState,

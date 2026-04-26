@@ -63,18 +63,6 @@ fun WorkoutTraversalItem.toTimeline(): List<TimeLineItemType> {
 
     return timeline + lastItem
 }
-/*
-fun WorkoutTraversalItem.toTimeline2(): List<TimeLineItemType> {
-    val result = mutableListOf<TimeLineItemType>()
-    ancestors.forEachIndexed { levelIndex, ancestor ->
-        val color = treeColors[levelIndex % treeColors.size]
-        result.add(if (ancestor) TimeLineItemType.None() else TimeLineItemType.Vertical(color))
-    }
-    val color = treeColors[level % treeColors.size]
-    result.add(if (isLast) TimeLineItemType.End(color) else TimeLineItemType.Triple(color))
-    return result
-}
-*/
 
 /**
  * Dokouje przekształcenia, ale tylko dla ćwiczeń typu builtin (te nie wymagają dostępu do repo)
@@ -100,7 +88,8 @@ fun transform(workout: Workout, exercises: Set<Exercise>): WorkoutWithExercisesU
         when (workoutTraversalItem.item) {
             is Circuit -> workoutTraversalItem.item.toUiBase().copy(
                 timeline = workoutTraversalItem.toTimeline(),
-                key = index,
+                uiKey = index,
+                depth = workoutTraversalItem.level,
             )
 
             is WorkoutExercise -> workoutTraversalItem.item.toUiBase(
@@ -109,7 +98,8 @@ fun transform(workout: Workout, exercises: Set<Exercise>): WorkoutWithExercisesU
                 )
             ).copy(
                 timeline = workoutTraversalItem.toTimeline(),
-                key = index,
+                uiKey = index,
+                depth = workoutTraversalItem.level,
             )
         }
     }
@@ -144,17 +134,17 @@ fun toDomain(items: List<WorkoutUiItem>): List<WorkoutItem> {
     val stack = mutableListOf<CircuitBuilder>()
 
     items.forEach { uiItem ->
-        val level = uiItem.timeline.size - 1
-        println("level: $level, stack: ${stack.size}")
+        //val level = uiItem.timeline.size - 1
+        //println("level: ${uiItem.depth}, stack: ${stack.size}")
 //        when(uiItem) {
 //            is CircuitUiItem -> println("circuit: ${uiItem.phase}")
 //            is ExerciseUiItem -> println("exercise: ${uiItem.exerciseId}")
 //        }
-        require(level <= stack.size) {
-            "Invalid hierarchy: level=$level, stack=${stack.size}"
+        require(uiItem.depth <= stack.size) {
+            "Invalid hierarchy: level=${uiItem.depth}, stack=${stack.size}"
         }
         // schodzimy do odpowiedniego poziomu
-        while (stack.size > level) {
+        while (stack.size > uiItem.depth) {
             val finished = stack.removeAt(stack.lastIndex).build()
             if (stack.isEmpty()) {
                 result.add(finished)

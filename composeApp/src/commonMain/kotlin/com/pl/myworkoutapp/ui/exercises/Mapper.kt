@@ -11,6 +11,7 @@ fun Exercise.toUi(): ExerciseInfoUiModel = when (this) {
             exerciseId = id,
             muscle = muscle,
             quantityType = quantityType,
+            quantityValue = defaultQuantityValue,
             name = config.name.asUiText(),
             customDesc = null,
             descExerciseId = id.toBuiltInExerciseId(),
@@ -27,6 +28,7 @@ fun Exercise.toUi(): ExerciseInfoUiModel = when (this) {
             exerciseId = id,
             muscle = muscle,
             quantityType = quantityType,
+            quantityValue = defaultQuantityValue,
             name = when {
                 name.isNotBlank() -> name.asUiText()
                 configBase != null -> configBase.name.asUiText()
@@ -107,7 +109,8 @@ fun CustomExercise.toExerciseEditorUiModel(): ExerciseEditorUiModel {
         exerciseType = exerciseType,
         equipment = equipment,
         met = met.toString(),
-        quantityType = quantityType
+        quantityType = quantityType,
+        defaultQuantityValue = defaultQuantityValue.toString(),
     )
 }
 
@@ -126,7 +129,8 @@ fun BuiltInExercise.toExerciseEditorUiModel(): ExerciseEditorUiModel {
         exerciseType = exerciseType,
         equipment = equipment,
         met = met.toString(),
-        quantityType = quantityType
+        quantityType = quantityType,
+        defaultQuantityValue = defaultQuantityValue.toString(),
     )
 }
 

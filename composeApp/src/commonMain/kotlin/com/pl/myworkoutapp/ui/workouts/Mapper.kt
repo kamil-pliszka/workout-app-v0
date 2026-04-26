@@ -2,7 +2,9 @@ package com.pl.myworkoutapp.ui.workouts
 
 import com.pl.myworkoutapp.domain.model.exercise.*
 import com.pl.myworkoutapp.domain.model.workout.*
+import com.pl.myworkoutapp.domain.usecase.ExerciseWithMarkdown
 import com.pl.myworkoutapp.ui.common.*
+import com.pl.myworkoutapp.ui.exercises.toUi
 import com.pl.myworkoutapp.ui.theme.*
 import myworkoutapplication.composeapp.generated.resources.*
 
@@ -137,3 +139,5 @@ fun CircuitStructure.getStructureDesc() : UiText = when(this) {
     is CircuitStructure.Standard -> Res.string.circuit_structure_desc_standard.asUiText(rounds)
     is CircuitStructure.Tabata -> Res.string.circuit_structure_desc_tabata.asUiText(rounds, workSec, restSec)
 }
+
+fun ExerciseWithMarkdown.toUi() = exercise.toUi().copy(descriptionMarkdown = descriptionMarkdown)

@@ -17,6 +17,7 @@ import myworkoutapplication.composeapp.generated.resources.*
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
+//NAV SCREEN
 @Composable
 fun SettingsScreen(
     state: SettingsUiState,

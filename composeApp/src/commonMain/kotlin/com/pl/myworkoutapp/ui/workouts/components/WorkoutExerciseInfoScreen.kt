@@ -32,9 +32,11 @@ sealed interface WorkoutExerciseInfoAction {
     object CloseExerciseInfo: WorkoutExerciseInfoAction
 }
 
+//OVERLAY SCREEN
 @Composable
 fun WorkoutExerciseInfoScreen(
     exerciseInfo: ExerciseInfoUiModel,
+    showExchangeButton: Boolean = true,
     onAction: (WorkoutExerciseInfoAction) -> Unit,
 ) {
 //    val sheetState = rememberModalBottomSheetState(
@@ -53,6 +55,7 @@ fun WorkoutExerciseInfoScreen(
 //    }
     WorkoutExerciseInfoContent(
         exerciseInfo = exerciseInfo,
+        showExchangeButton = showExchangeButton,
         onAction = onAction,
     )
 }
@@ -61,6 +64,7 @@ fun WorkoutExerciseInfoScreen(
 @Composable
 private fun WorkoutExerciseInfoContent(
     exerciseInfo: ExerciseInfoUiModel,
+    showExchangeButton: Boolean,
     onAction: (WorkoutExerciseInfoAction) -> Unit,
 ) {
     Box(
@@ -90,9 +94,10 @@ private fun WorkoutExerciseInfoContent(
                     style = MaterialTheme.typography.headlineMedium,
                     modifier = Modifier.weight(1f)
                 )
-
-                TextButton(onClick = { onAction(WorkoutExerciseInfoAction.ShowExercisePicker) }) {
-                    Text(stringResource(Res.string.workout_change))
+                if (showExchangeButton) {
+                    TextButton(onClick = { onAction(WorkoutExerciseInfoAction.ShowExercisePicker) }) {
+                        Text(stringResource(Res.string.workout_change))
+                    }
                 }
             }
 
@@ -107,7 +112,7 @@ private fun WorkoutExerciseInfoContent(
                 //CONTENT
                 ExerciseInfoComponent(
                     exerciseInfo = exerciseInfo,
-                    changeQtyButtons = true,
+                    showQuantity = true,
                     quantityChangeAction = { increase ->
                         onAction(
                             WorkoutExerciseInfoAction.ChangeQuantity(
@@ -180,7 +185,7 @@ private fun RowScope.BottomButtons(
 ) {
     //NEXT//PREV // RESET
     Box(modifier = Modifier.weight(4f)) {
-        if (exerciseInfo.quantityDirty) {
+        if (exerciseInfo.isDirty) {
             Button(
                 onClick = { onAction(WorkoutExerciseInfoAction.ExerciseReset)},
                 colors = buttonColors(containerColor = MaterialTheme.colorScheme.outline),
@@ -192,7 +197,7 @@ private fun RowScope.BottomButtons(
             }
         } else {
             NextPrev(
-                current = exerciseInfo.current ?: 0,
+                current = exerciseInfo.position ?: 0,
                 total = exerciseInfo.total ?: 0,
                 onAction = onAction,
             )
@@ -200,7 +205,7 @@ private fun RowScope.BottomButtons(
     }
     Box(modifier = Modifier.weight(6f)) {
         // 🔒 STICKY BUTTON
-        if (exerciseInfo.quantityDirty) {
+        if (exerciseInfo.isDirty) {
             Button(
                 onClick = { onAction(WorkoutExerciseInfoAction.ExerciseSave) },
                 modifier = Modifier.fillMaxWidth()
@@ -235,6 +240,7 @@ private fun ExerciseBottomSheet() {
                 quantityValue = 17,
                 descriptionMarkdown = markdown
             ),
+            showExchangeButton = true,
             onAction = {},
         )
     }
@@ -250,8 +256,9 @@ private fun ExerciseBottomSheetDirty() {
             exerciseInfo = exerciseInfo.copy(
                 quantityValue = 17,
                 descriptionMarkdown = markdown,
-                quantityDirty = true,
+                isDirty = true,
             ),
+            showExchangeButton = false,
             onAction = {},
         )
     }

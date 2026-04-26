@@ -6,9 +6,6 @@ import com.pl.myworkoutapp.domain.model.exercise.Quantity
 sealed interface WorkoutItem
 
 data class WorkoutExercise(
-    // chcę całego dostępu do ćwiczenia, żeby zwalidować quantity,
-    // zaś na poziomie bazy będzie zapisywane ExerciseId
-    //val exercise: Exercise,
     val exerciseId: ExerciseId,
     val quantity: Quantity
 ) : WorkoutItem {

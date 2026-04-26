@@ -1,13 +1,90 @@
 package com.pl.myworkoutapp.ui.workouts
 
+import com.pl.myworkoutapp.domain.model.exercise.ExerciseId
+import com.pl.myworkoutapp.domain.model.exercise.QuantityType
 import com.pl.myworkoutapp.ui.exercises.ExerciseInfoUiModel
 
+
 data class WorkoutDetailsUiState(
-    val isLoading: Boolean = false,
-    val workout: WorkoutWithExercisesUiModel? = null,
-    val isDirty: Boolean = false,
-    val selectedItem : WorkoutUiItem? = null,//TODO - zmienić na index wybranego elementu
-    val exerciseInfo: ExerciseInfoUiModel? = null,
-    val showExercisePicker: Boolean = false,
-    val editableWorkout: WorkoutWithExercisesUiModel? = null,
+    val mode: WorkoutDetailsMode
 )
+
+sealed interface WorkoutDetailsMode {
+    object Loading : WorkoutDetailsMode
+    data class View(
+        val session: WorkoutViewSession
+    ) : WorkoutDetailsMode
+
+    data class Edit(
+        val session: WorkoutEditSession
+    ) : WorkoutDetailsMode
+}
+
+sealed interface WorkoutViewModal {
+    data object ExercisePicker : WorkoutViewModal
+    data object ConfirmReset : WorkoutViewModal
+}
+
+sealed interface WorkoutEditModal {
+    data class ExercisePicker(val context: ExercisePickerContext, val currentExerciseId: ExerciseId?) : WorkoutEditModal
+    data object ConfirmDiscardChanges : WorkoutEditModal
+    data object ConfirmDeleteItem : WorkoutEditModal
+}
+
+sealed interface ExercisePickerContext {
+    data object AddExercise : ExercisePickerContext
+    data class ReplaceListItem(val key: Int) : ExercisePickerContext
+    data object ReplacePreview : ExercisePickerContext
+}
+
+data class ActiveExerciseSession(
+    val key: Int,
+    val draft: ActiveExercise,
+    val info: ExerciseInfoUiModel,
+)
+
+data class ActiveExercise(
+    val key: Int,
+    val quantityType: QuantityType,
+    val draftQuantity: Int,
+    val originalQuantity: Int
+)
+
+data class WorkoutViewSession(
+    override val workout: WorkoutWithExercisesUiModel,
+    override val activeExercise: ActiveExerciseSession? = null,
+    val hasUnsavedChanges: Boolean = false,
+    val modal: WorkoutViewModal? = null,
+) : ExerciseInteractionHost<WorkoutViewSession> {
+
+    override fun withWorkout(workout: WorkoutWithExercisesUiModel): WorkoutViewSession =
+        copy(workout = workout)
+
+    override fun withActiveExercise(
+        activeExercise: ActiveExerciseSession?
+    ): WorkoutViewSession = copy(activeExercise = activeExercise)
+}
+
+data class WorkoutEditSession(
+    val original: WorkoutWithExercisesUiModel,
+    override val workout: WorkoutWithExercisesUiModel,//draft
+
+    override val activeExercise: ActiveExerciseSession? = null,
+    val modal: WorkoutEditModal? = null,
+
+    val editableCircuit: CircuitEditorUiState? = null,
+    val editingCircuitItemKey: Int? = null,
+    val scrollToIdx: Int? = null,
+
+    val deletingWorkoutItemKey: Int? = null,
+    //val exchangingExerciseItemKey: Int? = null,
+    ) : ExerciseInteractionHost<WorkoutEditSession> {
+
+    override fun withWorkout(workout: WorkoutWithExercisesUiModel): WorkoutEditSession =
+        copy(workout = workout)
+
+    override fun withActiveExercise(
+        activeExercise: ActiveExerciseSession?
+    ): WorkoutEditSession = copy(activeExercise = activeExercise)
+
+}

@@ -13,6 +13,7 @@ import com.pl.myworkoutapp.ui.theme.TurquoiseBlue
 import myworkoutapplication.composeapp.generated.resources.Res
 import myworkoutapplication.composeapp.generated.resources.ic_plank1
 
+//NAV SCREEN
 @Composable
 fun PlansScreen(
     state: PlansUiState,

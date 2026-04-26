@@ -22,17 +22,6 @@ data class CircuitEditorUiState(
     val tabataRestSec: String = "10",
 )
 
-//fun CircuitEditorUiState.isValid(): Boolean {
-//    return when (structureType) {
-//        CircuitStructureType.Standard -> rounds.toIntOrNull()?.let { it > 0 } == true
-//        CircuitStructureType.EMOM -> emomMinutes.toIntOrNull()?.let { it > 0 } == true
-//        CircuitStructureType.AMRAP -> amrapMinutes.toIntOrNull()?.let { it > 0 } == true
-//        CircuitStructureType.Tabata ->
-//            tabataWorkSec.toIntOrNull()?.let { it > 0 } == true &&
-//                    tabataRestSec.toIntOrNull()?.let { it > 0 } == true
-//    }
-//}
-
 fun CircuitEditorUiState.toStructure() = when (structureType) {
     CircuitStructureType.Standard -> CircuitStructure.Standard(rounds.toInt())
     CircuitStructureType.EMOM -> CircuitStructure.EMOM(emomMinutes.toInt())

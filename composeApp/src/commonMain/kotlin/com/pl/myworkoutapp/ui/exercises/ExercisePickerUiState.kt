@@ -14,6 +14,7 @@ data class ExercisePickerUiState(
     val showExpandedFilters : Boolean = false,
     //val showExercisePreview : Boolean = false,
     val exercisePreview: ExerciseInfoUiModel? = null,
+    val scrollToIdx: Int? = null,
 ) {
     val isFilterEmpty: Boolean
         get() = query.isBlank() && muscleGroups.isEmpty() && equipments.isEmpty() && exerciseTypes.isEmpty()

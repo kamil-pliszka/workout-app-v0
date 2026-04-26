@@ -20,11 +20,13 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.pl.myworkoutapp.domain.model.exercise.ExerciseId
 import com.pl.myworkoutapp.domain.model.workout.*
 import com.pl.myworkoutapp.ui.common.*
 import com.pl.myworkoutapp.ui.theme.AppTheme
 import com.pl.myworkoutapp.ui.workouts.components.WorkoutEditableItemCircuit
 import com.pl.myworkoutapp.ui.workouts.components.WorkoutEditableItemExercise
+import com.pl.myworkoutapp.ui.workouts.components.WorkoutExerciseInfoScreen
 import kotlinx.coroutines.launch
 import myworkoutapplication.composeapp.generated.resources.*
 import org.jetbrains.compose.resources.painterResource
@@ -36,11 +38,11 @@ import org.jetbrains.compose.resources.stringResource
  * powstał w celu umożliwienia edycji obiektu, który może być zmodyfikowany(a jeszcze nie zapisany)
  * w ramach ekranu WorkoutDetailsScreen, więc modyfikujemy ten sam WorkoutDetailsUiState przez VM
  */
+//OVERLAY SCREEN
 @Composable
 fun WorkoutEditorScreen(
-    state: WorkoutWithExercisesUiModel,
-    onAction: (WorkoutDetailsAction) -> Unit,
-    onEditorAction: (WorkoutEditorAction) -> Unit,
+    state: WorkoutEditSession,
+    onEditAction: (WorkoutEditAction) -> Unit,
     onCircuitEditorAction: (CircuitEditorAction) -> Unit,
 ) {
     // Backdrop / Scrim
@@ -52,7 +54,7 @@ fun WorkoutEditorScreen(
                 indication = null,
                 interactionSource = remember { MutableInteractionSource() }
             ) {
-                onAction(WorkoutDetailsAction.OnCloseEditor)
+                onEditAction(WorkoutEditAction.CloseEditor)
             }
     ) {
         Column(
@@ -69,23 +71,20 @@ fun WorkoutEditorScreen(
                 ) { /* Consume clicks to prevent closing */ }
         ) {
             WorkoutEditorHeader(
-                title = state.workout.workoutId.asString(),
-                onClose = { onAction(WorkoutDetailsAction.OnCloseEditor) }
+                title = state.original.workout.workoutId.asString(),
+                onClose = { onEditAction(WorkoutEditAction.CloseEditor) }
             )
 
             // Content area
             Box(modifier = Modifier.weight(1f)) {
                 WorkoutEditorContent(
                     state = state,
-                    onEditorAction = onEditorAction,
-                    onExchangeAction = { exerciseUiItem ->
-                        //wygląda podejrzanie
-                        onEditorAction(WorkoutEditorAction.OnExerciseExchangeStart(exerciseUiItem))
-                        onAction(WorkoutDetailsAction.ShowExercisePicker)
+                    onEditorAction = onEditAction,
+                    onExchangeAction = { key, exerciseId ->
+                        onEditAction(WorkoutEditAction.ExerciseExchangeStart(key, exerciseId))
                     },
-                    onExerciseClick = { exe ->
-                        //TODO - to nie tutaj powinno iść, bo operuje na złym modelu
-                        onAction(WorkoutDetailsAction.ShowExerciseInfo(exe))
+                    onExerciseClick = { key, exerciseId ->
+                        onEditAction(WorkoutEditAction.ShowExerciseInfo(key, exerciseId))
                     }
                 )
             }
@@ -93,10 +92,10 @@ fun WorkoutEditorScreen(
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
 
             WorkoutEditorBottomButtons(
-                onReset = { onAction(WorkoutDetailsAction.OnResetEditor) },
-                onSave = { onAction(WorkoutDetailsAction.OnSaveEditor) },
-                onAddExercise = { onAction(WorkoutDetailsAction.ShowExercisePicker) },
-                onAddCircuit = { onEditorAction(WorkoutEditorAction.OnAddCircuit) },
+                onReset = { onEditAction(WorkoutEditAction.ResetDraft) },
+                onSave = { onEditAction(WorkoutEditAction.SaveDraft) },
+                onAddExercise = { onEditAction(WorkoutEditAction.AddExercise) },
+                onAddCircuit = { onEditAction(WorkoutEditAction.AddCircuit) },
             )
         }
     }
@@ -106,23 +105,31 @@ fun WorkoutEditorScreen(
         CircuitEditorScreen(
             state = state.editableCircuit,
             onEditorAction = onCircuitEditorAction,
-            onSave = { onEditorAction(WorkoutEditorAction.OnSaveCircuitEditor) },
-            onCancel = { onEditorAction(WorkoutEditorAction.OnCancelCircuitEditor) },
+            onSave = { onEditAction(WorkoutEditAction.SaveCircuitEditor) },
+            onCancel = { onEditAction(WorkoutEditAction.CancelCircuitEditor) },
         )
     }
 
-    if (state.deletingWorkoutItem != null) {
+    if (state.deletingWorkoutItemKey != null) {
         ConfirmationDialog(
             title = stringResource(Res.string.workout_editor_delete_title),
             text = stringResource(Res.string.workout_editor_delete_question),
             onConfirm = {
-                onEditorAction(WorkoutEditorAction.OnDeleteElementConfirm)
+                onEditAction(WorkoutEditAction.DeleteElementConfirm)
             },
             confirmText = stringResource(Res.string.btn_delete),
             confirmButtonColors = buttonColors(MaterialTheme.colorScheme.error),
             onCancel = {
-                onEditorAction(WorkoutEditorAction.OnDeleteElementCancel)
+                onEditAction(WorkoutEditAction.DeleteElementCancel)
             },
+        )
+    }
+
+    if (state.modal is WorkoutEditModal.ExercisePicker && state.activeExercise != null) {
+        WorkoutExerciseInfoScreen(
+            exerciseInfo = state.activeExercise.info,
+            showExchangeButton = false,
+            onAction = { onEditAction(it.toWorkoutEditAction()) }
         )
     }
 
@@ -254,10 +261,10 @@ fun WorkoutEditorBottomButtons(
 
 @Composable
 fun WorkoutEditorContent(
-    state: WorkoutWithExercisesUiModel,
-    onEditorAction: (WorkoutEditorAction) -> Unit,
-    onExchangeAction: (ExerciseUiItem) -> Unit,
-    onExerciseClick: (ExerciseUiItem) -> Unit,
+    state: WorkoutEditSession,
+    onEditorAction: (WorkoutEditAction) -> Unit,
+    onExchangeAction: (Int, ExerciseId) -> Unit,
+    onExerciseClick: (Int, ExerciseId) -> Unit,
     ) {
     val listState = rememberLazyListState()
     val scope = rememberCoroutineScope()
@@ -265,7 +272,7 @@ fun WorkoutEditorContent(
     val dragDropState = rememberDragDropState(
         listState = listState,
         onMove = { from, to ->
-            onEditorAction(WorkoutEditorAction.OnMove(from, to))
+            onEditorAction(WorkoutEditAction.Move(from, to))
             if (to == 0 || from == 0) {
                 scope.launch { listState.animateScrollToItem(0) }
             }
@@ -283,13 +290,13 @@ fun WorkoutEditorContent(
         contentPadding = PaddingValues(bottom = 16.dp)
     ) {
         itemsIndexed(
-            items = state.items,
-            key = { _, item -> item.key }
+            items = state.workout.items,
+            key = { _, item -> item.uiKey }
         ) { index, item ->
             DraggableItem(dragDropState = dragDropState, index = index) {
                 WorkoutEditableItemRow(
                     item = item,
-                    themeColor = state.workout.themeColor,
+                    themeColor = state.workout.workout.themeColor,
                     dragDropState = dragDropState,
                     index = index,
                     isDragging = dragDropState.draggingIndex == index,
@@ -309,9 +316,9 @@ fun WorkoutEditableItemRow(
     dragDropState: DragDropState,
     index: Int,
     isDragging: Boolean,
-    onEditorAction: (WorkoutEditorAction) -> Unit,
-    onExchangeAction: (ExerciseUiItem) -> Unit,
-    onExerciseClick: (ExerciseUiItem) -> Unit,
+    onEditorAction: (WorkoutEditAction) -> Unit,
+    onExchangeAction: (Int, ExerciseId) -> Unit,
+    onExerciseClick: (Int, ExerciseId) -> Unit,
 ) {
     Row(
         modifier = Modifier
@@ -330,7 +337,7 @@ fun WorkoutEditableItemRow(
         Box(
             modifier = Modifier
                 .padding(horizontal = 16.dp)
-                .pointerInput(item.key, index) {
+                .pointerInput(item.uiKey, index) {
                     detectDragGestures(
                         onDragStart = { dragDropState.onDragStart(index) },
                         onDragEnd = { dragDropState.onDragEnd() },
@@ -356,20 +363,20 @@ fun WorkoutEditableItemRow(
                     item,
                     themeColor,
                     onClick = {},
-                    onEditClick = { onEditorAction(WorkoutEditorAction.OnEditCircuit(item)) },
-                    onDeleteClick = { onEditorAction(WorkoutEditorAction.OnDeleteCircuit(item)) }
+                    onEditClick = { onEditorAction(WorkoutEditAction.EditCircuit(item.uiKey)) },
+                    onDeleteClick = { onEditorAction(WorkoutEditAction.DeleteItem(item.uiKey)) }
                 )
 
                 is ExerciseUiItem -> WorkoutEditableItemExercise(
                     item,
                     themeColor,
-                    onClick = { onExerciseClick(item) },
-                    onExchangeClick = { onExchangeAction(item) },
-                    onDeleteClick = { onEditorAction(WorkoutEditorAction.OnDeleteExercise(item)) },
+                    onClick = { onExerciseClick(item.uiKey, item.exerciseId) },
+                    onExchangeClick = { onExchangeAction(item.uiKey, item.exerciseId) },
+                    onDeleteClick = { onEditorAction(WorkoutEditAction.DeleteItem(item.uiKey)) },
                     quantityChangeAction = { increase ->
                         onEditorAction(
-                            WorkoutEditorAction.OnChangeQuantity(
-                                item,
+                            WorkoutEditAction.ChangeQuantityOnList(
+                                item.uiKey,
                                 increase
                             )
                         )
@@ -390,9 +397,11 @@ private fun WorkoutEditorScreenPreviewNoSet() {
     val workoutUiModel = transform(workout)
     AppTheme {
         WorkoutEditorScreen(
-            state = workoutUiModel,
-            onAction = { },
-            onEditorAction = { },
+            state = WorkoutEditSession(
+                original = workoutUiModel,
+                workout = workoutUiModel.copy(),
+            ),
+            onEditAction = { },
             onCircuitEditorAction = { },
         )
     }
@@ -405,9 +414,11 @@ private fun WorkoutEditorScreenPreviewWithSet() {
     val workoutUiModel = transform(workout)
     AppTheme {
         WorkoutEditorScreen(
-            state = workoutUiModel,
-            onAction = { },
-            onEditorAction = { },
+            state = WorkoutEditSession(
+                original = workoutUiModel,
+                workout = workoutUiModel.copy(),
+            ),
+            onEditAction = { },
             onCircuitEditorAction = { },
         )
     }

@@ -1,4 +1,5 @@
 @echo off
+setlocal enabledelayedexpansion
 
 echo. > model.txt
 for /r "domain" %%f in (*.kt) do (
@@ -26,6 +27,23 @@ for /r "ui/workouts" %%f in (*.kt) do (
     echo ==== %%f ==== >> workouts.txt
     type "%%f" >> workouts.txt
     echo. >> workouts.txt
+)
+
+echo. > workouts_flat.txt
+
+for %%f in ("ui/workouts\*.kt") do (
+    set "name=%%~nxf"
+    if /i not "!name:~0,7!"=="Circuit" (
+        if /i not "!name:~0,8!"=="Workouts" (
+            if /i "!name:~0,7!"=="Workout" (
+                    if /i not "!name:~-9!"=="Screen.kt" (
+                    echo ==== %%f ==== >> workouts_flat.txt
+                    type "%%f" >> workouts_flat.txt
+                    echo. >> workouts_flat.txt
+                )
+            )
+        )
+    )
 )
 
 dir /S/B > dir.txt

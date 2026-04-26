@@ -1,5 +1,6 @@
 package com.pl.myworkoutapp.ui.workouts
 
+import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
 import com.pl.myworkoutapp.domain.model.Difficulty
 import com.pl.myworkoutapp.domain.model.exercise.ExerciseId
@@ -8,6 +9,7 @@ import com.pl.myworkoutapp.domain.model.workout.*
 import com.pl.myworkoutapp.ui.common.UiText
 import org.jetbrains.compose.resources.DrawableResource
 
+@Immutable
 data class WorkoutUiModel(
     val workoutId: WorkoutId,
     val basedOn: WorkoutId.BuiltIn?,
@@ -21,21 +23,17 @@ data class WorkoutUiModel(
     val kcalText: UiText,
 )
 
+@Immutable
 data class WorkoutWithExercisesUiModel(
     val workout: WorkoutUiModel,
     val items: List<WorkoutUiItem>,
-    val scrollToIdx: Int? = null,
-    val editableCircuit: CircuitEditorUiState? = null,
-    val editingCircuitItem: CircuitUiItem? = null,
-    //val showDeleteConfirm: Boolean = false,
-    val deletingWorkoutItem: WorkoutUiItem? = null,
-    val exchangingExerciseItem: ExerciseUiItem? = null,
     ) {
     fun isDirty(original : WorkoutWithExercisesUiModel) : Boolean {
         return !(workout == original.workout && items == original.items)
     }
 }
 
+@Immutable
 sealed interface TimeLineItemType {
     val color: Color
     data class None(override val color: Color = Color.Transparent): TimeLineItemType //gdy będzie pojedyńczy element
@@ -45,18 +43,22 @@ sealed interface TimeLineItemType {
 }
 
 //tutaj będzie odpowiednik albo WorkoutExercise albo Circuit
+@Immutable
 sealed interface WorkoutUiItem {
     val isCurrent: Boolean
     val isDone: Boolean
     val timeline: List<TimeLineItemType>
-    val key: Int //klucz dla operacji UI, unikalny id obiektu będącego na liście w workout
+    val uiKey: Int //klucz dla operacji UI, unikalny id obiektu będącego na liście w workout
+    val depth: Int //głębokość w strukturze/drzewie
 }
 
+@Immutable
 data class ExerciseUiItem(
     override val isCurrent: Boolean = false,
     override val isDone: Boolean = false,
     override val timeline: List<TimeLineItemType> = listOf(),
-    override val key: Int = 0,
+    override val uiKey: Int = 0,
+    override val depth: Int = 0,
 
     val exerciseId: ExerciseId,
     //val muscle: MuscleGroup,
@@ -70,11 +72,13 @@ enum class CircuitStructureType {
     Standard, EMOM, AMRAP, Tabata
 }
 
+@Immutable
 data class CircuitUiItem(
     override val isCurrent: Boolean = false,
     override val isDone: Boolean = false,
     override val timeline: List<TimeLineItemType> = listOf(),
-    override val key: Int = 0,
+    override val uiKey: Int = 0,
+    override val depth: Int = 0,
 
     val phase: Phase,
     //TODO - trochę przenika, ale nie chce mi się robić kopii, bo jeszcze nie wiem jak to wykorzystam

@@ -3,11 +3,11 @@ package com.pl.myworkoutapp.ui.exercises
 import com.pl.myworkoutapp.domain.model.exercise.QuantityType
 import kotlin.math.roundToInt
 
-fun quantityChange(type: QuantityType, currentQuantityValua : Int, increase : Boolean) : Int = when(type) {
-        QuantityType.REPS -> changeReps(currentQuantityValua, increase)
-        QuantityType.REPS_PER_SIDE -> changeReps(currentQuantityValua, increase)
-        QuantityType.DURATION -> changeDuration(currentQuantityValua, increase)
-        QuantityType.DISTANCE -> changeDistance(currentQuantityValua, increase)
+fun quantityChange(type: QuantityType, currentQuantityValue : Int, increase : Boolean) : Int = when(type) {
+        QuantityType.REPS -> changeReps(currentQuantityValue, increase)
+        QuantityType.REPS_PER_SIDE -> changeReps(currentQuantityValue, increase)
+        QuantityType.DURATION -> changeDuration(currentQuantityValue, increase)
+        QuantityType.DISTANCE -> changeDistance(currentQuantityValue, increase)
     }
 
 

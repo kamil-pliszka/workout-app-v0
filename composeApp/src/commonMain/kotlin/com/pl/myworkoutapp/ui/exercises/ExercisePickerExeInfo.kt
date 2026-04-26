@@ -70,7 +70,7 @@ fun ExercisePickerExeInfo(
                 //CONTENT
                 ExerciseInfoComponent(
                     exerciseInfo = exerciseInfo,
-                    changeQtyButtons = false,
+                    showQuantity = false,
                     quantityChangeAction = {}
                 )
             }

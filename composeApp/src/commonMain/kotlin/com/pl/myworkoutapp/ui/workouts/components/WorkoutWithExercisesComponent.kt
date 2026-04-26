@@ -27,7 +27,7 @@ sealed interface WorkoutWithExercisesAction {
     object OnOpenEditor : WorkoutWithExercisesAction
     object OnDeleteRequest : WorkoutWithExercisesAction
     object OnTuneRequest : WorkoutWithExercisesAction
-    data class ShowExerciseInfo(val exercise: WorkoutUiItem) : WorkoutWithExercisesAction
+    data class ShowExerciseInfo(val key: Int, val exerciseId: ExerciseId) : WorkoutWithExercisesAction
 }
 
 @Composable
@@ -87,7 +87,7 @@ fun WorkoutItemRow(
         is CircuitUiItem -> "${item.title}"
         is ExerciseUiItem -> "${item.exerciseId}"
     }
-    println("WorkoutItemRow: ${item.key}, $desc")
+    println("WorkoutItemRow: ${item.uiKey}, $desc")
     Row(
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -95,13 +95,13 @@ fun WorkoutItemRow(
             is CircuitUiItem -> WorkoutItemCircuit(
                 item,
                 themeColor,
-                onClick = { onAction(WorkoutWithExercisesAction.ShowExerciseInfo(item)) }
+                onClick = { /*onAction(WorkoutWithExercisesAction.ShowExerciseInfo(item))*/ }
             )
 
             is ExerciseUiItem -> WorkoutItemExercise(
                 item,
                 themeColor,
-                onClick = { onAction(WorkoutWithExercisesAction.ShowExerciseInfo(item)) }
+                onClick = { onAction(WorkoutWithExercisesAction.ShowExerciseInfo(item.uiKey, item.exerciseId)) }
             )
         }
     }
@@ -240,8 +240,8 @@ val EXE_CD_2 = ExerciseUiItem(
 
 fun List<WorkoutUiItem>.prepareKeys() = this.mapIndexed { index, item ->
     when(item) {
-        is CircuitUiItem -> item.copy(key = index)
-        is ExerciseUiItem -> item.copy(key = index)
+        is CircuitUiItem -> item.copy(uiKey = index)
+        is ExerciseUiItem -> item.copy(uiKey = index)
     }
 }
 

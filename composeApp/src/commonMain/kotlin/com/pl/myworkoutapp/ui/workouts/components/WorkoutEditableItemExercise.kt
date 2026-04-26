@@ -69,6 +69,7 @@ fun WorkoutEditableItemExercise(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
+                    modifier = Modifier.align(Alignment.Start),
                     text = exercise.name.asString(),
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,

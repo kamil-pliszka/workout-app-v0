@@ -8,6 +8,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.pl.myworkoutapp.ui.execution.components.*
 
+//NAV SCREEN
 @Composable
 fun WorkoutExecutionScreen(
     state: WorkoutExecutionState,

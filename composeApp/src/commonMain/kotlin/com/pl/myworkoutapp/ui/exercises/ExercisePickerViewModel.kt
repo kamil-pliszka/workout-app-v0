@@ -7,8 +7,9 @@ import androidx.lifecycle.viewModelScope
 import com.pl.myworkoutapp.core.StringComparator
 import com.pl.myworkoutapp.domain.AppSettingRepository
 import com.pl.myworkoutapp.domain.WorkoutRepository
-import com.pl.myworkoutapp.domain.model.exercise.Exercise
 import com.pl.myworkoutapp.domain.model.exercise.ExerciseId
+import com.pl.myworkoutapp.domain.usecase.GetExerciseInfoUseCase
+import com.pl.myworkoutapp.ui.workouts.toUi
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 
@@ -16,7 +17,8 @@ import kotlinx.coroutines.flow.*
 class ExercisePickerViewModel(
     private val repository: WorkoutRepository,
     appSettingRepository: AppSettingRepository,
-    //exerciseCoordinator: ExerciseEditorCoordinator
+    private val exerciseCoordinator: ExerciseEditorCoordinator,
+    private val getExerciseInfoUseCase: GetExerciseInfoUseCase,
 ) : ViewModel() {
     private val _state = MutableStateFlow(
         ExercisePickerUiState(isLoading = true)
@@ -76,7 +78,7 @@ class ExercisePickerViewModel(
         filterInputFlow,
         queryFlow
     ) { (all, filters, currentId), query ->
-
+        println("filterFlow executed, all = ${all.size}")
         val (muscles, eq, types) = filters
 
         all.asSequence()
@@ -228,16 +230,31 @@ class ExercisePickerViewModel(
 
     private fun exercisePreview(exerciseId: ExerciseId) {
         viewModelScope.launch {
-            println("Exe preview clicked: $exerciseId")
-            val exercise: Exercise = repository.getExercise(exerciseId)
-            val exerciseInfo = exercise.toUi()
-            val exerciseMarkdown = exerciseInfo.loadExerciseDescription()
+            val exerciseInfo = getExerciseInfoUseCase.execute(exerciseId).toUi()
             _state.update {
-                it.copy(
-                    exercisePreview = exerciseInfo.copy(
-                        descriptionMarkdown = exerciseMarkdown
-                    )
-                )
+                it.copy(exercisePreview = exerciseInfo)
+            }
+        }
+    }
+
+    init {
+        observeCoordinatorExercises()
+    }
+
+    private fun observeCoordinatorExercises() {
+        viewModelScope.launch {
+            exerciseCoordinator.events.collect { event ->
+                when (event) {
+                    is ExerciseResult.Created -> {
+                        println("exerciseCoordinator.created exe: ${event.exerciseId}")
+                    }
+
+                    is ExerciseResult.Updated -> {
+                        println("exerciseCoordinator.updated exe: ${event.exerciseId}")
+                    }
+
+                    is ExerciseResult.Deleted -> {}
+                }
             }
         }
     }

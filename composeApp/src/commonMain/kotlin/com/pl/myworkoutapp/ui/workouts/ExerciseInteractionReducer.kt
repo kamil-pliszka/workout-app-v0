@@ -1,0 +1,234 @@
+package com.pl.myworkoutapp.ui.workouts
+
+import com.pl.myworkoutapp.domain.model.exercise.ExerciseId
+import com.pl.myworkoutapp.ui.exercises.ExerciseInfoUiModel
+import com.pl.myworkoutapp.ui.exercises.mapQuantityValue
+import com.pl.myworkoutapp.ui.exercises.quantityChange
+
+/**
+ * To jest shared core dla flow aktywnego ćwiczenia.
+ *
+ * Obsługuje wyłącznie:
+ *
+ * open exercise
+ * close exercise
+ * next / prev
+ * change quantity
+ * reset quantity
+ * exchange exercise
+ * save exercise
+ *
+ * Nie interesuje go:
+ *
+ * save whole workout
+ * start workout
+ * circuit editor
+ * delete item
+ * modale ekranu
+ *
+ * To jest bardzo ważne: ten reducer nie zna kontekstu ekranu.
+ * On zna tylko:
+ *
+ * „mam workout + active exercise flow”
+ */
+
+sealed interface ExerciseInteractionAction {
+    data class Open(val key: Int, val info: ExerciseInfoUiModel) : ExerciseInteractionAction
+    data object Close : ExerciseInteractionAction
+    data object Next : ExerciseInteractionAction
+    data object Prev : ExerciseInteractionAction
+    data class ChangeQuantity(val increase: Boolean) : ExerciseInteractionAction
+    data object Reset : ExerciseInteractionAction
+    data class Exchange(val newInfo: ExerciseInfoUiModel) : ExerciseInteractionAction
+    data object Save : ExerciseInteractionAction
+}
+
+interface ExerciseInteractionHost<T : ExerciseInteractionHost<T>> {
+    val workout: WorkoutWithExercisesUiModel
+    val activeExercise: ActiveExerciseSession?
+
+    fun withWorkout(workout: WorkoutWithExercisesUiModel): T
+    fun withActiveExercise(activeExercise: ActiveExerciseSession?): T
+}
+
+data class ExerciseInteractionResult<T : ExerciseInteractionHost<T>>(
+    val state: T,
+    val effect: ExerciseInteractionEffect? = null,
+)
+
+sealed interface ExerciseInteractionEffect {
+    data class LoadExerciseInfo(val key: Int, val exerciseId: ExerciseId) : ExerciseInteractionEffect
+}
+
+class ExerciseInteractionReducer {
+
+    fun <T : ExerciseInteractionHost<T>> reduce(
+        state: T,
+        action: ExerciseInteractionAction
+    ): ExerciseInteractionResult<T> {
+        return when (action) {
+            is ExerciseInteractionAction.Open ->
+                open(state, action.key, action.info)
+
+            ExerciseInteractionAction.Close ->
+                ExerciseInteractionResult(close(state))
+
+            ExerciseInteractionAction.Next ->
+                navigate(state, +1)
+
+            ExerciseInteractionAction.Prev ->
+                navigate(state, -1)
+
+            is ExerciseInteractionAction.ChangeQuantity ->
+                ExerciseInteractionResult(changeQuantity(state, action.increase))
+
+            ExerciseInteractionAction.Reset ->
+                ExerciseInteractionResult(reset(state))
+
+            is ExerciseInteractionAction.Exchange ->
+                ExerciseInteractionResult(exchange(state, action.newInfo))
+
+            ExerciseInteractionAction.Save ->
+                ExerciseInteractionResult(save(state))
+        }
+    }
+
+    private fun <T : ExerciseInteractionHost<T>> open(
+        host: T,
+        key: Int,
+        info: ExerciseInfoUiModel
+    ): ExerciseInteractionResult<T> {
+        val exercises = host.workout.items.filterIsInstance<ExerciseUiItem>()
+        val position = exercises.indexOfFirst { it.uiKey == key } + 1
+        val current = exercises.first { it.uiKey == key }
+
+        val active = ActiveExerciseSession(
+            key = key,
+            draft = ActiveExercise(
+                key = current.uiKey,
+                quantityType = current.quantityType,
+                draftQuantity = current.quantityValue,
+                originalQuantity = current.quantityValue,
+            ),
+            info = info.copy(
+                quantityValue = current.quantityValue,
+                position = position,
+                total = exercises.size,
+            )
+        )
+
+        return ExerciseInteractionResult(
+            state = host.withActiveExercise(active)
+        )
+    }
+
+    private fun <T : ExerciseInteractionHost<T>> close(host: T): T {
+        return host.withActiveExercise(null)
+    }
+
+    private fun <T : ExerciseInteractionHost<T>> navigate(
+        host: T,
+        offset: Int
+    ): ExerciseInteractionResult<T> {
+        val current = host.activeExercise ?: return ExerciseInteractionResult(host)
+
+        val exercises = host.workout.items.filterIsInstance<ExerciseUiItem>()
+        val currentIndex = exercises.indexOfFirst { it.uiKey == current.key }
+        val next = exercises.getOrNull(currentIndex + offset)
+            ?: return ExerciseInteractionResult(host)
+
+        return ExerciseInteractionResult(
+            state = host,
+            effect = ExerciseInteractionEffect.LoadExerciseInfo(next.uiKey, next.exerciseId)
+        )
+    }
+
+    private fun <T : ExerciseInteractionHost<T>> changeQuantity(
+        host: T,
+        increase: Boolean
+    ): T {
+        val active = host.activeExercise ?: return host
+
+        val newQuantity = quantityChange(
+            type = active.draft.quantityType,
+            currentQuantityValue = active.draft.draftQuantity,
+            increase = increase
+        )
+
+        return host.withActiveExercise(
+            active.copy(
+                draft = active.draft.copy(
+                    draftQuantity = newQuantity
+                ),
+                info = active.info.copy(
+                    quantityValue = newQuantity,
+                    isDirty = newQuantity != active.draft.originalQuantity
+                )
+            )
+        )
+    }
+
+    //tutaj mamy reset quantity, nie przywróci zmienionego ćwiczenia
+    private fun <T : ExerciseInteractionHost<T>> reset(host: T): T {
+        val active = host.activeExercise ?: return host
+
+        return host.withActiveExercise(
+            active.copy(
+                draft = active.draft.copy(
+                    draftQuantity = active.draft.originalQuantity
+                ),
+                info = active.info.copy(
+                    quantityValue = active.draft.originalQuantity,
+                    isDirty = false
+                )
+            )
+        )
+    }
+
+    private fun <T : ExerciseInteractionHost<T>> exchange(
+        host: T,
+        newInfo: ExerciseInfoUiModel
+    ): T {
+        val active = host.activeExercise ?: return host
+
+        val mappedQuantity = mapQuantityValue(
+            active.draft.quantityType,
+            active.draft.draftQuantity,
+            newInfo.quantityType
+        )
+
+        return host.withActiveExercise(
+            active.copy(
+                draft = active.draft.copy(
+                    quantityType = newInfo.quantityType,
+                    draftQuantity = mappedQuantity
+                ),
+                info = newInfo.copy(
+                    quantityValue = mappedQuantity,
+                    isDirty = true
+                )
+            )
+        )
+    }
+
+    private fun <T : ExerciseInteractionHost<T>> save(host: T): T {
+        val active = host.activeExercise ?: return host
+
+        val updatedItems = host.workout.items.map { item ->
+            if (item.uiKey != active.key) return@map item
+
+            val exercise = item as ExerciseUiItem
+            exercise.copy(
+                exerciseId = active.info.exerciseId,
+                quantityType = active.info.quantityType,
+                quantityValue = active.draft.draftQuantity,
+                name = active.info.name,
+                icon = active.info.icon ?: exercise.icon,
+            )
+        }
+
+        return host
+            .withWorkout(host.workout.copy(items = updatedItems))
+            .withActiveExercise(null)
+    }
+}

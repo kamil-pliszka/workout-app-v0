@@ -35,7 +35,7 @@ import myworkoutapplication.composeapp.generated.resources.*
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
-
+//OVERLAY SCREEN
 @Composable
 fun CircuitEditorScreen(
     state: CircuitEditorUiState,
@@ -388,16 +388,16 @@ fun CircuitEditorContent(
                             AssistChip(
                                 onClick = {
                                     onEditorAction(CircuitEditorAction.TabataRoundsChanged("8"))
-                                    onEditorAction(CircuitEditorAction.TabataWorksecChanged("20"))
-                                    onEditorAction(CircuitEditorAction.TabataRestsecChanged("10"))
+                                    onEditorAction(CircuitEditorAction.TabataWorkSecChanged("20"))
+                                    onEditorAction(CircuitEditorAction.TabataRestSecChanged("10"))
                                 },
                                 label = { Text("8/20/10") }
                             )
                             AssistChip(
                                 onClick = {
                                     onEditorAction(CircuitEditorAction.TabataRoundsChanged("6"))
-                                    onEditorAction(CircuitEditorAction.TabataWorksecChanged("30"))
-                                    onEditorAction(CircuitEditorAction.TabataRestsecChanged("15"))
+                                    onEditorAction(CircuitEditorAction.TabataWorkSecChanged("30"))
+                                    onEditorAction(CircuitEditorAction.TabataRestSecChanged("15"))
                                 },
                                 label = { Text("6/30/15") }
                             )
@@ -414,7 +414,7 @@ fun CircuitEditorContent(
                         CircuitNumberField(
                             label = stringResource(Res.string.circuit_tabata_worksec),
                             value = state.tabataWorkSec,
-                            onChange = { onEditorAction(CircuitEditorAction.TabataWorksecChanged(it)) },
+                            onChange = { onEditorAction(CircuitEditorAction.TabataWorkSecChanged(it)) },
                             imeAction = ImeAction.Next,
                             keyboardActions = KeyboardActions(onNext = { restFocus.requestFocus() }),
                             modifier = Modifier.focusRequester(firstAttrFocus)
@@ -422,7 +422,7 @@ fun CircuitEditorContent(
                         CircuitNumberField(
                             label = stringResource(Res.string.circuit_tabata_restsec),
                             value = state.tabataRestSec,
-                            onChange = { onEditorAction(CircuitEditorAction.TabataRestsecChanged(it)) },
+                            onChange = { onEditorAction(CircuitEditorAction.TabataRestSecChanged(it)) },
                             imeAction = ImeAction.Done,
                             modifier = Modifier.focusRequester(restFocus)
                         )

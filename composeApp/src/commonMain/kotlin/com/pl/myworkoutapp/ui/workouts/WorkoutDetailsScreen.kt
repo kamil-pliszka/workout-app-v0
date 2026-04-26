@@ -18,28 +18,42 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
 
+//NAV SCREEN
 @Composable
 fun WorkoutDetailsScreen(
     state: WorkoutDetailsUiState,
-    onAction: (WorkoutDetailsAction) -> Unit,
-    onEditorAction: (WorkoutEditorAction) -> Unit,
+    onViewAction: (WorkoutViewAction) -> Unit,
+    onEditAction: (WorkoutEditAction) -> Unit,
     onCircuitEditorAction: (CircuitEditorAction) -> Unit,
 ) {
-    if (state.isLoading || state.workout == null) {
+    if (state.mode is WorkoutDetailsMode.Loading) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             CircularProgressIndicator()
         }
         return
     }
 
-    if (state.editableWorkout != null) {
+    if (state.mode is WorkoutDetailsMode.Edit) {
         WorkoutEditorScreen(
-            state = state.editableWorkout,
-            onAction = onAction,
-            onEditorAction = onEditorAction,
+            state = state.mode.session,
+            onEditAction = onEditAction,
             onCircuitEditorAction = onCircuitEditorAction,
         )
-    } else {
+        state.mode.session.activeExercise?.let { exeSession ->
+            WorkoutExerciseInfoScreen(
+                exerciseInfo = exeSession.info,
+                onAction = { onEditAction(it.toWorkoutEditAction()) }
+            )
+        }
+        if (state.mode.session.modal is WorkoutEditModal.ExercisePicker) {
+            ExercisePickerScreen(
+                currentExerciseId = state.mode.session.modal.currentExerciseId,
+                onResult = { exerciseId -> onEditAction(WorkoutEditAction.ExercisePicked(exerciseId))},
+            )
+        }
+    }
+
+    if (state.mode is WorkoutDetailsMode.View) {
         Box {
             Column(
                 modifier = Modifier.fillMaxSize(),
@@ -47,36 +61,34 @@ fun WorkoutDetailsScreen(
                 //horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 WorkoutWithExercisesComponent(
-                    workoutUiModel = state.workout,
-                    onAction = { onAction(it.toWorkoutDetailsAction()) },
+                    workoutUiModel = state.mode.session.workout,
+                    onAction = { onViewAction(it.toWorkoutViewAction()) },
                 )
             }
             WorkoutDetailBottomButtons(
-                state = state,
-                onAction = onAction
+                state = state.mode.session,
+                onViewAction = onViewAction
             )
         }
-    }
-
-
-    if (state.exerciseInfo != null) {
-        WorkoutExerciseInfoScreen(
-            exerciseInfo = state.exerciseInfo,
-            onAction = { onAction(it.toWorkoutDetailsAction()) }
-        )
-    }
-    if (state.showExercisePicker) {
-        ExercisePickerScreen(
-            currentExerciseId = state.exerciseInfo?.exerciseId,
-            onResult = { exerciseId -> onAction(WorkoutDetailsAction.ExercisePicked(exerciseId))},
-        )
+        state.mode.session.activeExercise?.let { exeSession ->
+            WorkoutExerciseInfoScreen(
+                exerciseInfo = exeSession.info,
+                onAction = { onViewAction(it.toWorkoutViewAction()) }
+            )
+        }
+        if (state.mode.session.modal is WorkoutViewModal.ExercisePicker) {
+            ExercisePickerScreen(
+                currentExerciseId = state.mode.session.activeExercise?.info?.exerciseId,
+                onResult = { exerciseId -> onViewAction(WorkoutViewAction.ExercisePicked(exerciseId))},
+            )
+        }
     }
 }
 
 @Composable
 private fun BoxScope.WorkoutDetailBottomButtons(
-    state: WorkoutDetailsUiState,
-    onAction: (WorkoutDetailsAction) -> Unit,
+    state: WorkoutViewSession,
+    onViewAction: (WorkoutViewAction) -> Unit,
 ) {
     //pasek przyciskow na dole
     Box(
@@ -84,13 +96,13 @@ private fun BoxScope.WorkoutDetailBottomButtons(
             .align(Alignment.BottomCenter)
             .padding(16.dp)
     ) {
-        if (state.isDirty) {
+        if (state.hasUnsavedChanges) {
             Row(
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 OutlinedButton( // Use Outlined for secondary action
                     modifier = Modifier.weight(1f),
-                    onClick = { onAction(WorkoutDetailsAction.OnResetWorkout) },
+                    onClick = { onViewAction(WorkoutViewAction.ResetWorkout) },
                     colors = buttonColors(containerColor = MaterialTheme.colorScheme.outline),
                 ) {
                     Icon(painter = painterResource(Res.drawable.ic_reset_settings), contentDescription = null)
@@ -99,7 +111,7 @@ private fun BoxScope.WorkoutDetailBottomButtons(
                 }
                 Button( // Filled for primary action
                     modifier = Modifier.weight(1f),
-                    onClick = { onAction(WorkoutDetailsAction.OnSaveWorkout) }
+                    onClick = { onViewAction(WorkoutViewAction.SaveWorkout) }
                 ) {
                     Icon(painter = painterResource(Res.drawable.ic_check), contentDescription = null)
                     Spacer(Modifier.width(8.dp))
@@ -110,7 +122,7 @@ private fun BoxScope.WorkoutDetailBottomButtons(
             Button(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = {
-                    onAction(WorkoutDetailsAction.OnStartWorkout)
+                    onViewAction(WorkoutViewAction.StartWorkout)
                 }
             ) {
                 Text(stringResource(Res.string.workout_start))
@@ -126,12 +138,15 @@ private fun WorkoutDetailsScreenPreviewEN() {
     val workoutUiModel = transform(workout)
     WorkoutDetailsScreen(
         state = WorkoutDetailsUiState(
-            isLoading = false,
-            workout = workoutUiModel,
-            isDirty = true,
+            mode = WorkoutDetailsMode.View(
+                session = WorkoutViewSession(
+                    workout = workoutUiModel,
+                    hasUnsavedChanges = true
+                )
+            ),
         ),
-        onAction = { },
-        onEditorAction = { },
+        onViewAction = { },
+        onEditAction = { },
         onCircuitEditorAction = { },
     )
 }
@@ -143,11 +158,14 @@ private fun WorkoutDetailsScreenPreviewPL() {
     val workoutUiModel = transform(workout)
     WorkoutDetailsScreen(
         state = WorkoutDetailsUiState(
-            isLoading = false,
-            workout = workoutUiModel
+            mode = WorkoutDetailsMode.View(
+                session = WorkoutViewSession(
+                    workout = workoutUiModel,
+                )
+            ),
         ),
-        onAction = { },
-        onEditorAction = { },
+        onViewAction = { },
+        onEditAction = { },
         onCircuitEditorAction = { },
     )
 }

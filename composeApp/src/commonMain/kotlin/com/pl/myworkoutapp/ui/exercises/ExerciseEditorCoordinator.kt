@@ -24,6 +24,7 @@ class ExerciseEditorCoordinator {
 
     private fun emit(result: ExerciseResult) {
         _events.tryEmit(result)
+        println("ExerciseEditorCoordinator emited : $result")
     }
 
     fun exerciseCreated(exerciseId: ExerciseId.Custom) {
