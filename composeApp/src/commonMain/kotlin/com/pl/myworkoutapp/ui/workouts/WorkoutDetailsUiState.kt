@@ -1,7 +1,6 @@
 package com.pl.myworkoutapp.ui.workouts
 
 import com.pl.myworkoutapp.domain.model.exercise.ExerciseId
-import com.pl.myworkoutapp.domain.model.exercise.QuantityType
 import com.pl.myworkoutapp.ui.exercises.ExerciseInfoUiModel
 
 
@@ -39,15 +38,8 @@ sealed interface ExercisePickerContext {
 
 data class ActiveExerciseSession(
     val key: Int,
-    val draft: ActiveExercise,
-    val info: ExerciseInfoUiModel,
-)
-
-data class ActiveExercise(
-    val key: Int,
-    val quantityType: QuantityType,
-    val draftQuantity: Int,
-    val originalQuantity: Int
+    val original: ExerciseInfoUiModel,
+    val draft: ExerciseInfoUiModel,
 )
 
 data class WorkoutViewSession(

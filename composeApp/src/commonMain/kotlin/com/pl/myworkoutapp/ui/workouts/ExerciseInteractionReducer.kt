@@ -102,19 +102,15 @@ class ExerciseInteractionReducer {
         val position = exercises.indexOfFirst { it.uiKey == key } + 1
         val current = exercises.first { it.uiKey == key }
 
+        val infoCompleted = info.copy(
+            quantityValue = current.quantityValue,
+            position = position,
+            total = exercises.size,
+        )
         val active = ActiveExerciseSession(
             key = key,
-            draft = ActiveExercise(
-                key = current.uiKey,
-                quantityType = current.quantityType,
-                draftQuantity = current.quantityValue,
-                originalQuantity = current.quantityValue,
-            ),
-            info = info.copy(
-                quantityValue = current.quantityValue,
-                position = position,
-                total = exercises.size,
-            )
+            original = infoCompleted,
+            draft = infoCompleted,
         )
 
         return ExerciseInteractionResult(
@@ -151,36 +147,27 @@ class ExerciseInteractionReducer {
 
         val newQuantity = quantityChange(
             type = active.draft.quantityType,
-            currentQuantityValue = active.draft.draftQuantity,
+            currentQuantityValue = active.draft.quantityValue,
             increase = increase
         )
 
         return host.withActiveExercise(
             active.copy(
                 draft = active.draft.copy(
-                    draftQuantity = newQuantity
-                ),
-                info = active.info.copy(
                     quantityValue = newQuantity,
-                    isDirty = newQuantity != active.draft.originalQuantity
+                    isDirty = !(newQuantity == active.original.quantityValue
+                            && active.draft.exerciseId == active.original.exerciseId)
                 )
             )
         )
     }
 
-    //tutaj mamy reset quantity, nie przywróci zmienionego ćwiczenia
     private fun <T : ExerciseInteractionHost<T>> reset(host: T): T {
         val active = host.activeExercise ?: return host
 
         return host.withActiveExercise(
             active.copy(
-                draft = active.draft.copy(
-                    draftQuantity = active.draft.originalQuantity
-                ),
-                info = active.info.copy(
-                    quantityValue = active.draft.originalQuantity,
-                    isDirty = false
-                )
+                draft = active.original.copy()
             )
         )
     }
@@ -193,19 +180,16 @@ class ExerciseInteractionReducer {
 
         val mappedQuantity = mapQuantityValue(
             active.draft.quantityType,
-            active.draft.draftQuantity,
+            active.draft.quantityValue,
             newInfo.quantityType
         )
 
         return host.withActiveExercise(
             active.copy(
-                draft = active.draft.copy(
-                    quantityType = newInfo.quantityType,
-                    draftQuantity = mappedQuantity
-                ),
-                info = newInfo.copy(
+                draft = newInfo.copy(
                     quantityValue = mappedQuantity,
-                    isDirty = true
+                    isDirty = !(mappedQuantity == active.original.quantityValue
+                            && newInfo.exerciseId == active.original.exerciseId)
                 )
             )
         )
@@ -219,11 +203,11 @@ class ExerciseInteractionReducer {
 
             val exercise = item as ExerciseUiItem
             exercise.copy(
-                exerciseId = active.info.exerciseId,
-                quantityType = active.info.quantityType,
-                quantityValue = active.draft.draftQuantity,
-                name = active.info.name,
-                icon = active.info.icon ?: exercise.icon,
+                exerciseId = active.draft.exerciseId,
+                quantityType = active.draft.quantityType,
+                quantityValue = active.draft.quantityValue,
+                name = active.draft.name,
+                icon = active.draft.icon ?: exercise.icon,
             )
         }
 

@@ -127,7 +127,7 @@ fun WorkoutEditorScreen(
 
     if (state.modal is WorkoutEditModal.ExercisePicker && state.activeExercise != null) {
         WorkoutExerciseInfoScreen(
-            exerciseInfo = state.activeExercise.info,
+            exerciseInfo = state.activeExercise.draft,
             showExchangeButton = false,
             onAction = { onEditAction(it.toWorkoutEditAction()) }
         )

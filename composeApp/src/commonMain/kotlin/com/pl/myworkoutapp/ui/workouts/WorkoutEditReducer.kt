@@ -268,7 +268,7 @@ class WorkoutEditReducer(
                     state = session.copy(
                         modal = WorkoutEditModal.ExercisePicker(
                             ExercisePickerContext.ReplacePreview,
-                            session.activeExercise?.info?.exerciseId
+                            session.activeExercise?.draft?.exerciseId
                         )
                     )
                 )

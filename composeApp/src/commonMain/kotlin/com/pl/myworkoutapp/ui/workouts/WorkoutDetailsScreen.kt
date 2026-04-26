@@ -41,7 +41,7 @@ fun WorkoutDetailsScreen(
         )
         state.mode.session.activeExercise?.let { exeSession ->
             WorkoutExerciseInfoScreen(
-                exerciseInfo = exeSession.info,
+                exerciseInfo = exeSession.draft,
                 onAction = { onEditAction(it.toWorkoutEditAction()) }
             )
         }
@@ -72,13 +72,13 @@ fun WorkoutDetailsScreen(
         }
         state.mode.session.activeExercise?.let { exeSession ->
             WorkoutExerciseInfoScreen(
-                exerciseInfo = exeSession.info,
+                exerciseInfo = exeSession.draft,
                 onAction = { onViewAction(it.toWorkoutViewAction()) }
             )
         }
         if (state.mode.session.modal is WorkoutViewModal.ExercisePicker) {
             ExercisePickerScreen(
-                currentExerciseId = state.mode.session.activeExercise?.info?.exerciseId,
+                currentExerciseId = state.mode.session.activeExercise?.draft?.exerciseId,
                 onResult = { exerciseId -> onViewAction(WorkoutViewAction.ExercisePicked(exerciseId))},
             )
         }
