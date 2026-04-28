@@ -1,9 +1,11 @@
-package com.pl.myworkoutapp.ui.workouts
+package com.pl.myworkoutapp.ui.workouts.editor
 
 import com.pl.myworkoutapp.core.Log
 import com.pl.myworkoutapp.domain.model.exercise.ExerciseId
 import com.pl.myworkoutapp.ui.common.*
 import com.pl.myworkoutapp.ui.exercises.*
+import com.pl.myworkoutapp.ui.workouts.CircuitUiItem
+import com.pl.myworkoutapp.ui.workouts.ExerciseInteractionAction
 import com.pl.myworkoutapp.ui.workouts.ExerciseInteractionAction.ChangeQuantity
 import com.pl.myworkoutapp.ui.workouts.ExerciseInteractionAction.Close
 import com.pl.myworkoutapp.ui.workouts.ExerciseInteractionAction.Exchange
@@ -12,13 +14,22 @@ import com.pl.myworkoutapp.ui.workouts.ExerciseInteractionAction.Open
 import com.pl.myworkoutapp.ui.workouts.ExerciseInteractionAction.Prev
 import com.pl.myworkoutapp.ui.workouts.ExerciseInteractionAction.Reset
 import com.pl.myworkoutapp.ui.workouts.ExerciseInteractionAction.Save
-import com.pl.myworkoutapp.ui.workouts.WorkoutEditEffect.CloseEditor
-import com.pl.myworkoutapp.ui.workouts.WorkoutEditEffect.LoadExerciseForList
-import com.pl.myworkoutapp.ui.workouts.WorkoutEditEffect.LoadExerciseForPreview
-import com.pl.myworkoutapp.ui.workouts.WorkoutEditEffect.LoadExerciseInfo
-import com.pl.myworkoutapp.ui.workouts.WorkoutEditEffect.ResetDraft
-import com.pl.myworkoutapp.ui.workouts.WorkoutEditEffect.SaveDraft
+import com.pl.myworkoutapp.ui.workouts.ExerciseInteractionEffect
+import com.pl.myworkoutapp.ui.workouts.ExerciseInteractionReducer
+import com.pl.myworkoutapp.ui.workouts.details.ExercisePickerContext
+import com.pl.myworkoutapp.ui.workouts.ExerciseUiItem
+import com.pl.myworkoutapp.ui.workouts.details.WorkoutEditModal
+import com.pl.myworkoutapp.ui.workouts.details.WorkoutEditSession
+import com.pl.myworkoutapp.ui.workouts.WorkoutWithExercisesUiModel
+import com.pl.myworkoutapp.ui.workouts.editor.WorkoutEditEffect.CloseEditor
+import com.pl.myworkoutapp.ui.workouts.editor.WorkoutEditEffect.LoadExerciseForList
+import com.pl.myworkoutapp.ui.workouts.editor.WorkoutEditEffect.LoadExerciseForPreview
+import com.pl.myworkoutapp.ui.workouts.editor.WorkoutEditEffect.LoadExerciseInfo
+import com.pl.myworkoutapp.ui.workouts.editor.WorkoutEditEffect.ResetDraft
+import com.pl.myworkoutapp.ui.workouts.editor.WorkoutEditEffect.SaveDraft
 import com.pl.myworkoutapp.ui.workouts.components.WorkoutExerciseInfoAction
+import com.pl.myworkoutapp.ui.workouts.tree.WorkoutTreeMutation
+import com.pl.myworkoutapp.ui.workouts.tree.WorkoutTreeMutationHandler
 
 /**
  * Obsługuje edit concerns:

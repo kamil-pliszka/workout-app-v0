@@ -3,7 +3,7 @@ package com.pl.myworkoutapp.ui.settings
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pl.myworkoutapp.AppConfig
-import com.pl.myworkoutapp.AppStateHolder
+import com.pl.myworkoutapp.ui.app.AppStateHolder
 import com.pl.myworkoutapp.core.Constants.PROFILE_PHOTO_FILENAME
 import com.pl.myworkoutapp.domain.AppSettingRepository
 import com.pl.myworkoutapp.domain.StorageSupport

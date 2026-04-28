@@ -2,6 +2,7 @@ package com.pl.myworkoutapp
 
 import androidx.compose.runtime.*
 import com.pl.myworkoutapp.ui.common.LocalAppLocale
+import com.pl.myworkoutapp.ui.language.LanguageViewModel
 import com.pl.myworkoutapp.ui.navigation.AppRoot
 import com.pl.myworkoutapp.ui.theme.AppTheme
 import org.koin.compose.koinInject

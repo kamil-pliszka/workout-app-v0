@@ -1,9 +1,12 @@
-package com.pl.myworkoutapp.ui.workouts
+package com.pl.myworkoutapp.ui.workouts.details
 
 import com.pl.myworkoutapp.domain.model.exercise.ExerciseId
 import com.pl.myworkoutapp.ui.exercises.ExerciseInfoUiModel
+import com.pl.myworkoutapp.ui.workouts.ExerciseInteractionAction
 import com.pl.myworkoutapp.ui.workouts.ExerciseInteractionAction.*
-import com.pl.myworkoutapp.ui.workouts.WorkoutViewEffect.*
+import com.pl.myworkoutapp.ui.workouts.ExerciseInteractionEffect
+import com.pl.myworkoutapp.ui.workouts.ExerciseInteractionReducer
+import com.pl.myworkoutapp.ui.workouts.details.WorkoutViewEffect.*
 import com.pl.myworkoutapp.ui.workouts.components.WorkoutExerciseInfoAction
 import com.pl.myworkoutapp.ui.workouts.components.WorkoutWithExercisesAction
 

@@ -1,4 +1,6 @@
-package com.pl.myworkoutapp.ui.workouts
+package com.pl.myworkoutapp.ui.workouts.tree
+
+import com.pl.myworkoutapp.ui.workouts.WorkoutWithExercisesUiModel
 
 class WorkoutTreeMutationHandler(
     private val policy: WorkoutTreePolicy = WorkoutTreePolicy(),

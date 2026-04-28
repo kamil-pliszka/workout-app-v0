@@ -2,7 +2,7 @@ package com.pl.myworkoutapp.ui.execution
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import com.pl.myworkoutapp.AppStateHolder
+import com.pl.myworkoutapp.ui.app.AppStateHolder
 import com.pl.myworkoutapp.ui.effects.PlatformEffects
 import com.pl.myworkoutapp.ui.navigation.AppNavigator
 import com.pl.myworkoutapp.ui.theme.PearlOpalGreen

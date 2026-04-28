@@ -22,6 +22,9 @@ import com.pl.myworkoutapp.ui.reports.ReportsViewModel
 import com.pl.myworkoutapp.ui.settings.SettingsScreen
 import com.pl.myworkoutapp.ui.settings.SettingsViewModel
 import com.pl.myworkoutapp.ui.workouts.*
+import com.pl.myworkoutapp.ui.workouts.details.WorkoutDetailsEvent
+import com.pl.myworkoutapp.ui.workouts.details.WorkoutDetailsScreen
+import com.pl.myworkoutapp.ui.workouts.details.WorkoutDetailsViewModel
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 

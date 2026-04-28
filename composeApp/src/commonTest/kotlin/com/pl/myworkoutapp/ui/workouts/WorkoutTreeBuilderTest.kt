@@ -1,5 +1,8 @@
 package com.pl.myworkoutapp.ui.workouts
 
+import com.pl.myworkoutapp.ui.workouts.tree.CircuitNode
+import com.pl.myworkoutapp.ui.workouts.tree.ExerciseNode
+import com.pl.myworkoutapp.ui.workouts.tree.toTree
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue

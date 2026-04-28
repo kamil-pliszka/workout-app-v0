@@ -1,12 +1,12 @@
 package com.pl.myworkoutapp.di
 
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
-import com.pl.myworkoutapp.AppStateHolder
-import com.pl.myworkoutapp.LanguageViewModel
+import com.pl.myworkoutapp.ui.app.AppStateHolder
+import com.pl.myworkoutapp.ui.language.LanguageViewModel
 import com.pl.myworkoutapp.data.database.DatabaseFactory
 import com.pl.myworkoutapp.data.database.WorkoutDatabase
 import com.pl.myworkoutapp.data.mappers.WorkoutFlatteningMapper
-import com.pl.myworkoutapp.data.mappers.WorkoutTreeBuilder
+import com.pl.myworkoutapp.data.mappers.WorkoutEntityTreeBuilder
 import com.pl.myworkoutapp.data.prefs.DataStoreProvider
 import com.pl.myworkoutapp.data.repository.AppSettingRepositoryImpl
 import com.pl.myworkoutapp.data.repository.WorkoutRepositoryImpl
@@ -24,6 +24,15 @@ import com.pl.myworkoutapp.ui.plans.PlansViewModel
 import com.pl.myworkoutapp.ui.reports.ReportsViewModel
 import com.pl.myworkoutapp.ui.settings.SettingsViewModel
 import com.pl.myworkoutapp.ui.workouts.*
+import com.pl.myworkoutapp.ui.workouts.details.WorkoutDetailsViewModel
+import com.pl.myworkoutapp.ui.workouts.details.WorkoutSessionCoordinator
+import com.pl.myworkoutapp.ui.workouts.details.WorkoutViewReducer
+import com.pl.myworkoutapp.ui.workouts.editor.CircuitEditorDelegate
+import com.pl.myworkoutapp.ui.workouts.editor.WorkoutEditReducer
+import com.pl.myworkoutapp.ui.workouts.tree.WorkoutTreeMutationHandler
+import com.pl.myworkoutapp.ui.workouts.tree.WorkoutTreeMutator
+import com.pl.myworkoutapp.ui.workouts.tree.WorkoutTreeNormalizer
+import com.pl.myworkoutapp.ui.workouts.tree.WorkoutTreePolicy
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.*
 import org.koin.dsl.bind
@@ -47,7 +56,7 @@ val sharedModule = module {
     single { get<WorkoutDatabase>().workoutDao }
     singleOf(::AppSettingRepositoryImpl).bind<AppSettingRepository>()
     singleOf(::WorkoutFlatteningMapper)
-    singleOf(::WorkoutTreeBuilder)
+    singleOf(::WorkoutEntityTreeBuilder)
     singleOf(::ExerciseEditorCoordinator)
     singleOf(::AppNavigator)
     singleOf(::MessageCoordinator)
@@ -59,9 +68,9 @@ val sharedModule = module {
     singleOf(::GetExerciseWithDefaultQuantityUseCase)
 
     //jeśli delegate ma stan per ekran wtedy factoryOf, jeśli nie będzie miał stanu wtedy singleOf
-    singleOf( :: CircuitEditorDelegate)
-    singleOf( :: WorkoutEditReducer)
-    singleOf( :: WorkoutViewReducer)
+    singleOf(::CircuitEditorDelegate)
+    singleOf(::WorkoutEditReducer)
+    singleOf(::WorkoutViewReducer)
     singleOf( :: ExerciseInteractionReducer)
     singleOf(::WorkoutSessionCoordinator)
     singleOf(::WorkoutDropHandlerArchived)

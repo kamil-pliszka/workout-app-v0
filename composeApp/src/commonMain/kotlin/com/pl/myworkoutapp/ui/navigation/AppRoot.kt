@@ -8,7 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
-import com.pl.myworkoutapp.AppStateHolder
+import com.pl.myworkoutapp.ui.app.AppStateHolder
 import com.pl.myworkoutapp.getPlatform
 import com.pl.myworkoutapp.ui.common.MessageConsumer
 import com.pl.myworkoutapp.ui.common.MessageCoordinator

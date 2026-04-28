@@ -1,4 +1,4 @@
-package com.pl.myworkoutapp.ui.workouts
+package com.pl.myworkoutapp.ui.workouts.editor
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -25,7 +25,13 @@ import com.pl.myworkoutapp.domain.model.workout.*
 import com.pl.myworkoutapp.ui.common.*
 import com.pl.myworkoutapp.ui.theme.AppTheme
 import com.pl.myworkoutapp.ui.theme.EurostileExt
+import com.pl.myworkoutapp.ui.workouts.CircuitUiItem
+import com.pl.myworkoutapp.ui.workouts.ExerciseUiItem
+import com.pl.myworkoutapp.ui.workouts.details.WorkoutEditModal
+import com.pl.myworkoutapp.ui.workouts.details.WorkoutEditSession
+import com.pl.myworkoutapp.ui.workouts.WorkoutUiItem
 import com.pl.myworkoutapp.ui.workouts.components.*
+import com.pl.myworkoutapp.ui.workouts.tree.transform
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 import myworkoutapplication.composeapp.generated.resources.*

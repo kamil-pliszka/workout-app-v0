@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalMaterial3Api::class)
 
-package com.pl.myworkoutapp.ui.workouts
+package com.pl.myworkoutapp.ui.workouts.editor
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
@@ -31,6 +31,8 @@ import androidx.compose.ui.unit.dp
 import com.pl.myworkoutapp.domain.model.workout.Phase
 import com.pl.myworkoutapp.ui.common.asUiText
 import com.pl.myworkoutapp.ui.theme.AppTheme
+import com.pl.myworkoutapp.ui.workouts.CircuitStructureType
+import com.pl.myworkoutapp.ui.workouts.asUiText
 import myworkoutapplication.composeapp.generated.resources.*
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource

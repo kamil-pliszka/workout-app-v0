@@ -1,4 +1,4 @@
-package com.pl.myworkoutapp
+package com.pl.myworkoutapp.ui.app
 
 import androidx.compose.ui.graphics.Color
 

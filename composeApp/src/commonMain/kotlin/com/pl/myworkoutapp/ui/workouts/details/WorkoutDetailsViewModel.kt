@@ -1,7 +1,7 @@
-package com.pl.myworkoutapp.ui.workouts
+package com.pl.myworkoutapp.ui.workouts.details
 
 import androidx.lifecycle.*
-import com.pl.myworkoutapp.AppStateHolder
+import com.pl.myworkoutapp.ui.app.AppStateHolder
 import com.pl.myworkoutapp.core.Log
 import com.pl.myworkoutapp.core.exceptionToString
 import com.pl.myworkoutapp.domain.model.exercise.ExerciseId
@@ -9,10 +9,22 @@ import com.pl.myworkoutapp.domain.model.workout.WorkoutId
 import com.pl.myworkoutapp.domain.model.workout.toWorkoutIdOrNull
 import com.pl.myworkoutapp.domain.usecase.*
 import com.pl.myworkoutapp.ui.common.asUiText
-import com.pl.myworkoutapp.ui.workouts.WorkoutEditAction.*
-import com.pl.myworkoutapp.ui.workouts.WorkoutEditAction.SelectedExerciseLoaded
-import com.pl.myworkoutapp.ui.workouts.WorkoutEditAction.ShowLoadedExerciseInfo
-import com.pl.myworkoutapp.ui.workouts.WorkoutEditorEvent.*
+import com.pl.myworkoutapp.ui.workouts.ExerciseUiItem
+import com.pl.myworkoutapp.ui.workouts.editor.WorkoutEditAction.*
+import com.pl.myworkoutapp.ui.workouts.editor.WorkoutEditAction.SelectedExerciseLoaded
+import com.pl.myworkoutapp.ui.workouts.editor.WorkoutEditAction.ShowLoadedExerciseInfo
+import com.pl.myworkoutapp.ui.workouts.editor.WorkoutEditorEvent.*
+import com.pl.myworkoutapp.ui.workouts.editor.CircuitEditorAction
+import com.pl.myworkoutapp.ui.workouts.editor.WorkoutEditAction
+import com.pl.myworkoutapp.ui.workouts.editor.WorkoutEditEffect
+import com.pl.myworkoutapp.ui.workouts.editor.WorkoutEditReducer
+import com.pl.myworkoutapp.ui.workouts.editor.WorkoutEditResult
+import com.pl.myworkoutapp.ui.workouts.editor.WorkoutEditorEvent
+import com.pl.myworkoutapp.ui.workouts.tree.toDomain
+import com.pl.myworkoutapp.ui.workouts.toUi
+import com.pl.myworkoutapp.ui.workouts.toUiBase
+import com.pl.myworkoutapp.ui.workouts.tree.transform
+import com.pl.myworkoutapp.ui.workouts.tree.toTree
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch

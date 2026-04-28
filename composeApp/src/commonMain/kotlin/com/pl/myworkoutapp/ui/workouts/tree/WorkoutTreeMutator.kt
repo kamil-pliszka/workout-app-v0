@@ -1,4 +1,4 @@
-package com.pl.myworkoutapp.ui.workouts
+package com.pl.myworkoutapp.ui.workouts.tree
 
 import com.pl.myworkoutapp.ui.common.DropPosition
 

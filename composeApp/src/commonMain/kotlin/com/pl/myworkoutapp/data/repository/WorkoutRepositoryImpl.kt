@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.map
 class WorkoutRepositoryImpl(
     private val workoutDao: WorkoutDao,
     private val flatteningMapper: WorkoutFlatteningMapper,
-    private val workoutTreeBuilder: WorkoutTreeBuilder,
+    private val workoutTreeBuilder: WorkoutEntityTreeBuilder,
 ) : WorkoutRepository {
     override fun observeExercises(): Flow<List<Exercise>> {
 //        return workoutDao.observeExercises().map {

@@ -19,6 +19,7 @@ import com.pl.myworkoutapp.ui.common.asUiText
 import com.pl.myworkoutapp.ui.components.CircleIconButton
 import com.pl.myworkoutapp.ui.theme.*
 import com.pl.myworkoutapp.ui.workouts.*
+import com.pl.myworkoutapp.ui.workouts.tree.transform
 import myworkoutapplication.composeapp.generated.resources.*
 
 
@@ -317,7 +318,7 @@ fun WorkoutWithExercisesComponentPreviewCircuit() {
 
 
 //poniżej testy WorkoutUiTransformer
-//w głównej mierze chcemy tutaj przetestować wygląd UI po zastosowaniu WorkoutDomainMapper.kt
+//w głównej mierze chcemy tutaj przetestować wygląd UI po zastosowaniu WorkoutTreeDomainMapper.kt
 
 fun circuitWith(name: String, vararg items: WorkoutItem): Circuit {
     return Circuit(

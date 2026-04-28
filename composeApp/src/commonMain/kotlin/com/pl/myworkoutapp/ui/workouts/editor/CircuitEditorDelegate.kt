@@ -1,7 +1,8 @@
-package com.pl.myworkoutapp.ui.workouts
+package com.pl.myworkoutapp.ui.workouts.editor
 
 import com.pl.myworkoutapp.domain.model.workout.Phase
 import com.pl.myworkoutapp.ui.common.asUiText
+import com.pl.myworkoutapp.ui.workouts.CircuitStructureType
 
 sealed interface CircuitEditorAction {
     data class PhaseChanged(val phase: Phase) : CircuitEditorAction

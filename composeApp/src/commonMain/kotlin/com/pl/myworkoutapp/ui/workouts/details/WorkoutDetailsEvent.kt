@@ -1,4 +1,4 @@
-package com.pl.myworkoutapp.ui.workouts
+package com.pl.myworkoutapp.ui.workouts.details
 
 import com.pl.myworkoutapp.domain.model.workout.WorkoutId
 import com.pl.myworkoutapp.ui.common.UiText

@@ -1,4 +1,4 @@
-package com.pl.myworkoutapp
+package com.pl.myworkoutapp.ui.language
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -15,7 +15,7 @@ class LanguageViewModel(
     val language = settingsRepo.languageFlow
         .stateIn(
             viewModelScope,
-            SharingStarted.WhileSubscribed(5000),
+            SharingStarted.Companion.WhileSubscribed(5000),
             getSystemLanguage()
         )
 

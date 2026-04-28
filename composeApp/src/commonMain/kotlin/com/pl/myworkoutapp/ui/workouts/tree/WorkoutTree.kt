@@ -1,4 +1,8 @@
-package com.pl.myworkoutapp.ui.workouts
+package com.pl.myworkoutapp.ui.workouts.tree
+
+import com.pl.myworkoutapp.ui.workouts.CircuitUiItem
+import com.pl.myworkoutapp.ui.workouts.ExerciseUiItem
+import com.pl.myworkoutapp.ui.workouts.WorkoutUiItem
 
 
 sealed class TreeNode {

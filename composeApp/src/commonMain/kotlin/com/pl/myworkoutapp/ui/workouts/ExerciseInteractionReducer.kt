@@ -2,6 +2,7 @@ package com.pl.myworkoutapp.ui.workouts
 
 import com.pl.myworkoutapp.domain.model.exercise.ExerciseId
 import com.pl.myworkoutapp.ui.exercises.*
+import com.pl.myworkoutapp.ui.workouts.details.ActiveExerciseSession
 
 /**
  * To jest shared core dla flow aktywnego ćwiczenia.

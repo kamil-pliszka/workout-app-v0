@@ -1,7 +1,10 @@
-package com.pl.myworkoutapp.ui.workouts
+package com.pl.myworkoutapp.ui.workouts.details
 
 import com.pl.myworkoutapp.domain.model.exercise.ExerciseId
 import com.pl.myworkoutapp.ui.exercises.ExerciseInfoUiModel
+import com.pl.myworkoutapp.ui.workouts.ExerciseInteractionHost
+import com.pl.myworkoutapp.ui.workouts.WorkoutWithExercisesUiModel
+import com.pl.myworkoutapp.ui.workouts.editor.CircuitEditorUiState
 
 
 data class WorkoutDetailsUiState(

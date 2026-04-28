@@ -1,4 +1,4 @@
-package com.pl.myworkoutapp.ui.workouts
+package com.pl.myworkoutapp.ui.workouts.details
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -13,6 +13,12 @@ import com.pl.myworkoutapp.domain.model.workout.BuiltInWorkoutRegistry
 import com.pl.myworkoutapp.ui.exercises.ExercisePickerScreen
 import com.pl.myworkoutapp.ui.workouts.components.WorkoutExerciseInfoScreen
 import com.pl.myworkoutapp.ui.workouts.components.WorkoutWithExercisesComponent
+import com.pl.myworkoutapp.ui.workouts.editor.CircuitEditorAction
+import com.pl.myworkoutapp.ui.workouts.editor.WorkoutEditAction
+import com.pl.myworkoutapp.ui.workouts.editor.WorkoutEditorEvent
+import com.pl.myworkoutapp.ui.workouts.editor.WorkoutEditorScreen
+import com.pl.myworkoutapp.ui.workouts.editor.toWorkoutEditAction
+import com.pl.myworkoutapp.ui.workouts.tree.transform
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 import myworkoutapplication.composeapp.generated.resources.*

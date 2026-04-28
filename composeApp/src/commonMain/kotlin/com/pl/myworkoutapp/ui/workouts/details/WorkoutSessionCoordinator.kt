@@ -1,4 +1,4 @@
-package com.pl.myworkoutapp.ui.workouts
+package com.pl.myworkoutapp.ui.workouts.details
 
 class WorkoutSessionCoordinator {
     fun openEditor(view: WorkoutViewSession): WorkoutEditSession {
