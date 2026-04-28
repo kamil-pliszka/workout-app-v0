@@ -87,7 +87,7 @@ fun WorkoutItemRow(
         is CircuitUiItem -> "${item.title}"
         is ExerciseUiItem -> "${item.exerciseId}"
     }
-    println("WorkoutItemRow: ${item.uiKey}, $desc")
+    println("WorkoutItemRow: ${item.key}, $desc")
     Row(
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -101,7 +101,7 @@ fun WorkoutItemRow(
             is ExerciseUiItem -> WorkoutItemExercise(
                 item,
                 themeColor,
-                onClick = { onAction(WorkoutWithExercisesAction.ShowExerciseInfo(item.uiKey, item.exerciseId)) }
+                onClick = { onAction(WorkoutWithExercisesAction.ShowExerciseInfo(item.key, item.exerciseId)) }
             )
         }
     }
@@ -240,8 +240,8 @@ val EXE_CD_2 = ExerciseUiItem(
 
 fun List<WorkoutUiItem>.prepareKeys() = this.mapIndexed { index, item ->
     when(item) {
-        is CircuitUiItem -> item.copy(uiKey = index)
-        is ExerciseUiItem -> item.copy(uiKey = index)
+        is CircuitUiItem -> item.copy(key = index)
+        is ExerciseUiItem -> item.copy(key = index)
     }
 }
 
@@ -317,7 +317,7 @@ fun WorkoutWithExercisesComponentPreviewCircuit() {
 
 
 //poniżej testy WorkoutUiTransformer
-//w głównej mierze chcemy tutaj przetestować wygląd UI po zastosowaniu WorkoutUiTransformer.kt
+//w głównej mierze chcemy tutaj przetestować wygląd UI po zastosowaniu WorkoutDomainMapper.kt
 
 fun circuitWith(name: String, vararg items: WorkoutItem): Circuit {
     return Circuit(

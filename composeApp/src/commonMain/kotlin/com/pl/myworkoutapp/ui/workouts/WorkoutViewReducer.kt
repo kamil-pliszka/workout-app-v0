@@ -116,14 +116,13 @@ class WorkoutViewReducer(
                 delegate(session, Prev)
 
             is WorkoutViewAction.ChangeQuantity ->
-                //TODO - zrobić lepsze sprawdzenie czy są zmioany czy nie
-                delegate(session.copy(hasUnsavedChanges = true), ChangeQuantity(action.increase))
+                delegate(session, ChangeQuantity(action.increase))
 
             is WorkoutViewAction.ExerciseReplaced ->
-                delegate(session.copy(hasUnsavedChanges = true), Exchange(action.info))
+                delegate(session, Exchange(action.info))
 
             WorkoutViewAction.ExerciseReset ->
-                delegate(session.copy(hasUnsavedChanges = false), Reset)
+                delegate(session, Reset)
 
             WorkoutViewAction.ExerciseSave ->
                 delegate(session.copy(hasUnsavedChanges = true), Save)

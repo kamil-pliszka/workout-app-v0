@@ -101,6 +101,7 @@ fun Navigation(
                 val state by viewModel.state.collectAsStateWithLifecycle()
                 WorkoutDetailsScreen(
                     state = state,
+                    events = viewModel.editorEvents,
                     onViewAction = viewModel::onViewAction,
                     onEditAction = viewModel::onEditAction,
                     onCircuitEditorAction = viewModel::onCircuitEditorAction

@@ -24,10 +24,10 @@ import com.pl.myworkoutapp.domain.model.exercise.ExerciseId
 import com.pl.myworkoutapp.domain.model.workout.*
 import com.pl.myworkoutapp.ui.common.*
 import com.pl.myworkoutapp.ui.theme.AppTheme
-import com.pl.myworkoutapp.ui.workouts.components.WorkoutEditableItemCircuit
-import com.pl.myworkoutapp.ui.workouts.components.WorkoutEditableItemExercise
-import com.pl.myworkoutapp.ui.workouts.components.WorkoutExerciseInfoScreen
-import kotlinx.coroutines.launch
+import com.pl.myworkoutapp.ui.theme.EurostileExt
+import com.pl.myworkoutapp.ui.workouts.components.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 import myworkoutapplication.composeapp.generated.resources.*
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -42,6 +42,7 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun WorkoutEditorScreen(
     state: WorkoutEditSession,
+    events: Flow<WorkoutEditorEvent>,
     onEditAction: (WorkoutEditAction) -> Unit,
     onCircuitEditorAction: (CircuitEditorAction) -> Unit,
 ) {
@@ -71,7 +72,7 @@ fun WorkoutEditorScreen(
                 ) { /* Consume clicks to prevent closing */ }
         ) {
             WorkoutEditorHeader(
-                title = state.original.workout.workoutId.asString(),
+                title = state.original.workout.name.asString(),
                 onClose = { onEditAction(WorkoutEditAction.CloseEditor) }
             )
 
@@ -79,6 +80,7 @@ fun WorkoutEditorScreen(
             Box(modifier = Modifier.weight(1f)) {
                 WorkoutEditorContent(
                     state = state,
+                    events = events,
                     onEditorAction = onEditAction,
                     onExchangeAction = { key, exerciseId ->
                         onEditAction(WorkoutEditAction.ExerciseExchangeStart(key, exerciseId))
@@ -149,6 +151,7 @@ private fun WorkoutEditorHeader(
         Text(
             text = title,
             style = MaterialTheme.typography.titleLarge,
+            fontFamily = EurostileExt,
             modifier = Modifier
                 .weight(1f)
                 .padding(start = 16.dp),
@@ -262,25 +265,28 @@ fun WorkoutEditorBottomButtons(
 @Composable
 fun WorkoutEditorContent(
     state: WorkoutEditSession,
+    events: Flow<WorkoutEditorEvent>,
     onEditorAction: (WorkoutEditAction) -> Unit,
     onExchangeAction: (Int, ExerciseId) -> Unit,
     onExerciseClick: (Int, ExerciseId) -> Unit,
     ) {
     val listState = rememberLazyListState()
-    val scope = rememberCoroutineScope()
+    //val scope = rememberCoroutineScope()
 
     val dragDropState = rememberDragDropState(
         listState = listState,
-        onMove = { from, to ->
-            onEditorAction(WorkoutEditAction.Move(from, to))
-            if (to == 0 || from == 0) {
-                scope.launch { listState.animateScrollToItem(0) }
-            }
-        }
+        itemsProvider = { state.workout.items },
+        onDrop = { event ->
+            onEditorAction(WorkoutEditAction.Drop(event))
+        },
     )
-    LaunchedEffect(state.scrollToIdx) {
-        state.scrollToIdx?.let {
-            listState.animateScrollToItem(state.scrollToIdx)
+    LaunchedEffect(Unit) {
+        events.collect { event ->
+            when (event) {
+                is WorkoutEditorEvent.ScrollEditorTo -> {
+                    listState.animateScrollToItem(event.index, -500)
+                }
+            }
         }
     }
 
@@ -291,7 +297,7 @@ fun WorkoutEditorContent(
     ) {
         itemsIndexed(
             items = state.workout.items,
-            key = { _, item -> item.uiKey }
+            key = { _, item -> item.key }
         ) { index, item ->
             DraggableItem(dragDropState = dragDropState, index = index) {
                 WorkoutEditableItemRow(
@@ -337,7 +343,7 @@ fun WorkoutEditableItemRow(
         Box(
             modifier = Modifier
                 .padding(horizontal = 16.dp)
-                .pointerInput(item.uiKey, index) {
+                .pointerInput(item.key, index) {
                     detectDragGestures(
                         onDragStart = { dragDropState.onDragStart(index) },
                         onDragEnd = { dragDropState.onDragEnd() },
@@ -363,20 +369,20 @@ fun WorkoutEditableItemRow(
                     item,
                     themeColor,
                     onClick = {},
-                    onEditClick = { onEditorAction(WorkoutEditAction.EditCircuit(item.uiKey)) },
-                    onDeleteClick = { onEditorAction(WorkoutEditAction.DeleteItem(item.uiKey)) }
+                    onEditClick = { onEditorAction(WorkoutEditAction.EditCircuit(item.key)) },
+                    onDeleteClick = { onEditorAction(WorkoutEditAction.DeleteItem(item.key)) }
                 )
 
                 is ExerciseUiItem -> WorkoutEditableItemExercise(
                     item,
                     themeColor,
-                    onClick = { onExerciseClick(item.uiKey, item.exerciseId) },
-                    onExchangeClick = { onExchangeAction(item.uiKey, item.exerciseId) },
-                    onDeleteClick = { onEditorAction(WorkoutEditAction.DeleteItem(item.uiKey)) },
+                    onClick = { onExerciseClick(item.key, item.exerciseId) },
+                    onExchangeClick = { onExchangeAction(item.key, item.exerciseId) },
+                    onDeleteClick = { onEditorAction(WorkoutEditAction.DeleteItem(item.key)) },
                     quantityChangeAction = { increase ->
                         onEditorAction(
                             WorkoutEditAction.ChangeQuantityOnList(
-                                item.uiKey,
+                                item.key,
                                 increase
                             )
                         )
@@ -401,6 +407,7 @@ private fun WorkoutEditorScreenPreviewNoSet() {
                 original = workoutUiModel,
                 workout = workoutUiModel.copy(),
             ),
+            events = emptyFlow(),
             onEditAction = { },
             onCircuitEditorAction = { },
         )
@@ -418,6 +425,7 @@ private fun WorkoutEditorScreenPreviewWithSet() {
                 original = workoutUiModel,
                 workout = workoutUiModel.copy(),
             ),
+            events = emptyFlow(),
             onEditAction = { },
             onCircuitEditorAction = { },
         )

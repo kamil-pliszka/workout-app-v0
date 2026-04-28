@@ -64,6 +64,12 @@ val sharedModule = module {
     singleOf( :: WorkoutViewReducer)
     singleOf( :: ExerciseInteractionReducer)
     singleOf(::WorkoutSessionCoordinator)
+    singleOf(::WorkoutDropHandlerArchived)
+    singleOf(::WorkoutDropPolicyArchived)
+    singleOf(::WorkoutTreePolicy)
+    singleOf(::WorkoutTreeMutator)
+    singleOf(::WorkoutTreeNormalizer)
+    singleOf(::WorkoutTreeMutationHandler)
 
     //VM
     viewModelOf(::LanguageViewModel)

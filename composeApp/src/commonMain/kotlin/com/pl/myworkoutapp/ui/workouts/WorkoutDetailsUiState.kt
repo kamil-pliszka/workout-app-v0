@@ -66,10 +66,7 @@ data class WorkoutEditSession(
 
     val editableCircuit: CircuitEditorUiState? = null,
     val editingCircuitItemKey: Int? = null,
-    val scrollToIdx: Int? = null,
-
     val deletingWorkoutItemKey: Int? = null,
-    //val exchangingExerciseItemKey: Int? = null,
     ) : ExerciseInteractionHost<WorkoutEditSession> {
 
     override fun withWorkout(workout: WorkoutWithExercisesUiModel): WorkoutEditSession =

@@ -1,9 +1,8 @@
 package com.pl.myworkoutapp.ui.workouts
 
-import androidx.compose.ui.graphics.Color
 import com.pl.myworkoutapp.core.Log
 import com.pl.myworkoutapp.domain.model.exercise.ExerciseId
-import com.pl.myworkoutapp.ui.common.asUiText
+import com.pl.myworkoutapp.ui.common.*
 import com.pl.myworkoutapp.ui.exercises.*
 import com.pl.myworkoutapp.ui.workouts.ExerciseInteractionAction.ChangeQuantity
 import com.pl.myworkoutapp.ui.workouts.ExerciseInteractionAction.Close
@@ -50,7 +49,7 @@ import com.pl.myworkoutapp.ui.workouts.components.WorkoutExerciseInfoAction
 sealed interface WorkoutEditAction {
     data class Rename(val value: String) : WorkoutEditAction
     data class ChangeDescription(val value: String) : WorkoutEditAction
-    data class Move(val from: Int, val to: Int) : WorkoutEditAction
+    data class Drop(val event: DragDropEvent) : WorkoutEditAction
 
     data object AddExercise : WorkoutEditAction
     data object AddCircuit : WorkoutEditAction
@@ -110,6 +109,8 @@ sealed interface WorkoutEditEffect {
         WorkoutEditEffect
 
     data class LoadExerciseForPreview(val exerciseId: ExerciseId) : WorkoutEditEffect
+    data class ScrollTo(val index: Int) : WorkoutEditEffect
+    data object Vibration : WorkoutEditEffect
 
     data object SaveDraft : WorkoutEditEffect
     data object ResetDraft : WorkoutEditEffect
@@ -118,18 +119,19 @@ sealed interface WorkoutEditEffect {
 
 
 fun WorkoutEditSession.getExercise(key: Int): ExerciseUiItem =
-    requireNotNull(workout.items.find { it.uiKey == key } as? ExerciseUiItem) {
+    requireNotNull(workout.items.find { it.key == key } as? ExerciseUiItem) {
         "ExerciseUiItem not found for key=$key"
     }
 
 fun WorkoutEditSession.getCircuit(key: Int): CircuitUiItem =
-    requireNotNull(workout.items.find { it.uiKey == key } as? CircuitUiItem) {
+    requireNotNull(workout.items.find { it.key == key } as? CircuitUiItem) {
         "CircuitUiItem not found for key=$key"
     }
 
 class WorkoutEditReducer(
     private val exerciseReducer: ExerciseInteractionReducer,
     private val circuitReducer: CircuitEditorDelegate,
+    private val workoutTreeMutationHandler: WorkoutTreeMutationHandler
 ) {
     private val TAG = "WorkoutEditReducer"
 
@@ -187,9 +189,8 @@ class WorkoutEditReducer(
                 changeDescription(session, action.value)
             )
 
-            is WorkoutEditAction.Move -> WorkoutEditResult(
-                move(session, action.from, action.to)
-            )
+            is WorkoutEditAction.Drop ->
+                drop(session, action.event)
 
             //FAB action
             WorkoutEditAction.AddExercise -> WorkoutEditResult(
@@ -216,9 +217,8 @@ class WorkoutEditReducer(
                 )
             )
 
-            WorkoutEditAction.SaveCircuitEditor -> WorkoutEditResult(
+            WorkoutEditAction.SaveCircuitEditor ->
                 saveCircuitEditor(session)
-            )
 
             is WorkoutEditAction.DeleteItem -> WorkoutEditResult(
                 state = session.copy(
@@ -238,9 +238,8 @@ class WorkoutEditReducer(
             is WorkoutEditAction.ExercisePicked ->
                 exercisePicked(session, action.exerciseId)
 
-            is WorkoutEditAction.SelectedExerciseLoaded -> WorkoutEditResult(
+            is WorkoutEditAction.SelectedExerciseLoaded ->
                 exercisePickedLoaded(session, action.context, action.exercise)
-            )
 
             WorkoutEditAction.SaveDraft ->
                 WorkoutEditResult(session, SaveDraft)
@@ -324,18 +323,22 @@ class WorkoutEditReducer(
         )
     }
 
-    private fun move(
-        session: WorkoutEditSession,
-        from: Int,
-        to: Int
-    ): WorkoutEditSession {
-        //TODO - tutaj trzeba sie zastanowic co z timeline + circuit elementami
-        val items = session.workout.items.toMutableList()
-        val item = items.removeAt(from)
-        items.add(to, item)
-
-        return session.copy(
-            workout = session.workout.copy(items = items)
+    private fun drop(session: WorkoutEditSession, event: DragDropEvent): WorkoutEditResult {
+        Log.d(TAG, "Drop event: $event")
+        val workout = workoutTreeMutationHandler.apply(
+            session.workout,
+            WorkoutTreeMutation.Move(
+                event.draggedKey,
+                event.targetKey,
+                event.position
+            )
+        )
+        val movedItemIndex = workout.items.indexOfFirst { it.key == event.draggedKey }
+        return WorkoutEditResult(
+            session.copy(
+                workout = workout
+            ),
+            if (movedItemIndex >= 0) WorkoutEditEffect.ScrollTo(movedItemIndex) else null
         )
     }
 
@@ -376,7 +379,7 @@ class WorkoutEditReducer(
         session: WorkoutEditSession,
         context: ExercisePickerContext,
         exercise: ExerciseUiItem
-    ): WorkoutEditSession {
+    ): WorkoutEditResult {
         return when (context) {
             ExercisePickerContext.AddExercise ->
                 addExercise(session.copy(modal = null), exercise)
@@ -386,7 +389,7 @@ class WorkoutEditReducer(
 
             ExercisePickerContext.ReplacePreview -> {
                 Log.e(TAG, "Invalid ReplacePreview in exercisePickedLoaded")
-                session
+                WorkoutEditResult(session)
             }
         }
     }
@@ -394,29 +397,31 @@ class WorkoutEditReducer(
     private fun addExercise(
         session: WorkoutEditSession,
         exercise: ExerciseUiItem
-    ): WorkoutEditSession {
+    ): WorkoutEditResult {
         Log.d(TAG, "addExercise : ${exercise.exerciseId}")
-        val nextKey = (session.workout.items.maxOfOrNull { it.uiKey } ?: 0) + 1
+        val nextKey = (session.workout.items.maxOfOrNull { it.key } ?: 0) + 1
+        val exe = exercise.copy(key = nextKey)
 
-        val exe = exercise.copy(
-            uiKey = nextKey,
-            //TODO - tutaj trzeba sie zastanowic co z timeline + circuit elementami
-            timeline = listOf(TimeLineItemType.End(Color.Red)),
-            depth = 0, //TODO - to wymaga zaimplementowania jeszcze
+        val workout = workoutTreeMutationHandler.apply(
+            session.workout,
+            WorkoutTreeMutation.InsertExercise(
+                exercise = exe,
+                targetKey = null,//root level
+                position = DropPosition.BEFORE
+            )
         )
-
-        val newItems = session.workout.items + exe
-
-        return session.copy(
-            workout = session.workout.copy(items = newItems),
-            scrollToIdx = newItems.lastIndex,
+        return WorkoutEditResult(
+            session.copy(
+                workout = workout
+            ),
+            if (workout.items.lastIndex >= 0) WorkoutEditEffect.ScrollTo(workout.items.lastIndex) else null
         )
     }
 
     private fun exchangeExercise(
         session: WorkoutEditSession,
         key: Int, newExercise: ExerciseUiItem
-    ): WorkoutEditSession {
+    ): WorkoutEditResult {
         val existingExercise = session.getExercise(key)
         val newQuantityValue = mapQuantityValue(
             existingExercise.quantityType,
@@ -425,17 +430,20 @@ class WorkoutEditReducer(
         )
         val newExe = newExercise.copy(
             quantityValue = newQuantityValue,
-            uiKey = existingExercise.uiKey,
+            key = existingExercise.key,
             timeline = existingExercise.timeline,
             depth = existingExercise.depth,
         )
 
-        return session.copy(
-            workout = session.workout.copy(
-                items = session.workout.items.map {
-                    if (it.uiKey != existingExercise.uiKey) it else newExe
-                }
-            ),
+        val workout = workoutTreeMutationHandler.apply(
+            session.workout,
+            WorkoutTreeMutation.ReplaceExercise(
+                key = newExe.key,
+                newExercise = newExe
+            )
+        )
+        return WorkoutEditResult(
+            session.copy(workout = workout)
         )
     }
 
@@ -471,42 +479,50 @@ class WorkoutEditReducer(
 
     private fun saveCircuitEditor(
         session: WorkoutEditSession,
-    ): WorkoutEditSession {
-        val current = session.editableCircuit ?: return session
+    ): WorkoutEditResult {
+        val current = session.editableCircuit ?: return WorkoutEditResult(session)
         return if (session.editingCircuitItemKey == null) {
             //NEW CIRCUIT
-            val newWorkout = addCircuit(session.workout, current)
-            session.copy(
-                workout = newWorkout,
-                scrollToIdx = newWorkout.items.lastIndex,
-                editableCircuit = null,
-                editingCircuitItemKey = null
-            )
+            addCircuit(session, current)
         } else {
             val newWorkout = modifyCircuit(session.workout, session.editingCircuitItemKey, current)
-            session.copy(
-                workout = newWorkout,
-                editableCircuit = null,
-                editingCircuitItemKey = null
+            WorkoutEditResult(
+                session.copy(
+                    workout = newWorkout,
+                    editableCircuit = null,
+                    editingCircuitItemKey = null
+                )
             )
         }
     }
 
     private fun addCircuit(
-        state: WorkoutWithExercisesUiModel,
+        session: WorkoutEditSession,
         circuit: CircuitEditorUiState
-    ): WorkoutWithExercisesUiModel {
+    ): WorkoutEditResult {
         Log.d(TAG, "addCircuit : $circuit")
-        val nextKey = (state.items.maxOfOrNull { it.uiKey } ?: 0) + 1
-        return state.copy(
-            items = state.items + CircuitUiItem(
-                phase = circuit.phase,
-                structure = circuit.toStructure(),
-                title = circuit.name,
-                uiKey = nextKey,
-                timeline = listOf(TimeLineItemType.End(Color.Red)),
-                depth = 0, //TODO - to wymaga zaimplementowania jeszcze
+        val nextKey = (session.workout.items.maxOfOrNull { it.key } ?: 0) + 1
+        val circuit = CircuitUiItem(
+            phase = circuit.phase,
+            structure = circuit.toStructure(),
+            title = circuit.name,
+            key = nextKey,
+        )
+        val workout = workoutTreeMutationHandler.apply(
+            session.workout,
+            WorkoutTreeMutation.InsertCircuit(
+                circuit = circuit,
+                targetKey = null,//root level
+                position = DropPosition.BEFORE
             )
+        )
+        return WorkoutEditResult(
+            session.copy(
+                workout = workout,
+                editableCircuit = null,
+                editingCircuitItemKey = null
+            ),
+            if (workout.items.lastIndex >= 0) WorkoutEditEffect.ScrollTo(workout.items.lastIndex) else null
         )
     }
 
@@ -514,10 +530,10 @@ class WorkoutEditReducer(
         state: WorkoutWithExercisesUiModel,
         circuitKey: Int, modified: CircuitEditorUiState
     ): WorkoutWithExercisesUiModel {
-        val currentCircuit = state.items.first { it.uiKey == circuitKey } as CircuitUiItem
+        val currentCircuit = state.items.first { it.key == circuitKey } as CircuitUiItem
         return state.copy(
             items = state.items.map {
-                if (it.uiKey != circuitKey) it else currentCircuit.copy(
+                if (it.key != circuitKey) it else currentCircuit.copy(
                     phase = modified.phase,
                     structure = modified.toStructure(),
                     title = modified.name,
@@ -528,10 +544,16 @@ class WorkoutEditReducer(
 
     private fun deleteWorkoutElement(session: WorkoutEditSession): WorkoutEditSession {
         val toDeleteKey = session.deletingWorkoutItemKey ?: return session
+
+        val workout = workoutTreeMutationHandler.apply(
+            session.workout,
+            WorkoutTreeMutation.Delete(
+                key = toDeleteKey,
+            )
+        )
+
         return session.copy(
-            workout = session.workout.copy(
-                items = session.workout.items.filter { it.uiKey != toDeleteKey }
-            ),
+            workout = workout,
             deletingWorkoutItemKey = null,
             modal = null,
         )
@@ -551,7 +573,7 @@ class WorkoutEditReducer(
         return session.copy(
             workout = session.workout.copy(
                 items = session.workout.items.map {
-                    if (it.uiKey != exercise.uiKey) it else exercise.copy(
+                    if (it.key != exercise.key) it else exercise.copy(
                         quantityValue = newQuantityValue,
                     )
                 },

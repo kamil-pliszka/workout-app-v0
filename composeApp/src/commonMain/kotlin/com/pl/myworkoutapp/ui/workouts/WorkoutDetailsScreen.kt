@@ -13,6 +13,8 @@ import com.pl.myworkoutapp.domain.model.workout.BuiltInWorkoutRegistry
 import com.pl.myworkoutapp.ui.exercises.ExercisePickerScreen
 import com.pl.myworkoutapp.ui.workouts.components.WorkoutExerciseInfoScreen
 import com.pl.myworkoutapp.ui.workouts.components.WorkoutWithExercisesComponent
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 import myworkoutapplication.composeapp.generated.resources.*
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -22,6 +24,7 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun WorkoutDetailsScreen(
     state: WorkoutDetailsUiState,
+    events: Flow<WorkoutEditorEvent>,
     onViewAction: (WorkoutViewAction) -> Unit,
     onEditAction: (WorkoutEditAction) -> Unit,
     onCircuitEditorAction: (CircuitEditorAction) -> Unit,
@@ -36,6 +39,7 @@ fun WorkoutDetailsScreen(
     if (state.mode is WorkoutDetailsMode.Edit) {
         WorkoutEditorScreen(
             state = state.mode.session,
+            events = events,
             onEditAction = onEditAction,
             onCircuitEditorAction = onCircuitEditorAction,
         )
@@ -145,6 +149,7 @@ private fun WorkoutDetailsScreenPreviewEN() {
                 )
             ),
         ),
+        events = emptyFlow(),
         onViewAction = { },
         onEditAction = { },
         onCircuitEditorAction = { },
@@ -164,6 +169,7 @@ private fun WorkoutDetailsScreenPreviewPL() {
                 )
             ),
         ),
+        events = emptyFlow(),
         onViewAction = { },
         onEditAction = { },
         onCircuitEditorAction = { },

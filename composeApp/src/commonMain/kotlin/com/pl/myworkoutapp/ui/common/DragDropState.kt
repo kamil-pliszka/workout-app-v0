@@ -2,10 +2,14 @@ package com.pl.myworkoutapp.ui.common
 
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.*
+import com.pl.myworkoutapp.ui.workouts.CircuitUiItem
+import com.pl.myworkoutapp.ui.workouts.ExerciseUiItem
+import com.pl.myworkoutapp.ui.workouts.WorkoutUiItem
 
 class DragDropState(
     val listState: LazyListState,
-    val onMove: (Int, Int) -> Unit
+    private val itemsProvider: () -> List<WorkoutUiItem>,
+    private val onDrop: (DragDropEvent) -> Unit
 ) {
 
     var draggingIndex by mutableStateOf<Int?>(null)
@@ -23,14 +27,14 @@ class DragDropState(
     }
 
     fun onDragEnd() {
-        val from = draggingIndex ?: return
-        val to = calculateTargetIndex(from)
+        val draggedIndex = draggingIndex ?: return
+        val event = calculateDropEvent(draggedIndex)
 
         draggingIndex = null
         dragOffsetY = 0f
 
-        if (from != to) {
-            onMove(from, to)
+        if (event != null && event.draggedKey != event.targetKey) {
+            onDrop(event)
         }
     }
 
@@ -56,14 +60,80 @@ class DragDropState(
             kotlin.math.abs(itemCenter - centerY)
         }?.index ?: fromIndex
     }
+
+    private fun calculateDropEvent(draggedIndex: Int): DragDropEvent? {
+        val items = itemsProvider()
+        val layout = listState.layoutInfo.visibleItemsInfo
+
+        val draggedLayout = layout.find { it.index == draggedIndex }
+            ?: return null
+
+        val draggedItem = items.getOrNull(draggedIndex)
+            ?: return null
+
+        val draggedCenterY = draggedLayout.offset + dragOffsetY + draggedLayout.size / 2f
+
+        val targetLayout = layout
+            .filter { it.index != draggedIndex }
+            .minByOrNull { visibleItem ->
+                val center = visibleItem.offset + visibleItem.size / 2f
+                kotlin.math.abs(center - draggedCenterY)
+            } ?: return null
+
+        val targetIndex = targetLayout.index
+        val targetItem = items.getOrNull(targetIndex)
+            ?: return null
+
+        val relativeY = draggedCenterY - targetLayout.offset
+        val height = targetLayout.size.toFloat()
+
+        val dropPosition = resolveDropPosition(
+            targetItem,
+            relativeY,
+            height
+        )
+
+        return DragDropEvent(
+            draggedKey = draggedItem.key,
+            targetKey = targetItem.key,
+            position = dropPosition
+        )
+    }
+
+    private fun resolveDropPosition(
+        targetItem: WorkoutUiItem,
+        relativeY: Float,
+        height: Float
+    ): DropPosition {
+        return when (targetItem) {
+            is ExerciseUiItem -> {
+                if (relativeY < height * 0.5f) DropPosition.BEFORE
+                else DropPosition.AFTER
+            }
+
+            is CircuitUiItem -> when {
+                relativeY < height * 0.25f -> DropPosition.BEFORE
+                relativeY > height * 0.75f -> DropPosition.AFTER
+                else -> DropPosition.INSIDE
+            }
+        }
+    }
 }
 
 @Composable
 fun rememberDragDropState(
     listState: LazyListState,
-    onMove: (Int, Int) -> Unit
+    itemsProvider: () -> List<WorkoutUiItem>,
+    onDrop: (DragDropEvent) -> Unit
 ): DragDropState {
-    return remember {
-        DragDropState(listState, onMove)
+    val currentItemsProvider by rememberUpdatedState(itemsProvider)
+    val currentOnDrop by rememberUpdatedState(onDrop)
+
+    return remember(listState) {
+        DragDropState(
+            listState = listState,
+            itemsProvider = { currentItemsProvider() },
+            onDrop = { currentOnDrop(it) }
+        )
     }
 }

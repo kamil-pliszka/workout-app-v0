@@ -1,9 +1,7 @@
 package com.pl.myworkoutapp.ui.workouts
 
 import com.pl.myworkoutapp.domain.model.exercise.ExerciseId
-import com.pl.myworkoutapp.ui.exercises.ExerciseInfoUiModel
-import com.pl.myworkoutapp.ui.exercises.mapQuantityValue
-import com.pl.myworkoutapp.ui.exercises.quantityChange
+import com.pl.myworkoutapp.ui.exercises.*
 
 /**
  * To jest shared core dla flow aktywnego ćwiczenia.
@@ -57,7 +55,8 @@ data class ExerciseInteractionResult<T : ExerciseInteractionHost<T>>(
 )
 
 sealed interface ExerciseInteractionEffect {
-    data class LoadExerciseInfo(val key: Int, val exerciseId: ExerciseId) : ExerciseInteractionEffect
+    data class LoadExerciseInfo(val key: Int, val exerciseId: ExerciseId) :
+        ExerciseInteractionEffect
 }
 
 class ExerciseInteractionReducer {
@@ -99,8 +98,8 @@ class ExerciseInteractionReducer {
         info: ExerciseInfoUiModel
     ): ExerciseInteractionResult<T> {
         val exercises = host.workout.items.filterIsInstance<ExerciseUiItem>()
-        val position = exercises.indexOfFirst { it.uiKey == key } + 1
-        val current = exercises.first { it.uiKey == key }
+        val position = exercises.indexOfFirst { it.key == key } + 1
+        val current = exercises.first { it.key == key }
 
         val infoCompleted = info.copy(
             quantityValue = current.quantityValue,
@@ -129,13 +128,13 @@ class ExerciseInteractionReducer {
         val current = host.activeExercise ?: return ExerciseInteractionResult(host)
 
         val exercises = host.workout.items.filterIsInstance<ExerciseUiItem>()
-        val currentIndex = exercises.indexOfFirst { it.uiKey == current.key }
+        val currentIndex = exercises.indexOfFirst { it.key == current.key }
         val next = exercises.getOrNull(currentIndex + offset)
             ?: return ExerciseInteractionResult(host)
 
         return ExerciseInteractionResult(
             state = host,
-            effect = ExerciseInteractionEffect.LoadExerciseInfo(next.uiKey, next.exerciseId)
+            effect = ExerciseInteractionEffect.LoadExerciseInfo(next.key, next.exerciseId)
         )
     }
 
@@ -151,12 +150,14 @@ class ExerciseInteractionReducer {
             increase = increase
         )
 
+        val isDirty = newQuantity != active.original.quantityValue ||
+                active.draft.exerciseId != active.original.exerciseId
+
         return host.withActiveExercise(
             active.copy(
                 draft = active.draft.copy(
                     quantityValue = newQuantity,
-                    isDirty = !(newQuantity == active.original.quantityValue
-                            && active.draft.exerciseId == active.original.exerciseId)
+                    isDirty = isDirty
                 )
             )
         )
@@ -184,14 +185,23 @@ class ExerciseInteractionReducer {
             newInfo.quantityType
         )
 
+        val isDirty = newInfo.exerciseId != active.original.exerciseId ||
+                mappedQuantity != active.original.quantityValue
+
+        val updatedDraft = active.draft.copy(
+            exerciseId = newInfo.exerciseId,
+            name = newInfo.name,
+            icon = newInfo.icon,
+            descriptionMarkdown = newInfo.descriptionMarkdown,
+            quantityType = newInfo.quantityType,
+            quantityValue = mappedQuantity,
+            position = active.draft.position,
+            total = active.draft.total,
+            isDirty = isDirty
+        )
+
         return host.withActiveExercise(
-            active.copy(
-                draft = newInfo.copy(
-                    quantityValue = mappedQuantity,
-                    isDirty = !(mappedQuantity == active.original.quantityValue
-                            && newInfo.exerciseId == active.original.exerciseId)
-                )
-            )
+            active.copy(draft = updatedDraft)
         )
     }
 
@@ -199,7 +209,7 @@ class ExerciseInteractionReducer {
         val active = host.activeExercise ?: return host
 
         val updatedItems = host.workout.items.map { item ->
-            if (item.uiKey != active.key) return@map item
+            if (item.key != active.key) return@map item
 
             val exercise = item as ExerciseUiItem
             exercise.copy(

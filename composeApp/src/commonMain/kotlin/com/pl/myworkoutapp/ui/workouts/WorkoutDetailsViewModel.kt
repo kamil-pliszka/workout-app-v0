@@ -9,8 +9,10 @@ import com.pl.myworkoutapp.domain.model.workout.WorkoutId
 import com.pl.myworkoutapp.domain.model.workout.toWorkoutIdOrNull
 import com.pl.myworkoutapp.domain.usecase.*
 import com.pl.myworkoutapp.ui.common.asUiText
+import com.pl.myworkoutapp.ui.workouts.WorkoutEditAction.*
 import com.pl.myworkoutapp.ui.workouts.WorkoutEditAction.SelectedExerciseLoaded
 import com.pl.myworkoutapp.ui.workouts.WorkoutEditAction.ShowLoadedExerciseInfo
+import com.pl.myworkoutapp.ui.workouts.WorkoutEditorEvent.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -55,6 +57,9 @@ class WorkoutDetailsViewModel(
     private val _events = Channel<WorkoutDetailsEvent>(Channel.BUFFERED)
     val events = _events.receiveAsFlow()
 
+    private val _editorEvents = Channel<WorkoutEditorEvent>(Channel.BUFFERED)
+    val editorEvents = _editorEvents.receiveAsFlow()
+
     init {
         loadWorkoutFromParam()
     }
@@ -62,17 +67,6 @@ class WorkoutDetailsViewModel(
     // =========================================================
     // Public API
     // =========================================================
-
-    /*
-    fun onAction(action: WorkoutDetailsAction) {
-        when (_state.value.mode) {
-            WorkoutDetailsMode.Loading -> Unit
-
-            is WorkoutDetailsMode.View -> handleViewAction(action)
-            is WorkoutDetailsMode.Edit -> handleEditAction(action)
-        }
-    }
-    */
 
     fun onViewAction(action: WorkoutViewAction) {
         handleViewAction(action)
@@ -194,12 +188,19 @@ class WorkoutDetailsViewModel(
             }
             is WorkoutEditEffect.LoadExerciseForPreview -> {
                 val info = getExerciseInfoUseCase.execute(effect.exerciseId).toUi()
-                dispatchEdit(WorkoutEditAction.ExerciseReplaced(info))
+                dispatchEdit(ExerciseReplaced(info))
             }
 
             WorkoutEditEffect.SaveDraft -> saveEditor()
             WorkoutEditEffect.ResetDraft -> resetEditor()
             WorkoutEditEffect.CloseEditor -> closeEditor()
+            is WorkoutEditEffect.ScrollTo -> {
+                _editorEvents.send(ScrollEditorTo(effect.index))
+            }
+
+            WorkoutEditEffect.Vibration -> {
+                //TODO - przesłać gdzieś dalej ten event i zrobić wibracje na telefonie
+            }
         }
     }
 
@@ -258,7 +259,8 @@ class WorkoutDetailsViewModel(
             workoutId = workout.workout.workoutId,
             basedOn = workout.workout.basedOn,
             difficulty = workout.workout.difficulty,
-            items = toDomain(workout.items)
+            //items = toDomain(workout.items)
+            items = workout.items.toTree().toDomain()
         )
 
         sendEvent(WorkoutDetailsEvent.ShowSuccess(Res.string.workout_saved_success.asUiText()))

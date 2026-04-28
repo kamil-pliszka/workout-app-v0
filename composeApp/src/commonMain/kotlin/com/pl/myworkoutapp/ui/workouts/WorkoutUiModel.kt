@@ -48,7 +48,7 @@ sealed interface WorkoutUiItem {
     val isCurrent: Boolean
     val isDone: Boolean
     val timeline: List<TimeLineItemType>
-    val uiKey: Int //klucz dla operacji UI, unikalny id obiektu będącego na liście w workout
+    val key: Int //unikalny id obiektu będącego na liście w workout(klucz dla operacji UI)
     val depth: Int //głębokość w strukturze/drzewie
 }
 
@@ -57,7 +57,7 @@ data class ExerciseUiItem(
     override val isCurrent: Boolean = false,
     override val isDone: Boolean = false,
     override val timeline: List<TimeLineItemType> = listOf(),
-    override val uiKey: Int = 0,
+    override val key: Int = 0,
     override val depth: Int = 0,
 
     val exerciseId: ExerciseId,
@@ -65,7 +65,7 @@ data class ExerciseUiItem(
     val quantityType: QuantityType,
     val quantityValue: Int,
     val name: UiText,
-    val icon: DrawableResource
+    val icon: DrawableResource //TODO - to powinna być albo ikona albo ścieżka do obrazka
 ) : WorkoutUiItem
 
 enum class CircuitStructureType {
@@ -77,7 +77,7 @@ data class CircuitUiItem(
     override val isCurrent: Boolean = false,
     override val isDone: Boolean = false,
     override val timeline: List<TimeLineItemType> = listOf(),
-    override val uiKey: Int = 0,
+    override val key: Int = 0,
     override val depth: Int = 0,
 
     val phase: Phase,
