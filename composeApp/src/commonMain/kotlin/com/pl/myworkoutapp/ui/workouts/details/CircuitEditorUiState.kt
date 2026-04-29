@@ -1,12 +1,10 @@
-package com.pl.myworkoutapp.ui.workouts.editor
+package com.pl.myworkoutapp.ui.workouts.details
 
 import com.pl.myworkoutapp.domain.model.workout.CircuitStructure
 import com.pl.myworkoutapp.domain.model.workout.Phase
 import com.pl.myworkoutapp.ui.common.EmptyUiText
 import com.pl.myworkoutapp.ui.common.UiText
-import com.pl.myworkoutapp.ui.workouts.CircuitStructureType
-import com.pl.myworkoutapp.ui.workouts.CircuitUiItem
-import com.pl.myworkoutapp.ui.workouts.toStructureType
+import com.pl.myworkoutapp.ui.workouts.*
 
 
 data class CircuitEditorUiState(

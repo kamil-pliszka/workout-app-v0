@@ -2,6 +2,9 @@ package com.pl.myworkoutapp.ui.workouts.components
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,12 +24,14 @@ import com.pl.myworkoutapp.ui.theme.*
 import com.pl.myworkoutapp.ui.workouts.*
 import com.pl.myworkoutapp.ui.workouts.tree.transform
 import myworkoutapplication.composeapp.generated.resources.*
+import org.jetbrains.compose.resources.stringResource
 
 
 sealed interface WorkoutWithExercisesAction {
     object OnBack : WorkoutWithExercisesAction
     object OnOpenEditor : WorkoutWithExercisesAction
     object OnDeleteRequest : WorkoutWithExercisesAction
+    object OnResetRequest : WorkoutWithExercisesAction
     object OnTuneRequest : WorkoutWithExercisesAction
     data class ShowExerciseInfo(val key: Int, val exerciseId: ExerciseId) : WorkoutWithExercisesAction
 }
@@ -52,20 +57,32 @@ fun WorkoutWithExercisesComponent(
                 //onDescChanged = { onAction(WorkoutWithExercisesAction.OnDescChanged(it)) },
             )
             WorkoutHeaderActionsBox(
-                isBuiltIn = workoutUiModel.workout.workoutId is WorkoutId.BuiltIn,
+                workout = workoutUiModel.workout,
                 onBack = { onAction(WorkoutWithExercisesAction.OnBack) },
                 onEdit = { onAction(WorkoutWithExercisesAction.OnOpenEditor) },
                 onDelete = { onAction(WorkoutWithExercisesAction.OnDeleteRequest) },
+                onReset = { onAction(WorkoutWithExercisesAction.OnResetRequest) },
                 onTune = { onAction(WorkoutWithExercisesAction.OnTuneRequest) },
             )
         }
-        println("WorkoutCardComposable: ${workout.workoutId}")
-
         Spacer(Modifier.height(16.dp))
 
         Column(
             //verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
+            if (workoutUiModel.items.isEmpty() && workout.workoutId is WorkoutId.Custom /*&& workout.workoutId.isNew()*/) {
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(top = 48.dp),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Button(
+                        onClick = { onAction(WorkoutWithExercisesAction.OnOpenEditor) },
+                        //colors = cancelButtonColors,
+                    ) {
+                        Text(stringResource(Res.string.workout_add_items))
+                    }
+                }
+            }
             workoutUiModel.items.forEach { item ->
                 WorkoutItemRow(
                     item = item,
@@ -110,10 +127,11 @@ fun WorkoutItemRow(
 
 @Composable
 fun BoxScope.WorkoutHeaderActionsBox(
-    isBuiltIn: Boolean,
+    workout: WorkoutUiModel,
     onBack: () -> Unit,
     onEdit: () -> Unit,
     onDelete: () -> Unit,
+    onReset: () -> Unit,
     onTune: () -> Unit,
 ) {
     // LEWA IKONA (back)
@@ -137,10 +155,10 @@ fun BoxScope.WorkoutHeaderActionsBox(
             onClick = onEdit
         )
 
-        if (!isBuiltIn) {
+        if (workout.workoutId is WorkoutId.Custom && !workout.workoutId.isNew()) {
             CircleIconButton(
-                icon = Res.drawable.ic_delete,
-                onClick = onDelete
+                icon = if (workout.basedOn != null) Res.drawable.ic_reset_settings else Res.drawable.ic_delete,
+                onClick = if (workout.basedOn != null) onReset else onDelete
             )
         }
         CircleIconButton(
@@ -151,7 +169,7 @@ fun BoxScope.WorkoutHeaderActionsBox(
 }
 
 val PREVIEW_WORKOUT = WorkoutUiModel(
-    workoutId = 56789L.asWorkoutId(),
+    workoutId = WorkoutId.Custom.NEW,
     basedOn = null,
     name = "Twój workout ABS".asUiText(),
     desc = "Opis workouta, potrzebny bądź nie".asUiText(),

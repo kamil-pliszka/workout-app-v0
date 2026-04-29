@@ -2,11 +2,7 @@ package com.pl.myworkoutapp.ui.workouts.tree
 
 import com.pl.myworkoutapp.domain.model.exercise.*
 import com.pl.myworkoutapp.domain.model.workout.*
-import com.pl.myworkoutapp.ui.workouts.CircuitUiItem
-import com.pl.myworkoutapp.ui.workouts.ExerciseUiItem
-import com.pl.myworkoutapp.ui.workouts.WorkoutWithExercisesUiModel
-import com.pl.myworkoutapp.ui.workouts.toUi
-import com.pl.myworkoutapp.ui.workouts.toUiBase
+import com.pl.myworkoutapp.ui.workouts.*
 
 
 /**

@@ -21,10 +21,10 @@ import com.pl.myworkoutapp.ui.reports.ReportsScreen
 import com.pl.myworkoutapp.ui.reports.ReportsViewModel
 import com.pl.myworkoutapp.ui.settings.SettingsScreen
 import com.pl.myworkoutapp.ui.settings.SettingsViewModel
-import com.pl.myworkoutapp.ui.workouts.*
-import com.pl.myworkoutapp.ui.workouts.details.WorkoutDetailsEvent
-import com.pl.myworkoutapp.ui.workouts.details.WorkoutDetailsScreen
-import com.pl.myworkoutapp.ui.workouts.details.WorkoutDetailsViewModel
+import com.pl.myworkoutapp.ui.workouts.WorkoutsEvent
+import com.pl.myworkoutapp.ui.workouts.WorkoutsScreen
+import com.pl.myworkoutapp.ui.workouts.WorkoutsViewModel
+import com.pl.myworkoutapp.ui.workouts.details.*
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -79,6 +79,18 @@ fun Navigation(
         ) {
             composable(ScreenRoutes.WorkoutsList.route) {
                 val viewModel: WorkoutsViewModel = koinViewModel()
+                ObserveAsEvents(viewModel.events) { event ->
+                    println("BACK EVENT: $event")
+                    when (event) {
+                        is WorkoutsEvent.NavToExerciseEditor ->
+                            navController.navigate(ScreenRoutes.ExerciseEditor.create(event.exerciseId.asString()))
+                        is WorkoutsEvent.NavToWorkoutDetails ->
+                            navController.navigate(ScreenRoutes.WorkoutDetails.create(event.workoutId.asString()))
+                        is WorkoutsEvent.NavToWorkoutExecution -> navController.navigate(
+                            ScreenRoutes.WorkoutExecution.create(event.workoutId.asString())
+                        )
+                    }
+                }
                 //UiEventConsumer(snackbarHostState, viewModel.events)
                 val state by viewModel.state.collectAsStateWithLifecycle()
                 WorkoutsScreen(

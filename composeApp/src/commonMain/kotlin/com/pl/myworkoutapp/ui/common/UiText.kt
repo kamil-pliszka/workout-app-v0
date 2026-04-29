@@ -2,7 +2,8 @@ package com.pl.myworkoutapp.ui.common
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
-import org.jetbrains.compose.resources.*
+import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.stringResource
 
 @Immutable
 sealed interface UiText {

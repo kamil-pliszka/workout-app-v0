@@ -1,4 +1,4 @@
-package com.pl.myworkoutapp.ui.workouts.editor
+package com.pl.myworkoutapp.ui.workouts.details
 
 
 sealed interface WorkoutEditorEvent {

@@ -2,9 +2,7 @@ package com.pl.myworkoutapp.ui.common
 
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.*
-import com.pl.myworkoutapp.ui.workouts.CircuitUiItem
-import com.pl.myworkoutapp.ui.workouts.ExerciseUiItem
-import com.pl.myworkoutapp.ui.workouts.WorkoutUiItem
+import com.pl.myworkoutapp.ui.workouts.*
 
 class DragDropState(
     val listState: LazyListState,

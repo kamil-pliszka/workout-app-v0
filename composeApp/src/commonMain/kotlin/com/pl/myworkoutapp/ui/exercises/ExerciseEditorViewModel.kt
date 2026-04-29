@@ -1,12 +1,12 @@
 package com.pl.myworkoutapp.ui.exercises
 
 import androidx.lifecycle.*
-import com.pl.myworkoutapp.ui.app.AppStateHolder
 import com.pl.myworkoutapp.core.currentTimeMilliseconds
 import com.pl.myworkoutapp.core.exceptionToString
 import com.pl.myworkoutapp.domain.StorageSupport
 import com.pl.myworkoutapp.domain.WorkoutRepository
 import com.pl.myworkoutapp.domain.model.exercise.*
+import com.pl.myworkoutapp.ui.app.AppStateHolder
 import com.pl.myworkoutapp.ui.common.asUiText
 import com.pl.myworkoutapp.ui.common.toUiConfig
 import kotlinx.coroutines.channels.Channel

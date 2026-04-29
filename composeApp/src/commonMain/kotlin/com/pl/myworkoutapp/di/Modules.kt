@@ -1,40 +1,31 @@
 package com.pl.myworkoutapp.di
 
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
-import com.pl.myworkoutapp.ui.app.AppStateHolder
-import com.pl.myworkoutapp.ui.language.LanguageViewModel
 import com.pl.myworkoutapp.data.database.DatabaseFactory
 import com.pl.myworkoutapp.data.database.WorkoutDatabase
-import com.pl.myworkoutapp.data.mappers.WorkoutFlatteningMapper
 import com.pl.myworkoutapp.data.mappers.WorkoutEntityTreeBuilder
+import com.pl.myworkoutapp.data.mappers.WorkoutFlatteningMapper
 import com.pl.myworkoutapp.data.prefs.DataStoreProvider
 import com.pl.myworkoutapp.data.repository.AppSettingRepositoryImpl
 import com.pl.myworkoutapp.data.repository.WorkoutRepositoryImpl
 import com.pl.myworkoutapp.domain.AppSettingRepository
 import com.pl.myworkoutapp.domain.WorkoutRepository
-import com.pl.myworkoutapp.domain.usecase.GetExerciseInfoUseCase
-import com.pl.myworkoutapp.domain.usecase.GetExerciseWithDefaultQuantityUseCase
-import com.pl.myworkoutapp.domain.usecase.GetWorkoutWithExercisesUseCase
-import com.pl.myworkoutapp.domain.usecase.SaveWorkoutUseCase
+import com.pl.myworkoutapp.domain.usecase.*
+import com.pl.myworkoutapp.ui.app.AppStateHolder
 import com.pl.myworkoutapp.ui.common.MessageCoordinator
 import com.pl.myworkoutapp.ui.execution.WorkoutExecutionViewModel
 import com.pl.myworkoutapp.ui.exercises.*
+import com.pl.myworkoutapp.ui.language.LanguageViewModel
 import com.pl.myworkoutapp.ui.navigation.AppNavigator
 import com.pl.myworkoutapp.ui.plans.PlansViewModel
 import com.pl.myworkoutapp.ui.reports.ReportsViewModel
 import com.pl.myworkoutapp.ui.settings.SettingsViewModel
 import com.pl.myworkoutapp.ui.workouts.*
-import com.pl.myworkoutapp.ui.workouts.details.WorkoutDetailsViewModel
-import com.pl.myworkoutapp.ui.workouts.details.WorkoutSessionCoordinator
-import com.pl.myworkoutapp.ui.workouts.details.WorkoutViewReducer
-import com.pl.myworkoutapp.ui.workouts.editor.CircuitEditorDelegate
-import com.pl.myworkoutapp.ui.workouts.editor.WorkoutEditReducer
-import com.pl.myworkoutapp.ui.workouts.tree.WorkoutTreeMutationHandler
-import com.pl.myworkoutapp.ui.workouts.tree.WorkoutTreeMutator
-import com.pl.myworkoutapp.ui.workouts.tree.WorkoutTreeNormalizer
-import com.pl.myworkoutapp.ui.workouts.tree.WorkoutTreePolicy
+import com.pl.myworkoutapp.ui.workouts.details.*
+import com.pl.myworkoutapp.ui.workouts.tree.*
 import org.koin.core.module.Module
-import org.koin.core.module.dsl.*
+import org.koin.core.module.dsl.singleOf
+import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
@@ -53,6 +44,7 @@ val sharedModule = module {
     single {
         get<DataStoreProvider>().createDataStore()
     }
+    single { get<WorkoutDatabase>().exerciseDao }
     single { get<WorkoutDatabase>().workoutDao }
     singleOf(::AppSettingRepositoryImpl).bind<AppSettingRepository>()
     singleOf(::WorkoutFlatteningMapper)
@@ -66,12 +58,14 @@ val sharedModule = module {
     singleOf(::SaveWorkoutUseCase)
     singleOf(::GetExerciseInfoUseCase)
     singleOf(::GetExerciseWithDefaultQuantityUseCase)
+    singleOf(::GetMainWorkoutsUseCase)
+    singleOf(::DeleteCustomWorkoutAndResolveFallbackUseCase)
 
     //jeśli delegate ma stan per ekran wtedy factoryOf, jeśli nie będzie miał stanu wtedy singleOf
     singleOf(::CircuitEditorDelegate)
     singleOf(::WorkoutEditReducer)
     singleOf(::WorkoutViewReducer)
-    singleOf( :: ExerciseInteractionReducer)
+    singleOf(::ExerciseInteractionReducer)
     singleOf(::WorkoutSessionCoordinator)
     singleOf(::WorkoutDropHandlerArchived)
     singleOf(::WorkoutDropPolicyArchived)

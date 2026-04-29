@@ -3,10 +3,7 @@ package com.pl.myworkoutapp.ui.workouts
 import com.pl.myworkoutapp.core.Log
 import com.pl.myworkoutapp.domain.model.workout.CircuitStructure
 import com.pl.myworkoutapp.ui.common.DropPosition
-import com.pl.myworkoutapp.ui.workouts.tree.CircuitNode
-import com.pl.myworkoutapp.ui.workouts.tree.ExerciseNode
-import com.pl.myworkoutapp.ui.workouts.tree.TreeNode
-import com.pl.myworkoutapp.ui.workouts.tree.isDescendantOf
+import com.pl.myworkoutapp.ui.workouts.tree.*
 
 /**
  * Ma tylko 2 odpowiedzialności:

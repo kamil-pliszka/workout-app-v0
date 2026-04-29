@@ -1,33 +1,25 @@
-package com.pl.myworkoutapp.ui.workouts.editor
+package com.pl.myworkoutapp.ui.workouts.details
 
 import com.pl.myworkoutapp.core.Log
 import com.pl.myworkoutapp.domain.model.exercise.ExerciseId
 import com.pl.myworkoutapp.ui.common.*
 import com.pl.myworkoutapp.ui.exercises.*
-import com.pl.myworkoutapp.ui.workouts.CircuitUiItem
-import com.pl.myworkoutapp.ui.workouts.ExerciseInteractionAction
-import com.pl.myworkoutapp.ui.workouts.ExerciseInteractionAction.ChangeQuantity
-import com.pl.myworkoutapp.ui.workouts.ExerciseInteractionAction.Close
-import com.pl.myworkoutapp.ui.workouts.ExerciseInteractionAction.Exchange
-import com.pl.myworkoutapp.ui.workouts.ExerciseInteractionAction.Next
-import com.pl.myworkoutapp.ui.workouts.ExerciseInteractionAction.Open
-import com.pl.myworkoutapp.ui.workouts.ExerciseInteractionAction.Prev
-import com.pl.myworkoutapp.ui.workouts.ExerciseInteractionAction.Reset
-import com.pl.myworkoutapp.ui.workouts.ExerciseInteractionAction.Save
-import com.pl.myworkoutapp.ui.workouts.ExerciseInteractionEffect
-import com.pl.myworkoutapp.ui.workouts.ExerciseInteractionReducer
-import com.pl.myworkoutapp.ui.workouts.details.ExercisePickerContext
-import com.pl.myworkoutapp.ui.workouts.ExerciseUiItem
-import com.pl.myworkoutapp.ui.workouts.details.WorkoutEditModal
-import com.pl.myworkoutapp.ui.workouts.details.WorkoutEditSession
-import com.pl.myworkoutapp.ui.workouts.WorkoutWithExercisesUiModel
-import com.pl.myworkoutapp.ui.workouts.editor.WorkoutEditEffect.CloseEditor
-import com.pl.myworkoutapp.ui.workouts.editor.WorkoutEditEffect.LoadExerciseForList
-import com.pl.myworkoutapp.ui.workouts.editor.WorkoutEditEffect.LoadExerciseForPreview
-import com.pl.myworkoutapp.ui.workouts.editor.WorkoutEditEffect.LoadExerciseInfo
-import com.pl.myworkoutapp.ui.workouts.editor.WorkoutEditEffect.ResetDraft
-import com.pl.myworkoutapp.ui.workouts.editor.WorkoutEditEffect.SaveDraft
+import com.pl.myworkoutapp.ui.workouts.*
 import com.pl.myworkoutapp.ui.workouts.components.WorkoutExerciseInfoAction
+import com.pl.myworkoutapp.ui.workouts.details.ExerciseInteractionAction.ChangeQuantity
+import com.pl.myworkoutapp.ui.workouts.details.ExerciseInteractionAction.Close
+import com.pl.myworkoutapp.ui.workouts.details.ExerciseInteractionAction.Exchange
+import com.pl.myworkoutapp.ui.workouts.details.ExerciseInteractionAction.Next
+import com.pl.myworkoutapp.ui.workouts.details.ExerciseInteractionAction.Open
+import com.pl.myworkoutapp.ui.workouts.details.ExerciseInteractionAction.Prev
+import com.pl.myworkoutapp.ui.workouts.details.ExerciseInteractionAction.Reset
+import com.pl.myworkoutapp.ui.workouts.details.ExerciseInteractionAction.Save
+import com.pl.myworkoutapp.ui.workouts.details.WorkoutEditEffect.CloseEditor
+import com.pl.myworkoutapp.ui.workouts.details.WorkoutEditEffect.LoadExerciseForList
+import com.pl.myworkoutapp.ui.workouts.details.WorkoutEditEffect.LoadExerciseForPreview
+import com.pl.myworkoutapp.ui.workouts.details.WorkoutEditEffect.LoadExerciseInfo
+import com.pl.myworkoutapp.ui.workouts.details.WorkoutEditEffect.ResetDraft
+import com.pl.myworkoutapp.ui.workouts.details.WorkoutEditEffect.SaveDraft
 import com.pl.myworkoutapp.ui.workouts.tree.WorkoutTreeMutation
 import com.pl.myworkoutapp.ui.workouts.tree.WorkoutTreeMutationHandler
 
@@ -89,7 +81,7 @@ sealed interface WorkoutEditAction {
 
     data object SaveCircuitEditor : WorkoutEditAction
     data object CancelCircuitEditor : WorkoutEditAction
-    data object DeleteElementConfirm : WorkoutEditAction
+    data class DeleteElementConfirm(val key: Int) : WorkoutEditAction
     data object DeleteElementCancel : WorkoutEditAction
 
     data object SaveDraft : WorkoutEditAction // commit draft → view session
@@ -233,17 +225,16 @@ class WorkoutEditReducer(
 
             is WorkoutEditAction.DeleteItem -> WorkoutEditResult(
                 state = session.copy(
-                    deletingWorkoutItemKey = action.key,
-                    modal = WorkoutEditModal.ConfirmDeleteItem
+                    modal = WorkoutEditModal.ConfirmDeleteItem(action.key)
                 )
             )
 
             WorkoutEditAction.DeleteElementCancel -> WorkoutEditResult(
-                state = session.copy(deletingWorkoutItemKey = null, modal = null)
+                state = session.copy(modal = null)
             )
 
-            WorkoutEditAction.DeleteElementConfirm -> WorkoutEditResult(
-                deleteWorkoutElement(session)
+            is WorkoutEditAction.DeleteElementConfirm -> WorkoutEditResult(
+                deleteWorkoutElement(session, action.key)
             )
 
             is WorkoutEditAction.ExercisePicked ->
@@ -553,9 +544,7 @@ class WorkoutEditReducer(
         )
     }
 
-    private fun deleteWorkoutElement(session: WorkoutEditSession): WorkoutEditSession {
-        val toDeleteKey = session.deletingWorkoutItemKey ?: return session
-
+    private fun deleteWorkoutElement(session: WorkoutEditSession, toDeleteKey: Int): WorkoutEditSession {
         val workout = workoutTreeMutationHandler.apply(
             session.workout,
             WorkoutTreeMutation.Delete(
@@ -565,7 +554,6 @@ class WorkoutEditReducer(
 
         return session.copy(
             workout = workout,
-            deletingWorkoutItemKey = null,
             modal = null,
         )
     }

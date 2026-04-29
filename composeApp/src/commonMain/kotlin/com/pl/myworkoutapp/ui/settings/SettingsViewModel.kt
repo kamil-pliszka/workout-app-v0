@@ -3,12 +3,12 @@ package com.pl.myworkoutapp.ui.settings
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pl.myworkoutapp.AppConfig
-import com.pl.myworkoutapp.ui.app.AppStateHolder
 import com.pl.myworkoutapp.core.Constants.PROFILE_PHOTO_FILENAME
 import com.pl.myworkoutapp.domain.AppSettingRepository
 import com.pl.myworkoutapp.domain.StorageSupport
 import com.pl.myworkoutapp.domain.model.user.Gender
 import com.pl.myworkoutapp.domain.model.user.UserProfile
+import com.pl.myworkoutapp.ui.app.AppStateHolder
 import com.pl.myworkoutapp.ui.common.UiText
 import com.pl.myworkoutapp.ui.common.asUiText
 import kotlinx.coroutines.Dispatchers

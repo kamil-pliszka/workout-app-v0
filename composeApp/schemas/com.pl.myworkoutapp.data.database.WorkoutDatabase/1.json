@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "31e9bf762528c025a5575545f7368ff6",
+    "identityHash": "799c8ca3ba0b014399671e8c3c4ec33b",
     "entities": [
       {
         "tableName": "CustomExerciseEntity",
@@ -188,13 +188,18 @@
       },
       {
         "tableName": "CustomWorkoutEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT, `description` TEXT, `imageUri` TEXT, `basedOn` TEXT, `difficulty` TEXT NOT NULL, `updatedAt` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `planId` INTEGER, `name` TEXT, `description` TEXT, `imageUri` TEXT, `basedOn` TEXT, `difficulty` TEXT NOT NULL, `updatedAt` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
             "columnName": "id",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "planId",
+            "columnName": "planId",
+            "affinity": "INTEGER"
           },
           {
             "fieldPath": "name",
@@ -244,6 +249,15 @@
             ],
             "orders": [],
             "createSql": "CREATE INDEX IF NOT EXISTS `index_CustomWorkoutEntity_basedOn` ON `${TABLE_NAME}` (`basedOn`)"
+          },
+          {
+            "name": "index_CustomWorkoutEntity_planId",
+            "unique": false,
+            "columnNames": [
+              "planId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_CustomWorkoutEntity_planId` ON `${TABLE_NAME}` (`planId`)"
           }
         ]
       },
@@ -395,7 +409,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '31e9bf762528c025a5575545f7368ff6')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '799c8ca3ba0b014399671e8c3c4ec33b')"
     ]
   }
 }

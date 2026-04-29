@@ -89,6 +89,8 @@
     <string name="workouts_phase_warmup">Warmup</string>
     <string name="workouts_phase_training">Training</string>
     <string name="workouts_phase_coldown">Coldown</string>
+    <string name="workouts_add_exercise">Exercise</string>
+    <string name="workouts_add_workout">Workout</string>
 
     <string name="workout_start">Start</string>
     <string name="workout_close">Close</string>
@@ -99,9 +101,15 @@
     <string name="workout_saved_success">Workout saved succesfully</string>
     <string name="workout_add_exercise">Exercise</string>
     <string name="workout_add_circuit">Circuit</string>
+    <string name="workout_add_items">Add workout items</string>
 
     <string name="workout_editor_delete_title">Delete element</string>
     <string name="workout_editor_delete_question">Are you sure you want to delete element?</string>
+    <string name="workout_view_delete_title">Confirm delete workout</string>
+    <string name="workout_view_delete_question">Are you sure to delete that workout?</string>
+    <string name="workout_view_reset_title">Reset changes</string>
+    <string name="workout_view_reset_question">Are you sure to reset changes in workout?</string>
+    <string name="workout_delete_success">Operation was successful</string>
 
     <string name="circuit_label">Circuit</string>
     <string name="circuit_label_new">Circuit (new)</string>

@@ -2,13 +2,22 @@ package com.pl.myworkoutapp.ui.workouts.details
 
 import com.pl.myworkoutapp.domain.model.exercise.ExerciseId
 import com.pl.myworkoutapp.ui.exercises.ExerciseInfoUiModel
-import com.pl.myworkoutapp.ui.workouts.ExerciseInteractionAction
-import com.pl.myworkoutapp.ui.workouts.ExerciseInteractionAction.*
-import com.pl.myworkoutapp.ui.workouts.ExerciseInteractionEffect
-import com.pl.myworkoutapp.ui.workouts.ExerciseInteractionReducer
-import com.pl.myworkoutapp.ui.workouts.details.WorkoutViewEffect.*
 import com.pl.myworkoutapp.ui.workouts.components.WorkoutExerciseInfoAction
 import com.pl.myworkoutapp.ui.workouts.components.WorkoutWithExercisesAction
+import com.pl.myworkoutapp.ui.workouts.details.ExerciseInteractionAction.ChangeQuantity
+import com.pl.myworkoutapp.ui.workouts.details.ExerciseInteractionAction.Close
+import com.pl.myworkoutapp.ui.workouts.details.ExerciseInteractionAction.Exchange
+import com.pl.myworkoutapp.ui.workouts.details.ExerciseInteractionAction.Next
+import com.pl.myworkoutapp.ui.workouts.details.ExerciseInteractionAction.Open
+import com.pl.myworkoutapp.ui.workouts.details.ExerciseInteractionAction.Prev
+import com.pl.myworkoutapp.ui.workouts.details.ExerciseInteractionAction.Reset
+import com.pl.myworkoutapp.ui.workouts.details.ExerciseInteractionAction.Save
+import com.pl.myworkoutapp.ui.workouts.details.WorkoutViewEffect.ExchangeExercise
+import com.pl.myworkoutapp.ui.workouts.details.WorkoutViewEffect.LoadExerciseInfo
+import com.pl.myworkoutapp.ui.workouts.details.WorkoutViewEffect.OpenEditor
+import com.pl.myworkoutapp.ui.workouts.details.WorkoutViewEffect.ResetWorkout
+import com.pl.myworkoutapp.ui.workouts.details.WorkoutViewEffect.SaveWorkout
+import com.pl.myworkoutapp.ui.workouts.details.WorkoutViewEffect.StartWorkout
 
 /**
  * To reducer trybu podglądu. Obsługuje tylko flow ekranu view:
@@ -50,8 +59,11 @@ sealed interface WorkoutViewAction {
     data object StartWorkout : WorkoutViewAction
     data object OpenEditor : WorkoutViewAction
     data object OnBack : WorkoutViewAction
-    data object DeleteRequest: WorkoutViewAction
-    data object TuneRequest: WorkoutViewAction
+    data object DeleteRequest : WorkoutViewAction
+    data object ResetRequest: WorkoutViewAction
+    data object TuneRequest : WorkoutViewAction
+    data object DeleteConfirm: WorkoutViewAction
+    data object DeleteCancel: WorkoutViewAction
 }
 
 fun WorkoutExerciseInfoAction.toWorkoutViewAction(): WorkoutViewAction = when (this) {
@@ -67,9 +79,13 @@ fun WorkoutExerciseInfoAction.toWorkoutViewAction(): WorkoutViewAction = when (t
 fun WorkoutWithExercisesAction.toWorkoutViewAction(): WorkoutViewAction = when (this) {
     WorkoutWithExercisesAction.OnBack -> WorkoutViewAction.OnBack
     WorkoutWithExercisesAction.OnDeleteRequest -> WorkoutViewAction.DeleteRequest
+    WorkoutWithExercisesAction.OnResetRequest -> WorkoutViewAction.ResetRequest
     WorkoutWithExercisesAction.OnOpenEditor -> WorkoutViewAction.OpenEditor
     WorkoutWithExercisesAction.OnTuneRequest -> WorkoutViewAction.TuneRequest
-    is WorkoutWithExercisesAction.ShowExerciseInfo -> WorkoutViewAction.ShowExerciseInfo(key, exerciseId)
+    is WorkoutWithExercisesAction.ShowExerciseInfo -> WorkoutViewAction.ShowExerciseInfo(
+        key,
+        exerciseId
+    )
 }
 
 
@@ -85,6 +101,7 @@ sealed interface WorkoutViewEffect {
     data object ResetWorkout : WorkoutViewEffect
     data object StartWorkout : WorkoutViewEffect
     data object OpenEditor : WorkoutViewEffect
+    data object DeleteWorkout : WorkoutViewEffect
 }
 
 
@@ -156,7 +173,21 @@ class WorkoutViewReducer(
 
 
             WorkoutViewAction.OnBack -> WorkoutViewResult(session)
-            WorkoutViewAction.DeleteRequest -> TODO() //celowy wyjątek
+            WorkoutViewAction.DeleteRequest -> WorkoutViewResult(
+                state = session.copy(
+                    modal = WorkoutViewModal.ConfirmDelete
+                )
+            )
+            WorkoutViewAction.ResetRequest -> WorkoutViewResult(
+                state = session.copy(
+                    modal = WorkoutViewModal.ConfirmReset
+                )
+            )
+            WorkoutViewAction.DeleteCancel -> WorkoutViewResult(
+                state = session.copy(modal = null)
+            )
+            WorkoutViewAction.DeleteConfirm ->
+                WorkoutViewResult(session, WorkoutViewEffect.DeleteWorkout)
             WorkoutViewAction.TuneRequest -> TODO() //celowy wyjątek
         }
     }

@@ -1,13 +1,11 @@
 package com.pl.myworkoutapp.ui.workouts.components
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -16,15 +14,10 @@ import com.pl.myworkoutapp.domain.model.workout.CircuitStructure
 import com.pl.myworkoutapp.domain.model.workout.Phase
 import com.pl.myworkoutapp.ui.common.EmptyUiText
 import com.pl.myworkoutapp.ui.common.asUiText
-import com.pl.myworkoutapp.ui.components.ProgressCircle
-import com.pl.myworkoutapp.ui.components.SegmentedProgressIndicator
-import com.pl.myworkoutapp.ui.theme.DesertWhite
+import com.pl.myworkoutapp.ui.theme.AppTheme
 import com.pl.myworkoutapp.ui.theme.PureGreen
 import com.pl.myworkoutapp.ui.workouts.*
-import myworkoutapplication.composeapp.generated.resources.Res
-import myworkoutapplication.composeapp.generated.resources.ic_delete
-import myworkoutapplication.composeapp.generated.resources.ic_done_all
-import myworkoutapplication.composeapp.generated.resources.ic_edit
+import myworkoutapplication.composeapp.generated.resources.*
 import org.jetbrains.compose.resources.painterResource
 
 
@@ -61,11 +54,10 @@ fun WorkoutEditableItemCircuit(
                 itemWidth = 24.dp
             )
             Column(
-                modifier = Modifier
+                modifier = Modifier.padding(vertical = 16.dp)
             ) {
                 val title = circuit.title.asString()
                 if (title.isBlank()) {
-                    //TODO - rozwiazac problem, timeline jest zbyt niski, na dole pozostaje sporo miejsca
                     Row {
                         Text(
                             text = circuit.phase.asUiText().asString(),
@@ -109,8 +101,7 @@ fun WorkoutEditableItemCircuit(
         Row(
             modifier = Modifier
                 .align(Alignment.TopEnd)
-                .padding(horizontal = 8.dp, vertical = 8.dp)
-            ,
+                .padding(horizontal = 8.dp, vertical = 8.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Icon(
@@ -126,7 +117,7 @@ fun WorkoutEditableItemCircuit(
                     onClick = onDeleteClick
                 ),
                 painter = painterResource(Res.drawable.ic_delete),
-                contentDescription = "edit",
+                contentDescription = "delete",
                 tint = MaterialTheme.colorScheme.error
             )
         }
@@ -145,69 +136,77 @@ val CIRCUIT_EDITABLE_ITEM_WM = CircuitUiItem(
 @Preview
 @Composable
 fun CircuitEditablePreviewBasic() {
-    WorkoutEditableItemCircuit(
-        circuit = CIRCUIT_EDITABLE_ITEM_WM.copy(
-            structure = CircuitStructure.AMRAP(300)
-        ),
-        themeColor = PureGreen,
-        onClick = { },
-        onEditClick = { },
-        onDeleteClick = { },
-    )
+    AppTheme {
+        WorkoutEditableItemCircuit(
+            circuit = CIRCUIT_EDITABLE_ITEM_WM.copy(
+                structure = CircuitStructure.AMRAP(300)
+            ),
+            themeColor = PureGreen,
+            onClick = { },
+            onEditClick = { },
+            onDeleteClick = { },
+        )
+    }
 }
 
 @Preview
 @Composable
 fun CircuitEditablePreviewTimeLine() {
-    WorkoutEditableItemCircuit(
-        circuit = CIRCUIT_EDITABLE_ITEM_WM.copy(
-            structure = CircuitStructure.EMOM(12)
-        ).with(
-            TimeLineItemType.Vertical(Color.Green),
-            TimeLineItemType.Triple(Color.Magenta),
-            TimeLineItemType.End(Color.Red),
-        ),
-        themeColor = PureGreen,
-        onClick = { },
-        onEditClick = { },
-        onDeleteClick = { },
-    )
+    AppTheme {
+        WorkoutEditableItemCircuit(
+            circuit = CIRCUIT_EDITABLE_ITEM_WM.copy(
+                structure = CircuitStructure.EMOM(12)
+            ).with(
+                TimeLineItemType.Vertical(Color.Green),
+                TimeLineItemType.Triple(Color.Magenta),
+                TimeLineItemType.End(Color.Red),
+            ),
+            themeColor = PureGreen,
+            onClick = { },
+            onEditClick = { },
+            onDeleteClick = { },
+        )
+    }
 }
 
 @Preview
 @Composable
 fun CircuitEditablePreviewProgress1() {
-    WorkoutEditableItemCircuit(
-        circuit = CIRCUIT_EDITABLE_ITEM_WM.copy(
-            structure = CircuitStructure.Standard(7),
-        ).with(
-            TimeLineItemType.End(Color.Red),
-        ),
-        themeColor = PureGreen,
-        onClick = { },
-        onEditClick = { },
-        onDeleteClick = { },
-    )
+    AppTheme {
+
+        WorkoutEditableItemCircuit(
+            circuit = CIRCUIT_EDITABLE_ITEM_WM.copy(
+                structure = CircuitStructure.Standard(7),
+            ).with(
+                TimeLineItemType.End(Color.Red),
+            ),
+            themeColor = PureGreen,
+            onClick = { },
+            onEditClick = { },
+            onDeleteClick = { },
+        )
+    }
 }
 
 @Preview
 @Composable
 fun CircuitEditablePreviewProgress2() {
-    WorkoutEditableItemCircuit(
-        circuit = CIRCUIT_EDITABLE_ITEM_WM.copy(
-            title = EmptyUiText,
-            structure = CircuitStructure.Tabata(
-                rounds = 8,
-                workSec = 30,
-                restSec = 15
+    AppTheme {
+        WorkoutEditableItemCircuit(
+            circuit = CIRCUIT_EDITABLE_ITEM_WM.copy(
+                title = EmptyUiText,
+                structure = CircuitStructure.Tabata(
+                    rounds = 8,
+                    workSec = 30,
+                    restSec = 15
+                ),
+            ).with(
+                TimeLineItemType.Triple(Color.Red),
             ),
-        ).with(
-            TimeLineItemType.Triple(Color.Red),
-        ),
-        themeColor = PureGreen,
-        onClick = { },
-        onEditClick = { },
-        onDeleteClick = { },
-    )
+            themeColor = PureGreen,
+            onClick = { },
+            onEditClick = { },
+            onDeleteClick = { },
+        )
+    }
 }
-

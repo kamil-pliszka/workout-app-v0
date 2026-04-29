@@ -1,5 +1,6 @@
 package com.pl.myworkoutapp.data.repository
 
+import com.pl.myworkoutapp.data.database.ExerciseDao
 import com.pl.myworkoutapp.data.database.WorkoutDao
 import com.pl.myworkoutapp.data.mappers.*
 import com.pl.myworkoutapp.domain.WorkoutRepository
@@ -11,8 +12,10 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
+//TODO - rozdzielić na 2 repo
 class WorkoutRepositoryImpl(
     private val workoutDao: WorkoutDao,
+    private val exerciseDao: ExerciseDao,
     private val flatteningMapper: WorkoutFlatteningMapper,
     private val workoutTreeBuilder: WorkoutEntityTreeBuilder,
 ) : WorkoutRepository {
@@ -22,17 +25,20 @@ class WorkoutRepositoryImpl(
 //        }
         TODO()
     }
+
     override suspend fun getCustomExercises(): List<CustomExercise> = withContext(Dispatchers.IO) {
-        workoutDao.getAllExercises().map {
+        exerciseDao.getAllExercises().map {
             it.toDomain()
         }
     }
 
-    override suspend fun getBuiltinExercises(): List<BuiltInExercise> = withContext(Dispatchers.IO) {
-        BuiltInExerciseRegistry.getAll().toList()
-    }
+    override suspend fun getBuiltinExercises(): List<BuiltInExercise> =
+        withContext(Dispatchers.IO) {
+            BuiltInExerciseRegistry.getAll().toList()
+        }
 
-    override suspend fun getAllExercises(): List<Exercise> = getCustomExercises() + getBuiltinExercises()
+    override suspend fun getAllExercises(): List<Exercise> =
+        getCustomExercises() + getBuiltinExercises()
 
     override suspend fun getPlans(): List<TrainingPlan> {
         return BuiltInTrainingPlansRegistry.getAll()
@@ -56,7 +62,7 @@ class WorkoutRepositoryImpl(
     }
 
     override suspend fun getWorkout(workoutId: WorkoutId): Workout {
-        return when(workoutId) {
+        return when (workoutId) {
             is WorkoutId.BuiltIn -> BuiltInWorkoutRegistry.get(workoutId.id)
             is WorkoutId.Custom -> getCustomWorkout(workoutId.id)
         }
@@ -76,16 +82,16 @@ class WorkoutRepositoryImpl(
     }
 
     override suspend fun getExercise(exerciseId: ExerciseId): Exercise {
-        return when(exerciseId) {
+        return when (exerciseId) {
             is ExerciseId.BuiltIn -> BuiltInExerciseRegistry.get(exerciseId.id)
             is ExerciseId.Custom -> {
-                workoutDao.getExerciseById(exerciseId.toLong())?.toDomain()
+                exerciseDao.getExerciseById(exerciseId.toLong())?.toDomain()
                     ?: error("Exercise not found: $exerciseId")
             }
         }
     }
 
-    override suspend fun saveCustomWorkout(customWorkout: CustomWorkout) : WorkoutId.Custom {
+    override suspend fun saveCustomWorkout(customWorkout: CustomWorkout): WorkoutId.Custom {
         //println("saveCustomWorkout, eq check: ${WorkoutId.Custom.NEW == 0L.asWorkoutId()}")
         //val flatItems = mutableListOf<FlatWorkoutItem>()
         //flatten(customWorkout.items, flatItems, null)
@@ -103,16 +109,31 @@ class WorkoutRepositoryImpl(
 
     override suspend fun saveCustomExercise(customExercise: CustomExercise): ExerciseId.Custom {
         if (customExercise.id == ExerciseId.Custom.NEW) { //insert as Custom
-            return workoutDao.insertExercise(customExercise.toEntity())
+            return exerciseDao.insertExercise(customExercise.toEntity())
         } else { //update Custom
-            return workoutDao.updateExercise(customExercise.toEntity())
+            return exerciseDao.updateExercise(customExercise.toEntity())
         }
     }
 
     override fun observeCustomExercises(): Flow<List<CustomExercise>> =
-        workoutDao.observeExercises().map {
-                list -> list.map { it.toDomain() }
+        exerciseDao.observeExercises().map { list ->
+            list.map { it.toDomain() }
         }
 
+    override fun observeLatestBasedOn(builtinIds: Set<WorkoutId.BuiltIn>): Flow<List<CustomWorkout>> {
+        return workoutDao.observeLatestBasedOn(
+            builtinIds.map { it.asRawString() }.toSet()
+        ).map { entities ->
+            entities.map { it.toDomain() }
+        }
+    }
+
+    override suspend fun findLatestBasedOn(builtInId: WorkoutId.BuiltIn): CustomWorkout? {
+        return workoutDao.findLatestBasedOn(builtInId.asRawString())?.toDomain()
+    }
+
+    override suspend fun deleteWorkout(id: WorkoutId.Custom) {
+        workoutDao.deleteById(id.toLong())
+    }
 }
 

@@ -2,9 +2,7 @@ package com.pl.myworkoutapp.ui.workouts.details
 
 import com.pl.myworkoutapp.domain.model.exercise.ExerciseId
 import com.pl.myworkoutapp.ui.exercises.ExerciseInfoUiModel
-import com.pl.myworkoutapp.ui.workouts.ExerciseInteractionHost
 import com.pl.myworkoutapp.ui.workouts.WorkoutWithExercisesUiModel
-import com.pl.myworkoutapp.ui.workouts.editor.CircuitEditorUiState
 
 
 data class WorkoutDetailsUiState(
@@ -24,13 +22,14 @@ sealed interface WorkoutDetailsMode {
 
 sealed interface WorkoutViewModal {
     data object ExercisePicker : WorkoutViewModal
+    data object ConfirmDelete : WorkoutViewModal
     data object ConfirmReset : WorkoutViewModal
 }
 
 sealed interface WorkoutEditModal {
     data class ExercisePicker(val context: ExercisePickerContext, val currentExerciseId: ExerciseId?) : WorkoutEditModal
     data object ConfirmDiscardChanges : WorkoutEditModal
-    data object ConfirmDeleteItem : WorkoutEditModal
+    data class ConfirmDeleteItem(val key: Int) : WorkoutEditModal
 }
 
 sealed interface ExercisePickerContext {
@@ -69,7 +68,6 @@ data class WorkoutEditSession(
 
     val editableCircuit: CircuitEditorUiState? = null,
     val editingCircuitItemKey: Int? = null,
-    val deletingWorkoutItemKey: Int? = null,
     ) : ExerciseInteractionHost<WorkoutEditSession> {
 
     override fun withWorkout(workout: WorkoutWithExercisesUiModel): WorkoutEditSession =

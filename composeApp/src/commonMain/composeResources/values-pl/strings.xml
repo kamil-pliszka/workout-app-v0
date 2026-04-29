@@ -62,6 +62,8 @@
     <string name="workouts_phase_warmup">Rozgrzewka</string>
     <string name="workouts_phase_training">Trening</string>
     <string name="workouts_phase_coldown">Schłodzenie</string>
+    <string name="workouts_add_exercise">Ćwiczenie</string>
+    <string name="workouts_add_workout">Trening</string>
 
     <string name="workout_start">Uruchom</string>
     <string name="workout_close">Zamknij</string>
@@ -72,9 +74,15 @@
     <string name="workout_saved_success">Zestaw ćwiczeń został zapisany</string>
     <string name="workout_add_exercise">Ćwiczenie</string>
     <string name="workout_add_circuit">Obwód</string>
+    <string name="workout_add_items">Dodaj elementy treningu</string>
 
     <string name="workout_editor_delete_title">Usunięcie elementu</string>
     <string name="workout_editor_delete_question">Czy na pewno chcesz usunąć element?</string>
+    <string name="workout_view_delete_title">Potwierdź usunięcie</string>
+    <string name="workout_view_delete_question">Czy na pewno chcesz usunąć ten trening?</string>
+    <string name="workout_view_reset_title">Czyszczenie zmian</string>
+    <string name="workout_view_reset_question">Czy na pewno chcesz wyczyścić zmiany wprowadzone do treningu?</string>
+    <string name="workout_delete_success">Operacja przebiegła pomyślnie</string>
 
     <string name="circuit_label">Obwód</string>
     <string name="circuit_label_new">Obwód (nowy)</string>

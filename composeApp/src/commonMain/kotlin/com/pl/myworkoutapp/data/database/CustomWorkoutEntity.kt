@@ -6,10 +6,13 @@ import androidx.room.*
 @Entity(
     indices = [
         Index("basedOn"),
+        Index("planId"),
     ]
 )
 data class CustomWorkoutEntity(
     @PrimaryKey(autoGenerate = true) val id: Long,
+    val planId: Long? = null,//wskazanie że workout jest częścią planu X dniowego,
+        // tutaj trzeba będzie zmienić na Custom/BuiltIn
     val name: String?,
     val description: String?,
     val imageUri: String?,// np. "file://...", "content://...", lub URL do zasobu

@@ -10,14 +10,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.pl.myworkoutapp.domain.model.workout.BuiltInWorkoutId
 import com.pl.myworkoutapp.domain.model.workout.BuiltInWorkoutRegistry
+import com.pl.myworkoutapp.ui.common.ConfirmationDialog
 import com.pl.myworkoutapp.ui.exercises.ExercisePickerScreen
 import com.pl.myworkoutapp.ui.workouts.components.WorkoutExerciseInfoScreen
 import com.pl.myworkoutapp.ui.workouts.components.WorkoutWithExercisesComponent
-import com.pl.myworkoutapp.ui.workouts.editor.CircuitEditorAction
-import com.pl.myworkoutapp.ui.workouts.editor.WorkoutEditAction
-import com.pl.myworkoutapp.ui.workouts.editor.WorkoutEditorEvent
-import com.pl.myworkoutapp.ui.workouts.editor.WorkoutEditorScreen
-import com.pl.myworkoutapp.ui.workouts.editor.toWorkoutEditAction
+import com.pl.myworkoutapp.ui.workouts.details.WorkoutViewAction.*
 import com.pl.myworkoutapp.ui.workouts.tree.transform
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
@@ -86,11 +83,42 @@ fun WorkoutDetailsScreen(
                 onAction = { onViewAction(it.toWorkoutViewAction()) }
             )
         }
-        if (state.mode.session.modal is WorkoutViewModal.ExercisePicker) {
-            ExercisePickerScreen(
-                currentExerciseId = state.mode.session.activeExercise?.draft?.exerciseId,
-                onResult = { exerciseId -> onViewAction(WorkoutViewAction.ExercisePicked(exerciseId))},
-            )
+
+        when (state.mode.session.modal) {
+            is WorkoutViewModal.ExercisePicker ->
+                ExercisePickerScreen(
+                    currentExerciseId = state.mode.session.activeExercise?.draft?.exerciseId,
+                    onResult = { exerciseId -> onViewAction(ExercisePicked(exerciseId))},
+                )
+            is WorkoutViewModal.ConfirmReset -> {
+                ConfirmationDialog(
+                    title = stringResource(Res.string.workout_view_reset_title),
+                    text = stringResource(Res.string.workout_view_reset_question),
+                    onConfirm = {
+                        onViewAction(DeleteConfirm)
+                    },
+                    confirmText = stringResource(Res.string.btn_reset),
+                    confirmButtonColors = buttonColors(MaterialTheme.colorScheme.error),
+                    onCancel = {
+                        onViewAction(DeleteCancel)
+                    },
+                )
+            }
+            is WorkoutViewModal.ConfirmDelete -> {
+                ConfirmationDialog(
+                    title = stringResource(Res.string.workout_view_delete_title),
+                    text = stringResource(Res.string.workout_view_delete_question),
+                    onConfirm = {
+                        onViewAction(DeleteConfirm)
+                    },
+                    confirmText = stringResource(Res.string.btn_delete),
+                    confirmButtonColors = buttonColors(MaterialTheme.colorScheme.error),
+                    onCancel = {
+                        onViewAction(DeleteCancel)
+                    },
+                )
+            }
+            null -> Unit
         }
     }
 }

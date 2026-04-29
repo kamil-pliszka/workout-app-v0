@@ -1,14 +1,7 @@
 package com.pl.myworkoutapp.ui.workouts.tree
 
-import com.pl.myworkoutapp.ui.theme.BrillantBlue
-import com.pl.myworkoutapp.ui.theme.FernGreen
-import com.pl.myworkoutapp.ui.theme.PearlOpalGreen
-import com.pl.myworkoutapp.ui.theme.TrafficPurple
-import com.pl.myworkoutapp.ui.workouts.CircuitUiItem
-import com.pl.myworkoutapp.ui.workouts.ExerciseUiItem
-import com.pl.myworkoutapp.ui.workouts.TimeLineItemType
-import com.pl.myworkoutapp.ui.workouts.WorkoutUiItem
-import com.pl.myworkoutapp.ui.workouts.WorkoutWithExercisesUiModel
+import com.pl.myworkoutapp.ui.theme.*
+import com.pl.myworkoutapp.ui.workouts.*
 
 private data class TreeTraversalItem(
     val item: WorkoutUiItem,

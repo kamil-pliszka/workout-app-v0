@@ -1,4 +1,4 @@
-package com.pl.myworkoutapp.ui.workouts.editor
+package com.pl.myworkoutapp.ui.workouts.details
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -21,15 +21,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.pl.myworkoutapp.domain.model.exercise.ExerciseId
-import com.pl.myworkoutapp.domain.model.workout.*
+import com.pl.myworkoutapp.domain.model.workout.BuiltInWorkoutId
+import com.pl.myworkoutapp.domain.model.workout.BuiltInWorkoutRegistry
 import com.pl.myworkoutapp.ui.common.*
 import com.pl.myworkoutapp.ui.theme.AppTheme
 import com.pl.myworkoutapp.ui.theme.EurostileExt
-import com.pl.myworkoutapp.ui.workouts.CircuitUiItem
-import com.pl.myworkoutapp.ui.workouts.ExerciseUiItem
-import com.pl.myworkoutapp.ui.workouts.details.WorkoutEditModal
-import com.pl.myworkoutapp.ui.workouts.details.WorkoutEditSession
-import com.pl.myworkoutapp.ui.workouts.WorkoutUiItem
+import com.pl.myworkoutapp.ui.workouts.*
 import com.pl.myworkoutapp.ui.workouts.components.*
 import com.pl.myworkoutapp.ui.workouts.tree.transform
 import kotlinx.coroutines.flow.Flow
@@ -118,12 +115,12 @@ fun WorkoutEditorScreen(
         )
     }
 
-    if (state.deletingWorkoutItemKey != null) {
+    if (state.modal is WorkoutEditModal.ConfirmDeleteItem) {
         ConfirmationDialog(
             title = stringResource(Res.string.workout_editor_delete_title),
             text = stringResource(Res.string.workout_editor_delete_question),
             onConfirm = {
-                onEditAction(WorkoutEditAction.DeleteElementConfirm)
+                onEditAction(WorkoutEditAction.DeleteElementConfirm(state.modal.key))
             },
             confirmText = stringResource(Res.string.btn_delete),
             confirmButtonColors = buttonColors(MaterialTheme.colorScheme.error),

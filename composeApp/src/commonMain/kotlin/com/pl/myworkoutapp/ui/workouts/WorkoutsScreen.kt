@@ -5,27 +5,23 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.pl.myworkoutapp.domain.model.exercise.ExerciseId
 import com.pl.myworkoutapp.domain.model.workout.*
-import com.pl.myworkoutapp.ui.navigation.AppNavigator
 import com.pl.myworkoutapp.ui.workouts.components.WorkoutHeaderCard
 import myworkoutapplication.composeapp.generated.resources.*
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import org.koin.compose.koinInject
 
 //NAV SCREEN
 @Composable
 fun WorkoutsScreen(
     state: WorkoutsUiState,
     onAction: (WorkoutsAction) -> Unit,
-    appNavigator: AppNavigator = koinInject(),
+    //appNavigator: AppNavigator = koinInject(),
 ) {
     if (state.isLoading) {
         CircularProgressIndicator()
@@ -58,25 +54,13 @@ fun WorkoutsScreen(
                 WorkoutHeaderCard(
                     workout = workoutUiModel,
                     onClick = {
-                        appNavigator.navigateToWorkoutDetails(workoutUiModel.workoutId)
+                        //appNavigator.navigateToWorkoutDetails(workoutUiModel.workoutId)
+                        onAction(WorkoutsAction.ShowWorkoutDetails(workoutUiModel.workoutId))
                     }
                 )
             }
         }
-
-        //tymczasoe, do szybkiego odpalenia edytora
-        FloatingActionButton(
-            onClick = {
-                appNavigator.navigateToExerciseEditor(ExerciseId.Custom.NEW)
-            },
-            modifier = Modifier.align(Alignment.BottomCenter).offset(y = (-16).dp),
-            shape = CircleShape
-        ) {
-            Icon(
-                painter = painterResource(Res.drawable.ic_add),
-                contentDescription = stringResource(Res.string.btn_create)
-            )
-        }
+        FabButton(onAction = onAction)
     }
 
     /*
@@ -91,6 +75,78 @@ fun WorkoutsScreen(
         )
     }
     */
+}
+
+@Composable
+private fun BoxScope.FabButton(
+    onAction: (WorkoutsAction) -> Unit,
+) {
+    // Stan menu
+    var menuExpanded by remember { mutableStateOf(false) }
+
+    // FAB z Menu
+    Box(
+        modifier = Modifier
+            .align(Alignment.BottomCenter)
+            .offset(y = (-16).dp)
+    ) {
+        FloatingActionButton(
+            onClick = { menuExpanded = true },
+            shape = CircleShape
+        ) {
+            Icon(
+                painter = painterResource(Res.drawable.ic_add),
+                contentDescription = stringResource(Res.string.btn_add)
+            )
+        }
+
+//        //tymczasoe, do szybkiego odpalenia edytora
+//        FloatingActionButton(
+//            onClick = {
+//                appNavigator.navigateToExerciseEditor(ExerciseId.Custom.NEW)
+//            },
+//            modifier = Modifier.align(Alignment.BottomCenter).offset(y = (-16).dp),
+//            shape = CircleShape
+//        ) {
+//            Icon(
+//                painter = painterResource(Res.drawable.ic_add),
+//                contentDescription = stringResource(Res.string.btn_create)
+//            )
+//        }
+
+        // Menu wyboru
+        DropdownMenu(
+            expanded = menuExpanded,
+            onDismissRequest = { menuExpanded = false }
+        ) {
+            DropdownMenuItem(
+                text = { Text(stringResource(Res.string.workouts_add_exercise)) },
+                leadingIcon = {
+                    Icon(
+                        painterResource(Res.drawable.ic_exercise),
+                        contentDescription = "add exe"
+                    )
+                },
+                onClick = {
+                    menuExpanded = false
+                    onAction(WorkoutsAction.AddExercise)
+                }
+            )
+            DropdownMenuItem(
+                text = { Text(stringResource(Res.string.workouts_add_workout)) },
+                leadingIcon = {
+                    Icon(
+                        painterResource(Res.drawable.ic_cycle),
+                        contentDescription = "add workout"
+                    )
+                },
+                onClick = {
+                    menuExpanded = false
+                    onAction(WorkoutsAction.AddWorkout)
+                }
+            )
+        }
+    }
 }
 
 @Preview
@@ -110,6 +166,6 @@ private fun WorkoutsScreenPreview() {
             currentPage = 0,
         ),
         onAction = { },
-        appNavigator = AppNavigator()
+        //appNavigator = AppNavigator()
     )
 }

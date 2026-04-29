@@ -29,8 +29,15 @@ for /r "ui/workouts" %%f in (*.kt) do (
     echo. >> workouts.txt
 )
 
-echo. > workouts_flat.txt
+echo. > workouts_details.txt
+for /r "ui/workouts/details" %%f in (*.kt) do (
+    echo ==== %%f ==== >> workouts_details.txt
+    type "%%f" >> workouts_details.txt
+    echo. >> workouts_details.txt
+)
 
+
+echo. > workouts_flat.txt
 for %%f in ("ui/workouts\*.kt") do (
     set "name=%%~nxf"
     if /i not "!name:~0,7!"=="Circuit" (

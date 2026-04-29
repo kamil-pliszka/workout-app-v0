@@ -12,6 +12,7 @@ import androidx.room.*
 )
 @ConstructedBy(WorkoutDatabaseConstructor::class)
 abstract class WorkoutDatabase: RoomDatabase() {
+    abstract val exerciseDao: ExerciseDao
     abstract val workoutDao: WorkoutDao
 
     companion object {

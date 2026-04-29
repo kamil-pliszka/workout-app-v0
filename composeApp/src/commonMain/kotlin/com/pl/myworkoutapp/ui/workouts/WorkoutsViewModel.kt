@@ -2,41 +2,64 @@ package com.pl.myworkoutapp.ui.workouts
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.pl.myworkoutapp.domain.WorkoutRepository
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import com.pl.myworkoutapp.domain.model.exercise.ExerciseId
+import com.pl.myworkoutapp.domain.model.workout.WorkoutId
+import com.pl.myworkoutapp.domain.usecase.GetMainWorkoutsUseCase
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class WorkoutsViewModel(
-    private val repository: WorkoutRepository,
+    private val getMainWorkoutsUseCase: GetMainWorkoutsUseCase,
 ) : ViewModel() {
-    private val _state = MutableStateFlow(
-        WorkoutsUiState(isLoading = false)
-    )
+
+    private val _state = MutableStateFlow(WorkoutsUiState(isLoading = true))
     val state: StateFlow<WorkoutsUiState> = _state
 
-    fun onAction(action: WorkoutsAction) {
-        println("Got action: $action")
-    }
+    private val _events = Channel<WorkoutsEvent>(Channel.BUFFERED)
+    val events = _events.receiveAsFlow()
+
 
     init {
-        loadWorkouts()
+        observeWorkouts()
     }
 
-    private fun loadWorkouts() {
+    private fun observeWorkouts() {
         viewModelScope.launch {
-            val workouts = repository.getWorkouts()
-            _state.value = WorkoutsUiState(
-                isLoading = false,
-                workouts = workouts.map { workout ->
-                    workout.toUi()
-                }
-            )
-            println("Wczytane treningi: ${workouts.size}")
+            getMainWorkoutsUseCase.execute().collect { workouts ->
+                _state.value = WorkoutsUiState(
+                    isLoading = false,
+                    workouts = workouts.map { it.toUi() }
+                )
+            }
         }
     }
 
+    fun onAction(action: WorkoutsAction) {
+        println("Got action: $action")
+        when(action) {
+            is WorkoutsAction.OnPageChanged -> Unit
+            is WorkoutsAction.ShowWorkoutDetails -> showWorkoutDetails(action.workoutId)
+            WorkoutsAction.AddExercise -> addExercise()
+            WorkoutsAction.AddWorkout -> addWorkout()
+        }
+    }
 
+    private fun showWorkoutDetails(workoutId: WorkoutId) {
+        viewModelScope.launch {
+            _events.send(WorkoutsEvent.NavToWorkoutDetails(workoutId))
+        }
+    }
 
+    private fun addExercise() {
+        viewModelScope.launch {
+            _events.send(WorkoutsEvent.NavToExerciseEditor(ExerciseId.Custom.NEW))
+        }
+    }
 
+    private fun addWorkout() {
+        viewModelScope.launch {
+            _events.send(WorkoutsEvent.NavToWorkoutDetails(WorkoutId.Custom.NEW))
+        }
+    }
 }

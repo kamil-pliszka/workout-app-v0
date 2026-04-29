@@ -1,30 +1,23 @@
 package com.pl.myworkoutapp.ui.workouts.details
 
 import androidx.lifecycle.*
-import com.pl.myworkoutapp.ui.app.AppStateHolder
 import com.pl.myworkoutapp.core.Log
 import com.pl.myworkoutapp.core.exceptionToString
+import com.pl.myworkoutapp.domain.model.Difficulty
 import com.pl.myworkoutapp.domain.model.exercise.ExerciseId
 import com.pl.myworkoutapp.domain.model.workout.WorkoutId
 import com.pl.myworkoutapp.domain.model.workout.toWorkoutIdOrNull
 import com.pl.myworkoutapp.domain.usecase.*
+import com.pl.myworkoutapp.ui.app.AppStateHolder
+import com.pl.myworkoutapp.ui.common.EmptyUiText
 import com.pl.myworkoutapp.ui.common.asUiText
-import com.pl.myworkoutapp.ui.workouts.ExerciseUiItem
-import com.pl.myworkoutapp.ui.workouts.editor.WorkoutEditAction.*
-import com.pl.myworkoutapp.ui.workouts.editor.WorkoutEditAction.SelectedExerciseLoaded
-import com.pl.myworkoutapp.ui.workouts.editor.WorkoutEditAction.ShowLoadedExerciseInfo
-import com.pl.myworkoutapp.ui.workouts.editor.WorkoutEditorEvent.*
-import com.pl.myworkoutapp.ui.workouts.editor.CircuitEditorAction
-import com.pl.myworkoutapp.ui.workouts.editor.WorkoutEditAction
-import com.pl.myworkoutapp.ui.workouts.editor.WorkoutEditEffect
-import com.pl.myworkoutapp.ui.workouts.editor.WorkoutEditReducer
-import com.pl.myworkoutapp.ui.workouts.editor.WorkoutEditResult
-import com.pl.myworkoutapp.ui.workouts.editor.WorkoutEditorEvent
-import com.pl.myworkoutapp.ui.workouts.tree.toDomain
-import com.pl.myworkoutapp.ui.workouts.toUi
-import com.pl.myworkoutapp.ui.workouts.toUiBase
-import com.pl.myworkoutapp.ui.workouts.tree.transform
-import com.pl.myworkoutapp.ui.workouts.tree.toTree
+import com.pl.myworkoutapp.ui.theme.PearlOpalGreen
+import com.pl.myworkoutapp.ui.workouts.*
+import com.pl.myworkoutapp.ui.workouts.details.WorkoutEditAction.ExerciseReplaced
+import com.pl.myworkoutapp.ui.workouts.details.WorkoutEditAction.SelectedExerciseLoaded
+import com.pl.myworkoutapp.ui.workouts.details.WorkoutEditAction.ShowLoadedExerciseInfo
+import com.pl.myworkoutapp.ui.workouts.details.WorkoutEditorEvent.ScrollEditorTo
+import com.pl.myworkoutapp.ui.workouts.tree.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -53,6 +46,7 @@ class WorkoutDetailsViewModel(
     private val getWorkoutWithExercisesUseCase: GetWorkoutWithExercisesUseCase,
     private val getExerciseInfoUseCase: GetExerciseInfoUseCase,
     private val getExerciseWithDefaultQuantityUseCase: GetExerciseWithDefaultQuantityUseCase,
+    private val deleteWorkoutUseCase: DeleteCustomWorkoutAndResolveFallbackUseCase,
     private val workoutViewReducer: WorkoutViewReducer,
     private val workoutEditReducer: WorkoutEditReducer,
     private val sessionCoordinator: WorkoutSessionCoordinator,
@@ -117,6 +111,7 @@ class WorkoutDetailsViewModel(
         val result = workoutViewReducer.reduce(view.session, action)
         applyViewResult(view, result)
     }
+
     private fun applyViewResult(
         current: WorkoutDetailsMode.View,
         result: WorkoutViewResult
@@ -150,6 +145,7 @@ class WorkoutDetailsViewModel(
             WorkoutViewEffect.ResetWorkout -> resetWorkout()
             WorkoutViewEffect.StartWorkout -> startWorkout()
             WorkoutViewEffect.OpenEditor -> openEditor()
+            WorkoutViewEffect.DeleteWorkout -> deleteWorkout()
         }
     }
 
@@ -190,6 +186,7 @@ class WorkoutDetailsViewModel(
                     ShowLoadedExerciseInfo(effect.key, info)
                 )
             }
+
             is WorkoutEditEffect.LoadExerciseForList -> {
                 dispatchEdit(
                     SelectedExerciseLoaded(
@@ -198,6 +195,7 @@ class WorkoutDetailsViewModel(
                     )
                 )
             }
+
             is WorkoutEditEffect.LoadExerciseForPreview -> {
                 val info = getExerciseInfoUseCase.execute(effect.exerciseId).toUi()
                 dispatchEdit(ExerciseReplaced(info))
@@ -234,7 +232,38 @@ class WorkoutDetailsViewModel(
             }
             return
         }
-        loadWorkoutById(workoutId)
+        when (workoutId) {
+            WorkoutId.Custom.NEW -> prepareNewWorkout()
+            else -> loadWorkoutById(workoutId)
+        }
+    }
+
+    private fun prepareNewWorkout() {
+        _state.update {
+            it.copy(
+                mode = WorkoutDetailsMode.View(
+                    session = WorkoutViewSession(
+                        workout = WorkoutWithExercisesUiModel(
+                            //TODO - gdzieś to wynieść
+                            workout = WorkoutUiModel(
+                                workoutId = WorkoutId.Custom.NEW,
+                                basedOn = null,
+                                name = EmptyUiText,
+                                desc = EmptyUiText,
+                                imageUrl = Res.drawable.ic_flying_witch1,
+                                isInProgress = false,
+                                difficulty = Difficulty.ADVANCED,
+                                themeColor = PearlOpalGreen,
+                                durationText = EmptyUiText,
+                                kcalText = EmptyUiText,
+                            ),
+                            items = emptyList()
+                        ),
+                        hasUnsavedChanges = true,
+                    ),
+                )
+            )
+        }
     }
 
     private fun loadWorkoutById(workoutId: WorkoutId) {
@@ -278,6 +307,21 @@ class WorkoutDetailsViewModel(
         sendEvent(WorkoutDetailsEvent.ShowSuccess(Res.string.workout_saved_success.asUiText()))
         loadWorkoutById(savedWorkoutId)
     }
+
+    private suspend fun deleteWorkout() {
+        val view = _state.value.mode as? WorkoutDetailsMode.View ?: return
+        val workout = view.session.workout
+        val fallbackWorkoudId = deleteWorkoutUseCase.execute(workout.workout.workoutId)
+        //pokazać komunikat o udanym usunięciu
+        sendEvent(WorkoutDetailsEvent.ShowSuccess(Res.string.workout_delete_success.asUiText()))
+        if (fallbackWorkoudId != null) {
+            loadWorkoutById(fallbackWorkoudId)
+        } else {
+            //tutaj raczej nie wystąpi taki przypadek, możliwe jedynie gdyby był to CustomWorkout ale bez ustawionego basedOn
+            closeScreen()
+        }
+    }
+
 
     private fun resetWorkout() {
         val view = _state.value.mode as? WorkoutDetailsMode.View ?: return
