@@ -141,11 +141,13 @@ class WorkoutEditReducer(
     fun reduce(
         session: WorkoutEditSession,
         action: CircuitEditorAction
-    ): WorkoutEditSession {
-        val editableCircuit = session.editableCircuit ?: return session
+    ): WorkoutEditResult {
+        val editableCircuit = session.editableCircuit ?: return WorkoutEditResult(session)
 
-        return session.copy(
-            editableCircuit = circuitReducer.reduce(editableCircuit, action)
+        return WorkoutEditResult(
+            session.copy(
+                editableCircuit = circuitReducer.reduce(editableCircuit, action)
+            )
         )
     }
 
@@ -544,7 +546,10 @@ class WorkoutEditReducer(
         )
     }
 
-    private fun deleteWorkoutElement(session: WorkoutEditSession, toDeleteKey: Int): WorkoutEditSession {
+    private fun deleteWorkoutElement(
+        session: WorkoutEditSession,
+        toDeleteKey: Int
+    ): WorkoutEditSession {
         val workout = workoutTreeMutationHandler.apply(
             session.workout,
             WorkoutTreeMutation.Delete(

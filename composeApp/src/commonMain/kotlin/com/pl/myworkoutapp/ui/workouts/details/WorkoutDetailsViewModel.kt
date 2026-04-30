@@ -3,25 +3,24 @@ package com.pl.myworkoutapp.ui.workouts.details
 import androidx.lifecycle.*
 import com.pl.myworkoutapp.core.Log
 import com.pl.myworkoutapp.core.exceptionToString
-import com.pl.myworkoutapp.domain.model.Difficulty
 import com.pl.myworkoutapp.domain.model.exercise.ExerciseId
 import com.pl.myworkoutapp.domain.model.workout.WorkoutId
 import com.pl.myworkoutapp.domain.model.workout.toWorkoutIdOrNull
 import com.pl.myworkoutapp.domain.usecase.*
 import com.pl.myworkoutapp.ui.app.AppStateHolder
-import com.pl.myworkoutapp.ui.common.EmptyUiText
 import com.pl.myworkoutapp.ui.common.asUiText
-import com.pl.myworkoutapp.ui.theme.PearlOpalGreen
 import com.pl.myworkoutapp.ui.workouts.*
 import com.pl.myworkoutapp.ui.workouts.details.WorkoutEditAction.ExerciseReplaced
 import com.pl.myworkoutapp.ui.workouts.details.WorkoutEditAction.SelectedExerciseLoaded
 import com.pl.myworkoutapp.ui.workouts.details.WorkoutEditAction.ShowLoadedExerciseInfo
 import com.pl.myworkoutapp.ui.workouts.details.WorkoutEditorEvent.ScrollEditorTo
 import com.pl.myworkoutapp.ui.workouts.tree.*
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import myworkoutapplication.composeapp.generated.resources.*
+import kotlin.coroutines.cancellation.CancellationException
 
 //Docelowa odpowiedzialność ViewModel
 //WorkoutDetailsViewModel ma teraz tylko 4 obowiązki:
@@ -51,7 +50,7 @@ class WorkoutDetailsViewModel(
     private val workoutEditReducer: WorkoutEditReducer,
     private val sessionCoordinator: WorkoutSessionCoordinator,
 ) : ViewModel() {
-
+    private val TAG = "WorkoutDetailsVM"
     private val workoutIdParam: String =
         savedStateHandle["workoutId"] ?: error("workoutId is required")
 
@@ -85,12 +84,12 @@ class WorkoutDetailsViewModel(
 
     fun onCircuitEditorAction(action: CircuitEditorAction) {
         val edit = _state.value.mode as? WorkoutDetailsMode.Edit ?: return
-
-        val newSession = workoutEditReducer.reduce(edit.session, action)
-
-        _state.update {
-            it.copy(mode = edit.copy(session = newSession))
-        }
+//        val newSession = workoutEditReducer.reduce(edit.session, action)
+//        _state.update {
+//            it.copy(mode = edit.copy(session = newSession))
+//        }
+        val result = workoutEditReducer.reduce(edit.session, action)
+        applyEditResult(edit, result)
     }
 
     // =========================================================
@@ -100,7 +99,7 @@ class WorkoutDetailsViewModel(
 
     private fun handleViewAction(action: WorkoutViewAction) {
         if (action is WorkoutViewAction.OnBack) {
-            closeScreen()
+            launchCloseScreen()
             return
         }
         dispatchView(action)
@@ -120,9 +119,28 @@ class WorkoutDetailsViewModel(
             it.copy(mode = current.copy(session = result.state))
         }
 
-        result.effect?.let { effect ->
-            viewModelScope.launch {
-                handleViewEffect(effect)
+        result.effect?.let(::dispatchViewEffect)
+    }
+
+    private var viewLoadJob: Job? = null
+    private fun dispatchViewEffect(effect: WorkoutViewEffect) {
+        when (effect) {
+            is WorkoutViewEffect.LoadExerciseInfo,
+            is WorkoutViewEffect.ExchangeExercise -> {
+                viewLoadJob?.cancel()
+                viewLoadJob = viewModelScope.launch {
+                    try {
+                        handleViewEffect(effect)
+                    } finally {
+                        viewLoadJob = null
+                    }
+                }
+            }
+
+            else -> {
+                viewModelScope.launch {
+                    handleViewEffect(effect)
+                }
             }
         }
     }
@@ -171,9 +189,29 @@ class WorkoutDetailsViewModel(
             it.copy(mode = current.copy(session = result.state))
         }
 
-        result.effect?.let { effect ->
-            viewModelScope.launch {
-                handleEditEffect(effect)
+        result.effect?.let(::dispatchEditEffect)
+    }
+
+    private var editLoadJob: Job? = null
+    private fun dispatchEditEffect(effect: WorkoutEditEffect) {
+        when (effect) {
+            is WorkoutEditEffect.LoadExerciseInfo,
+            is WorkoutEditEffect.LoadExerciseForList,
+            is WorkoutEditEffect.LoadExerciseForPreview -> {
+                editLoadJob?.cancel()
+                editLoadJob = viewModelScope.launch {
+                    try {
+                        handleEditEffect(effect)
+                    } finally {
+                        editLoadJob = null
+                    }
+                }
+            }
+
+            else -> {
+                viewModelScope.launch {
+                    handleEditEffect(effect)
+                }
             }
         }
     }
@@ -234,7 +272,9 @@ class WorkoutDetailsViewModel(
         }
         when (workoutId) {
             WorkoutId.Custom.NEW -> prepareNewWorkout()
-            else -> loadWorkoutById(workoutId)
+            else -> viewModelScope.launch {
+                loadWorkoutById(workoutId)
+            }
         }
     }
 
@@ -244,19 +284,7 @@ class WorkoutDetailsViewModel(
                 mode = WorkoutDetailsMode.View(
                     session = WorkoutViewSession(
                         workout = WorkoutWithExercisesUiModel(
-                            //TODO - gdzieś to wynieść
-                            workout = WorkoutUiModel(
-                                workoutId = WorkoutId.Custom.NEW,
-                                basedOn = null,
-                                name = EmptyUiText,
-                                desc = EmptyUiText,
-                                imageUrl = Res.drawable.ic_flying_witch1,
-                                isInProgress = false,
-                                difficulty = Difficulty.ADVANCED,
-                                themeColor = PearlOpalGreen,
-                                durationText = EmptyUiText,
-                                kcalText = EmptyUiText,
-                            ),
+                            workout = prepareInitialWorkout(),
                             items = emptyList()
                         ),
                         hasUnsavedChanges = true,
@@ -266,26 +294,25 @@ class WorkoutDetailsViewModel(
         }
     }
 
-    private fun loadWorkoutById(workoutId: WorkoutId) {
-        viewModelScope.launch {
-            _state.update { it.copy(mode = WorkoutDetailsMode.Loading) }
+    private suspend fun loadWorkoutById(workoutId: WorkoutId) {
+        _state.update { it.copy(mode = WorkoutDetailsMode.Loading) }
 
-            try {
-                val result = getWorkoutWithExercisesUseCase.execute(workoutId)
-                val uiWorkout = transform(result.workout, result.exercises)
+        try {
+            val result = getWorkoutWithExercisesUseCase.execute(workoutId)
+            val uiWorkout = transform(result.workout, result.exercises)
 
-                _state.update {
-                    it.copy(
-                        mode = WorkoutDetailsMode.View(
-                            session = WorkoutViewSession(workout = uiWorkout)
-                        )
+            _state.update {
+                it.copy(
+                    mode = WorkoutDetailsMode.View(
+                        session = WorkoutViewSession(workout = uiWorkout)
                     )
-                }
-            } catch (e: Throwable) {
-                Log.e("WorkoutDetails", "Failed to load workout", e)
-                showExceptionAsMessage(e)
-                sendEvent(WorkoutDetailsEvent.Close)
+                )
             }
+        } catch (e: Throwable) {
+            if (e is CancellationException) throw e
+            Log.e(TAG, "Failed to load workout", e)
+            showExceptionAsMessage(e)
+            sendEvent(WorkoutDetailsEvent.Close)
         }
     }
 
@@ -296,34 +323,58 @@ class WorkoutDetailsViewModel(
     private suspend fun saveWorkout() {
         val view = _state.value.mode as? WorkoutDetailsMode.View ?: return
         val workout = view.session.workout
-        val savedWorkoutId = saveWorkoutUseCase.execute(
-            workoutId = workout.workout.workoutId,
-            basedOn = workout.workout.basedOn,
-            difficulty = workout.workout.difficulty,
-            //items = toDomain(workout.items)
-            items = workout.items.toTree().toDomain()
-        )
 
-        sendEvent(WorkoutDetailsEvent.ShowSuccess(Res.string.workout_saved_success.asUiText()))
-        loadWorkoutById(savedWorkoutId)
+        val savedWorkoutResult = try {
+            saveWorkoutUseCase.execute(
+                workoutId = workout.workout.workoutId,
+                basedOn = workout.workout.basedOn,
+                difficulty = workout.workout.difficulty,
+                items = workout.items.toTree().toDomain()
+            )
+        } catch (e: Throwable) {
+            if (e is CancellationException) throw e
+            Log.e(TAG, "Failed to save workout", e)
+            showExceptionAsMessage(e)
+            return
+        }
+
+        when(savedWorkoutResult) {
+            is SaveWorkoutResult.Success -> {
+                sendEvent(WorkoutDetailsEvent.ShowSuccess(Res.string.workout_saved_success.asUiText()))
+                loadWorkoutById(savedWorkoutResult.workoutId)
+            }
+            is SaveWorkoutResult.ValidationError -> {
+                sendEvent(
+                    WorkoutDetailsEvent.ShowError(
+                        savedWorkoutResult.errors.first().asUiText()
+                    )
+                )
+            }
+        }
     }
 
     private suspend fun deleteWorkout() {
         val view = _state.value.mode as? WorkoutDetailsMode.View ?: return
         val workout = view.session.workout
-        val fallbackWorkoudId = deleteWorkoutUseCase.execute(workout.workout.workoutId)
-        //pokazać komunikat o udanym usunięciu
+        val fallbackWorkoutId = try {
+            deleteWorkoutUseCase.execute(workout.workout.workoutId)
+        } catch (e: Throwable) {
+            if (e is CancellationException) throw e
+            Log.e(TAG, "Failed to delete workout", e)
+            showExceptionAsMessage(e)
+            return
+        }
+
         sendEvent(WorkoutDetailsEvent.ShowSuccess(Res.string.workout_delete_success.asUiText()))
-        if (fallbackWorkoudId != null) {
-            loadWorkoutById(fallbackWorkoudId)
+        if (fallbackWorkoutId != null) {
+            loadWorkoutById(fallbackWorkoutId)
         } else {
-            //tutaj raczej nie wystąpi taki przypadek, możliwe jedynie gdyby był to CustomWorkout ale bez ustawionego basedOn
             closeScreen()
         }
     }
 
 
-    private fun resetWorkout() {
+    private suspend fun resetWorkout() {
         val view = _state.value.mode as? WorkoutDetailsMode.View ?: return
         loadWorkoutById(view.session.workout.workout.workoutId)
     }
@@ -397,10 +448,12 @@ class WorkoutDetailsViewModel(
         }
     }
 
-    private fun closeScreen() {
-        viewModelScope.launch {
-            sendEvent(WorkoutDetailsEvent.Close)
-        }
+    private fun launchCloseScreen() {
+        viewModelScope.launch { closeScreen() }
+    }
+
+    private suspend fun closeScreen() {
+        sendEvent(WorkoutDetailsEvent.Close)
     }
 
     // =========================================================

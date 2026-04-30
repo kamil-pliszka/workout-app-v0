@@ -1,7 +1,11 @@
 #### Exercise Description
-Plank is an isometric core exercise that strengthens the abdominal muscles, back, and spinal stabilizers. It involves holding a static front support position while maintaining proper full-body alignment.
+
+Plank is an isometric core exercise that strengthens the abdominal muscles, back, and spinal
+stabilizers. It involves holding a static front support position while maintaining proper full-body
+alignment.
 
 #### Tips
+
 - Place your elbows directly under your shoulders.
 - Keep your body in a straight line from head to heels.
 - Engage your core and glutes.
@@ -10,6 +14,7 @@ Plank is an isometric core exercise that strengthens the abdominal muscles, back
 - Breathe steadily and continuously.
 
 #### Common Mistakes
+
 - Letting the hips sag.
 - Raising the hips too high.
 - Lack of core and glute engagement.

@@ -35,7 +35,7 @@ fun ExercisePickerFilters(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.Black.copy(alpha = 0.5f))
+            .background(MaterialTheme.colorScheme.scrim.copy(alpha = 0.5f))
             .clickable(
                 indication = null,
                 interactionSource = remember { MutableInteractionSource() }
@@ -47,7 +47,7 @@ fun ExercisePickerFilters(
                 .fillMaxWidth()
                 .fillMaxHeight(0.89f)
                 .clip(RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp))
-                .background(Color.White)
+                .background(MaterialTheme.colorScheme.onPrimary)
         ) {
             Spacer(Modifier.height(8.dp))
             // HEADER
@@ -231,7 +231,7 @@ fun FilterCard(
 ) {
     val background =
         if (selected) MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)
-        else Color.LightGray.copy(alpha = 0.2f)
+        else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.2f)
 
     val borderColor =
         if (selected) MaterialTheme.colorScheme.primary
@@ -250,7 +250,7 @@ fun FilterCard(
         Box(
             modifier = Modifier
                 .size(64.dp)
-                //.background(Color.Gray, RoundedCornerShape(8.dp))
+            //.background(Color.Gray, RoundedCornerShape(8.dp))
         ) {
             Image(
                 painter = painterResource(image),
@@ -286,7 +286,7 @@ private fun ExercisePickerFiltersPreviewPL() {
                 Equipment.RINGS,
                 Equipment.ROPE
             ),
-            exerciseTypes = listOf( ExerciseType.STRETCH, ExerciseType.MOBILITY ),
+            exerciseTypes = listOf(ExerciseType.STRETCH, ExerciseType.MOBILITY),
             onClose = { },
             onSaveFilters = { _, _, _ -> },
         )
@@ -306,7 +306,7 @@ private fun ExercisePickerFiltersPreviewEN() {
                 Equipment.RINGS,
                 Equipment.ROPE
             ),
-            exerciseTypes = listOf( ExerciseType.STRETCH, ExerciseType.MOBILITY ),
+            exerciseTypes = listOf(ExerciseType.STRETCH, ExerciseType.MOBILITY),
             onClose = { },
             onSaveFilters = { _, _, _ -> },
         )

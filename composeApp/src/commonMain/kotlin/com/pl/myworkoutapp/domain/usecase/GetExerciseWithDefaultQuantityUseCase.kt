@@ -9,6 +9,7 @@ data class GetExerciseWithDefaultQuantityResult(
     val exercise: Exercise,
     val workoutExercise: WorkoutExercise,
 )
+
 class GetExerciseWithDefaultQuantityUseCase(
     private val repository: WorkoutRepository
 ) {

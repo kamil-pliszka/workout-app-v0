@@ -1,7 +1,11 @@
 #### Opis ćwiczenia
-Butt Bridge (mostek biodrowy) to ćwiczenie wzmacniające głównie mięśnie pośladkowe oraz tylną taśmę ciała, w tym mięśnie dwugłowe ud i dolną część pleców. Polega na unoszeniu bioder w górę z pozycji leżącej, co poprawia siłę, stabilizację oraz mobilność bioder.
+
+Butt Bridge (mostek biodrowy) to ćwiczenie wzmacniające głównie mięśnie pośladkowe oraz tylną taśmę
+ciała, w tym mięśnie dwugłowe ud i dolną część pleców. Polega na unoszeniu bioder w górę z pozycji
+leżącej, co poprawia siłę, stabilizację oraz mobilność bioder.
 
 #### Wskazówki
+
 - Ustaw stopy płasko na podłożu, na szerokość bioder.
 - Napnij pośladki przed uniesieniem bioder.
 - Unieś biodra do momentu, aż ciało utworzy linię prostą od kolan do barków.
@@ -10,6 +14,7 @@ Butt Bridge (mostek biodrowy) to ćwiczenie wzmacniające głównie mięśnie po
 - Oddychaj regularnie – wydech przy unoszeniu bioder.
 
 #### Błędy
+
 - Przeprost w odcinku lędźwiowym zamiast pracy pośladków.
 - Zbyt wysokie unoszenie bioder kosztem techniki.
 - Brak napięcia mięśni brzucha i pośladków.

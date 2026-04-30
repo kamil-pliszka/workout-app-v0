@@ -1,7 +1,11 @@
 #### Opis ćwiczenia
-Running on Time to forma biegu interwałowego, w której aktywność jest kontrolowana czasowo. Ćwiczenie polega na naprzemiennych odcinkach biegu i odpoczynku lub zmiany intensywności w określonych ramach czasowych. Poprawia wydolność, tempo oraz zdolność regeneracji organizmu.
+
+Running on Time to forma biegu interwałowego, w której aktywność jest kontrolowana czasowo.
+Ćwiczenie polega na naprzemiennych odcinkach biegu i odpoczynku lub zmiany intensywności w
+określonych ramach czasowych. Poprawia wydolność, tempo oraz zdolność regeneracji organizmu.
 
 #### Wskazówki
+
 - Ustal stałe interwały czasu (np. bieg / marsz).
 - Rozpoczynaj od umiarkowanego tempa, szczególnie na początku.
 - Kontroluj oddech i staraj się utrzymać rytm przez cały trening.
@@ -10,6 +14,7 @@ Running on Time to forma biegu interwałowego, w której aktywność jest kontro
 - Stopniowo zwiększaj intensywność w miarę poprawy kondycji.
 
 #### Błędy
+
 - Zbyt szybki start i przedwczesne zmęczenie.
 - Brak kontroli nad czasem interwałów.
 - Nierówne tempo w trakcie odcinków biegu.

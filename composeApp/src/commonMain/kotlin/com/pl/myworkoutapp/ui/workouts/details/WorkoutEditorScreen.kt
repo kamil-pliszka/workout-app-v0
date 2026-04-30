@@ -272,7 +272,7 @@ fun WorkoutEditorContent(
     onEditorAction: (WorkoutEditAction) -> Unit,
     onExchangeAction: (Int, ExerciseId) -> Unit,
     onExerciseClick: (Int, ExerciseId) -> Unit,
-    ) {
+) {
     val listState = rememberLazyListState()
     //val scope = rememberCoroutineScope()
 

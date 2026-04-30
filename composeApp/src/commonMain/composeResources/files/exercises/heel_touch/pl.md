@@ -1,7 +1,11 @@
 #### Opis ćwiczenia
-Heel Touch (dotykanie pięt) to ćwiczenie wzmacniające mięśnie skośne brzucha oraz poprawiające kontrolę tułowia. Polega na naprzemiennym pochylaniu się w leżeniu i dotykaniu pięt dłońmi, przy aktywnym napięciu mięśni core.
+
+Heel Touch (dotykanie pięt) to ćwiczenie wzmacniające mięśnie skośne brzucha oraz poprawiające
+kontrolę tułowia. Polega na naprzemiennym pochylaniu się w leżeniu i dotykaniu pięt dłońmi, przy
+aktywnym napięciu mięśni core.
 
 #### Wskazówki
+
 - Połóż się na plecach, ugnij kolana, stopy ustaw płasko na podłożu.
 - Unieś lekko górną część pleców, aktywując mięśnie brzucha.
 - Naprzemiennie sięgaj dłońmi do pięt po obu stronach.
@@ -10,6 +14,7 @@ Heel Touch (dotykanie pięt) to ćwiczenie wzmacniające mięśnie skośne brzuc
 - Oddychaj rytmicznie – wydech przy każdym skłonie.
 
 #### Błędy
+
 - Ciągnięcie szyi zamiast pracy mięśni brzucha.
 - Zbyt szybkie i niekontrolowane ruchy.
 - Całkowite opuszczanie tułowia między powtórzeniami.

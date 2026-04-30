@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "799c8ca3ba0b014399671e8c3c4ec33b",
+    "identityHash": "fda0ca22119fd08d5d9c0419e8e11f52",
     "entities": [
       {
         "tableName": "CustomExerciseEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `description` TEXT, `imageUri` TEXT, `basedOn` TEXT, `muscle` TEXT NOT NULL, `exerciseType` TEXT NOT NULL, `equipment` TEXT NOT NULL, `met` REAL NOT NULL, `quantityType` TEXT NOT NULL, `defaultQuantityVal` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `description` TEXT, `imageUri` TEXT, `basedOn` TEXT, `muscle` TEXT NOT NULL, `exerciseType` TEXT NOT NULL, `equipment` TEXT NOT NULL, `met` REAL NOT NULL, `quantityType` TEXT NOT NULL, `defaultQuantityVal` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, `secondsPerRep` REAL, `metersPerSecond` REAL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -76,6 +76,16 @@
             "columnName": "updatedAt",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "secondsPerRep",
+            "columnName": "secondsPerRep",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "metersPerSecond",
+            "columnName": "metersPerSecond",
+            "affinity": "REAL"
           }
         ],
         "primaryKey": {
@@ -188,7 +198,7 @@
       },
       {
         "tableName": "CustomWorkoutEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `planId` INTEGER, `name` TEXT, `description` TEXT, `imageUri` TEXT, `basedOn` TEXT, `difficulty` TEXT NOT NULL, `updatedAt` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `planId` INTEGER, `name` TEXT, `description` TEXT, `imageUri` TEXT, `basedOn` TEXT, `difficulty` TEXT NOT NULL, `updatedAt` INTEGER NOT NULL, `estimatedDuration` INTEGER, `baseKcalPerKg` REAL, `estimatedKcal` INTEGER)",
         "fields": [
           {
             "fieldPath": "id",
@@ -232,6 +242,21 @@
             "columnName": "updatedAt",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "estimatedDuration",
+            "columnName": "estimatedDuration",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "baseKcalPerKg",
+            "columnName": "baseKcalPerKg",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "estimatedKcal",
+            "columnName": "estimatedKcal",
+            "affinity": "INTEGER"
           }
         ],
         "primaryKey": {
@@ -409,7 +434,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '799c8ca3ba0b014399671e8c3c4ec33b')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'fda0ca22119fd08d5d9c0419e8e11f52')"
     ]
   }
 }

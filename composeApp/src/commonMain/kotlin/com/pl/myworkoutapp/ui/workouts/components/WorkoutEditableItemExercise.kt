@@ -31,7 +31,7 @@ fun WorkoutEditableItemExercise(
     onExchangeClick: () -> Unit,
     onDeleteClick: () -> Unit,
     quantityChangeAction: (increase: Boolean) -> Unit,
-    ) {
+) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -76,7 +76,8 @@ fun WorkoutEditableItemExercise(
                     //fontWeight = FontWeight.Bold,
                 )
                 SmallQuantityPicker(
-                    value = exercise.quantityValue.qtyValueAsUiText(exercise.quantityType).asString(),
+                    value = exercise.quantityValue.qtyValueAsUiText(exercise.quantityType)
+                        .asString(),
                     themeColor = themeColor,
                     onValueChange = quantityChangeAction
                 )
@@ -87,8 +88,7 @@ fun WorkoutEditableItemExercise(
         Row(
             modifier = Modifier
                 .align(Alignment.TopEnd)
-                .padding(horizontal = 8.dp, vertical = 8.dp)
-            ,
+                .padding(horizontal = 8.dp, vertical = 8.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Icon(
@@ -122,7 +122,8 @@ fun WorkoutEditableItemExerciseCard(
             //.fillMaxWidth()
             .height(80.dp)
             .width(80.dp)
-            .border(1.dp,
+            .border(
+                1.dp,
                 themeColor, //MaterialTheme.colorScheme.secondary,
                 RoundedCornerShape(8.dp)
             )

@@ -3,19 +3,8 @@ package com.pl.myworkoutapp.ui.common
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import kotlinx.cinterop.ExperimentalForeignApi
-import platform.Foundation.NSData
-import platform.Foundation.NSDate
-import platform.Foundation.NSTemporaryDirectory
-import platform.Foundation.timeIntervalSince1970
-import platform.Foundation.writeToFile
-import platform.UIKit.UIApplication
-import platform.UIKit.UIImage
-import platform.UIKit.UIImageJPEGRepresentation
-import platform.UIKit.UIImagePickerController
-import platform.UIKit.UIImagePickerControllerDelegateProtocol
-import platform.UIKit.UIImagePickerControllerOriginalImage
-import platform.UIKit.UIImagePickerControllerSourceType
-import platform.UIKit.UINavigationControllerDelegateProtocol
+import platform.Foundation.*
+import platform.UIKit.*
 import platform.darwin.NSObject
 
 @OptIn(ExperimentalForeignApi::class)
@@ -62,7 +51,8 @@ actual fun rememberImagePicker(
         object : ImagePicker {
             override fun pickImage() {
                 val picker = UIImagePickerController()
-                picker.sourceType = UIImagePickerControllerSourceType.UIImagePickerControllerSourceTypePhotoLibrary
+                picker.sourceType =
+                    UIImagePickerControllerSourceType.UIImagePickerControllerSourceTypePhotoLibrary
 
                 delegate.callback = onResult
                 picker.delegate = delegate

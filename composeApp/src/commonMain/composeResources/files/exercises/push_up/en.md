@@ -1,7 +1,11 @@
 #### Exercise Description
-Push Ups are a fundamental strength exercise targeting the chest muscles, triceps, and shoulders, as well as core stabilizers. The movement involves lowering and raising the body in a front plank position using upper body strength.
+
+Push Ups are a fundamental strength exercise targeting the chest muscles, triceps, and shoulders, as
+well as core stabilizers. The movement involves lowering and raising the body in a front plank
+position using upper body strength.
 
 #### Tips
+
 - Place your hands slightly wider than shoulder-width apart.
 - Keep your body in a straight line from head to heels.
 - Engage your core and glutes throughout the movement.
@@ -10,6 +14,7 @@ Push Ups are a fundamental strength exercise targeting the chest muscles, tricep
 - Breathe in while lowering and out while pushing up.
 
 #### Common Mistakes
+
 - Dropping or lifting the hips excessively.
 - Flaring elbows out to 90 degrees.
 - Lack of core engagement causing sagging.

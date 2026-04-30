@@ -5,10 +5,7 @@ import com.pl.myworkoutapp.domain.model.Difficulty
 import com.pl.myworkoutapp.domain.model.exercise.ExerciseId
 import com.pl.myworkoutapp.domain.model.exercise.QuantityType
 import com.pl.myworkoutapp.domain.model.workout.WorkoutId
-import com.pl.myworkoutapp.ui.common.DragDropEvent
-import com.pl.myworkoutapp.ui.common.DropPosition
-import com.pl.myworkoutapp.ui.common.EmptyUiText
-import com.pl.myworkoutapp.ui.common.asUiText
+import com.pl.myworkoutapp.ui.common.*
 import myworkoutapplication.composeapp.generated.resources.Res
 import myworkoutapplication.composeapp.generated.resources.compose_multiplatform
 import kotlin.test.Test

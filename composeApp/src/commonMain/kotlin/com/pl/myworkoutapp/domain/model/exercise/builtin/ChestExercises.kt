@@ -11,5 +11,8 @@ val CHEST_EXERCISES = listOf(
         met = 7.0,
         quantityType = QuantityType.REPS,
         defaultQuantityValue = 10,
+        // ~2s w dół + ~1s w górę + krótka stabilizacja
+        secondsPerRep = 3.0,
+        metersPerSecond = null,
     ),
 )

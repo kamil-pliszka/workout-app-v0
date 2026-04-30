@@ -121,6 +121,17 @@ interface WorkoutDao {
         """
     SELECT *
     FROM CustomWorkoutEntity
+    WHERE basedOn IS NULL 
+        AND planId IS NULL
+    ORDER BY updatedAt DESC, id DESC
+    """
+    )
+    fun observeMainCustomWorkouts(): Flow<List<CustomWorkoutEntity>>
+
+    @Query(
+        """
+    SELECT *
+    FROM CustomWorkoutEntity
     WHERE basedOn = :baseId
       AND planId IS NULL
     ORDER BY updatedAt DESC, id DESC

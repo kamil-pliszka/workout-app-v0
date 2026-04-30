@@ -3,16 +3,26 @@ package com.pl.myworkoutapp.domain.usecase
 import com.pl.myworkoutapp.domain.WorkoutRepository
 import com.pl.myworkoutapp.domain.model.Difficulty
 import com.pl.myworkoutapp.domain.model.workout.*
+import kotlin.math.roundToInt
+
+sealed interface SaveWorkoutResult {
+    data class Success(val workoutId: WorkoutId) : SaveWorkoutResult
+    data class ValidationError(val errors: List<WorkoutValidationError>) : SaveWorkoutResult
+}
 
 class SaveWorkoutUseCase(
-    private val repository: WorkoutRepository
+    private val repository: WorkoutRepository,
+    private val validateWorkoutUseCase: ValidateWorkoutUseCase,
+    private val resolveWorkoutExercisesUC: ResolveWorkoutExercisesUseCase,
+    private val estimateWorkoutMetricsUC: EstimateWorkoutMetricsUseCase
 ) {
     suspend fun execute(
         workoutId: WorkoutId,
         basedOn: WorkoutId.BuiltIn?,
         difficulty: Difficulty,
-        items: List<WorkoutItem>
-    ): WorkoutId {
+        items: List<WorkoutItem>,
+        weightKg : Double = 100.0, //TODO - na razie zahardkodowana wartość
+    ): SaveWorkoutResult {
         println("Saving workout: $workoutId")
         items.forEachIndexed { index, item ->
             println("ITEM[$index]: $item")
@@ -25,6 +35,11 @@ class SaveWorkoutUseCase(
             is WorkoutId.BuiltIn -> WorkoutId.Custom.NEW
             is WorkoutId.Custom -> workoutId
         }
+
+        val exercises = resolveWorkoutExercisesUC.execute(items)
+        val metrics = estimateWorkoutMetricsUC.execute(items, exercises)
+        val estimatedKcal = metrics.baseKcalPerKg * weightKg
+
         val customWorkout = CustomWorkout(
             id = customId,
             name = null,//TODO
@@ -32,9 +47,19 @@ class SaveWorkoutUseCase(
             imageUri = null,//TODO
             basedOn = finalBasedOn,
             difficulty = difficulty,
-            items = items
+            estimatedDuration = metrics.durationSeconds,
+            baseKcalPerKg = metrics.baseKcalPerKg,
+            estimatedKcal = estimatedKcal.roundToInt(),
+            items = items,
         )
 
-        return repository.saveCustomWorkout(customWorkout)
+        val validationErrors = validateWorkoutUseCase.execute(customWorkout)
+
+        if (validationErrors.isNotEmpty()) {
+            return SaveWorkoutResult.ValidationError(validationErrors)
+        }
+
+        val savedId = repository.saveCustomWorkout(customWorkout)
+        return SaveWorkoutResult.Success(savedId)
     }
 }

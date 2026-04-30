@@ -24,6 +24,7 @@ sealed interface UiText {
                 val resolvedArgs = args.map { if (it is UiText) it.asString() else it }
                 stringResource(resource = id, formatArgs = resolvedArgs.toTypedArray())
             }
+
             is Empty -> ""
         }
     }

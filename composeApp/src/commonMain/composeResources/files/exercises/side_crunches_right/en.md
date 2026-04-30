@@ -1,7 +1,11 @@
 #### Exercise Description
-Side Crunches Right target the right oblique abdominal muscles and core stability. The movement involves lifting and rotating the torso in a controlled manner while lying on the back, focusing on abdominal engagement without momentum.
+
+Side Crunches Right target the right oblique abdominal muscles and core stability. The movement
+involves lifting and rotating the torso in a controlled manner while lying on the back, focusing on
+abdominal engagement without momentum.
 
 #### Tips
+
 - Lie on your back with knees bent and feet flat on the floor.
 - Place your hands near your temples or across your chest.
 - Lift your upper torso while rotating toward the right side.
@@ -10,6 +14,7 @@ Side Crunches Right target the right oblique abdominal muscles and core stabilit
 - Breathe steadily – exhale while lifting.
 
 #### Common Mistakes
+
 - Pulling the head with the hands instead of using abdominal muscles.
 - Performing the movement too quickly without control.
 - Lack of core engagement.

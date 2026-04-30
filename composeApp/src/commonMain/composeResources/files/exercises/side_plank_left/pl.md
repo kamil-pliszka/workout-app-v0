@@ -1,7 +1,11 @@
 #### Opis ćwiczenia
-Side Plank Left to izometryczne ćwiczenie wzmacniające mięśnie skośne brzucha, mięśnie core oraz stabilizatory boczne tułowia. Polega na utrzymaniu pozycji podporu bocznego na lewej stronie ciała, z zachowaniem stabilnej sylwetki.
+
+Side Plank Left to izometryczne ćwiczenie wzmacniające mięśnie skośne brzucha, mięśnie core oraz
+stabilizatory boczne tułowia. Polega na utrzymaniu pozycji podporu bocznego na lewej stronie ciała,
+z zachowaniem stabilnej sylwetki.
 
 #### Wskazówki
+
 - Oprzyj lewy łokieć bezpośrednio pod barkiem.
 - Utrzymuj ciało w jednej linii od głowy do stóp.
 - Napnij mięśnie brzucha i pośladków.
@@ -10,6 +14,7 @@ Side Plank Left to izometryczne ćwiczenie wzmacniające mięśnie skośne brzuc
 - Oddychaj spokojnie i regularnie.
 
 #### Błędy
+
 - Opadanie bioder w dół.
 - Rotacja tułowia do przodu lub tyłu.
 - Brak napięcia mięśni core i pośladków.

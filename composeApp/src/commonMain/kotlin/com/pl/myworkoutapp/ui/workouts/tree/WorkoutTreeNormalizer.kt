@@ -32,7 +32,7 @@ private fun List<TreeNode>.flatten(): List<TreeTraversalItem> {
         isLast: Boolean,
         ancestors: List<Boolean>
     ) {
-        val uiItem = when(item) {
+        val uiItem = when (item) {
             is CircuitNode -> item.circuit
             is ExerciseNode -> item.exercise
         }
@@ -57,11 +57,12 @@ private fun List<TreeNode>.flatten(): List<TreeTraversalItem> {
 fun List<TreeNode>.normalizeToUi(): List<WorkoutUiItem> {
     val traversalItems = flatten()
     return traversalItems.map { flat ->
-        when(flat.item) {
+        when (flat.item) {
             is CircuitUiItem -> flat.item.copy(
                 depth = flat.depth,
                 timeline = flat.ancestorsTL.toTimeline()
             )
+
             is ExerciseUiItem -> flat.item.copy(
                 depth = flat.depth,
                 timeline = flat.ancestorsTL.toTimeline()

@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 
 sealed interface UiMessage {
     val text: UiText
+
     data class Error(override val text: UiText) : UiMessage
     data class Success(override val text: UiText) : UiMessage
     data class Info(override val text: UiText) : UiMessage

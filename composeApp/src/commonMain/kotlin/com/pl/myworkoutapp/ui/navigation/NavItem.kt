@@ -36,4 +36,4 @@ val NAV_ITEMS = listOf(
         icon = Res.drawable.ic_settings_account_box,
     ),
 
-)
+    )

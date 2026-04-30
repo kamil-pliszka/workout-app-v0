@@ -111,6 +111,8 @@ fun CustomExercise.toExerciseEditorUiModel(): ExerciseEditorUiModel {
         met = met.toString(),
         quantityType = quantityType,
         defaultQuantityValue = defaultQuantityValue.toString(),
+        secondsPerRep = secondsPerRep?.toString() ?: "",
+        metersPerSecond = metersPerSecond?.toString() ?: "",
     )
 }
 
@@ -131,10 +133,12 @@ fun BuiltInExercise.toExerciseEditorUiModel(): ExerciseEditorUiModel {
         met = met.toString(),
         quantityType = quantityType,
         defaultQuantityValue = defaultQuantityValue.toString(),
+        secondsPerRep = secondsPerRep?.toString() ?: "",
+        metersPerSecond = metersPerSecond?.toString() ?: "",
     )
 }
 
-fun ExerciseEditorUiModel.toDomain() : CustomExercise {
+fun ExerciseEditorUiModel.toDomain(): CustomExercise {
     return CustomExercise(
         id = exerciseId,
         name = name,
@@ -147,5 +151,7 @@ fun ExerciseEditorUiModel.toDomain() : CustomExercise {
         met = met.toDouble(),
         quantityType = requireNotNull(quantityType),
         defaultQuantityValue = defaultQuantityValue.toInt(),
+        secondsPerRep = secondsPerRep.toDoubleOrNull(),
+        metersPerSecond = metersPerSecond.toDoubleOrNull(),
     )
 }

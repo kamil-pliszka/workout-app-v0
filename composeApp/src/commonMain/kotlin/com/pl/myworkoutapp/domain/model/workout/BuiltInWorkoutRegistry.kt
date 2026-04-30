@@ -14,7 +14,7 @@ object BuiltInWorkoutRegistry {
 
     fun getAllId(): Set<BuiltInWorkoutId> = BUILT_INS.keys
 
-    fun getAll() : List<BuiltInWorkout> = BUILT_INS.values.toList()
+    fun getAll(): List<BuiltInWorkout> = BUILT_INS.values.toList()
 
     init {
         val missing = BuiltInWorkoutId.entries - BUILT_INS.keys

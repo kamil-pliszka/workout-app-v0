@@ -1,6 +1,6 @@
 package com.pl.myworkoutapp.domain.model.user
 
-data class Settings (
+data class Settings(
     //kod języka(null - default)
     val langTag: String? = null,
     //czas odstepu miedzy ćwiczeniami (w sekundach)

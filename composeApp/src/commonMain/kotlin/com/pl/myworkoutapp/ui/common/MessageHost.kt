@@ -37,8 +37,7 @@ fun MessageHost(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
-            .padding(bottom = 24.dp)
-        ,
+            .padding(bottom = 24.dp),
         contentAlignment = Alignment.BottomCenter
     ) {
         Surface(
@@ -69,7 +68,7 @@ fun MessageHost(
                     }
                 }
 
-               // 🔹 CLOSE BUTTON
+                // 🔹 CLOSE BUTTON
                 IconButton(
                     onClick = onClose,
                     modifier = Modifier

@@ -205,6 +205,7 @@ class ExerciseEditorViewModel(
                     )
                 }
             }
+
             is ExerciseEditorAction.DefaultQuantityValueChanged -> {
                 updateAndValidate {
                     copy(
@@ -225,6 +226,22 @@ class ExerciseEditorViewModel(
                     }
                 }
             }
+
+            is ExerciseEditorAction.MetersPerSecondChanged ->
+                updateAndValidate {
+                    copy(
+                        exercise = exercise.copy(metersPerSecond = action.value),
+                        touchedFields = touchedFields + ExeEditorField.METERS_PER_SECOND
+                    )
+                }
+
+            is ExerciseEditorAction.SecondsPerRepChanged ->
+                updateAndValidate {
+                    copy(
+                        exercise = exercise.copy(secondsPerRep = action.value),
+                        touchedFields = touchedFields + ExeEditorField.SECONDS_PER_REP
+                    )
+                }
         }
     }
 
@@ -281,6 +298,26 @@ class ExerciseEditorViewModel(
             errors[ExeEditorField.MET] = "Invalid MET"
         } else if (metValue > 30.0) {
             errors[ExeEditorField.MET] = "MET too big"
+        }
+
+        when(state.exercise.quantityType) {
+            QuantityType.REPS, QuantityType.REPS_PER_SIDE -> {
+                val secondsPerRep = state.exercise.secondsPerRep.toDoubleOrNull()
+                if (secondsPerRep == null || secondsPerRep <= 0.0) {
+                    errors[ExeEditorField.SECONDS_PER_REP] = "Invalid SecondsPerRep"
+                } else if (secondsPerRep > 30.0) {
+                    errors[ExeEditorField.SECONDS_PER_REP] = "SecondsPerRep too big"
+                }
+            }
+            QuantityType.DISTANCE -> {
+                val metersPerSecond = state.exercise.metersPerSecond.toDoubleOrNull()
+                if (metersPerSecond == null || metersPerSecond <= 0.0) {
+                    errors[ExeEditorField.SECONDS_PER_REP] = "Invalid NetersPerSecond"
+                } else if (metersPerSecond > 30.0) {
+                    errors[ExeEditorField.SECONDS_PER_REP] = "metersPerSecond too big"
+                }
+            }
+            else -> Unit
         }
 
         return state.copy(
@@ -382,7 +419,12 @@ class ExerciseEditorViewModel(
         //messageCoordinator.success(Res.string.exercise_editor_save_success.asUiText())
         sendEvent(ExerciseEditorEvent.ShowMessage(Res.string.exercise_editor_save_success.asUiText()))
         //exerciseCoordinator.exerciseCreated(savedExerciseId)
-        sendEvent(ExerciseEditorEvent.Completed(savedExerciseId, validatedState.exercise.exerciseId.isNew()))
+        sendEvent(
+            ExerciseEditorEvent.Completed(
+                savedExerciseId,
+                validatedState.exercise.exerciseId.isNew()
+            )
+        )
     }
 
 }

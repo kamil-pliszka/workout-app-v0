@@ -5,12 +5,14 @@ import kotlin.jvm.JvmInline
 sealed interface WorkoutId {
     @JvmInline
     value class BuiltIn(val id: BuiltInWorkoutId) : WorkoutId
+
     @JvmInline
     value class Custom(val id: Long) : WorkoutId {
         companion object {
             val NEW = Custom(0)
         }
-        fun isNew() =  this == NEW
+
+        fun isNew() = this == NEW
     }
 }
 
@@ -31,13 +33,15 @@ fun String.toWorkoutIdOrNull(): WorkoutId? = when {
         val name = removePrefix(BUILTIN_PREFIX)
         BuiltInWorkoutId.entries.find { it.name == name }?.asWorkoutId()
     }
+
     startsWith(CUSTOM_PREFIX) -> {
         removePrefix(CUSTOM_PREFIX).toLongOrNull()?.asWorkoutId()
     }
+
     else -> null
 }
 
-fun WorkoutId.asString() = when(this) {
+fun WorkoutId.asString() = when (this) {
     is WorkoutId.BuiltIn -> BUILTIN_PREFIX + this.id.name
     is WorkoutId.Custom -> CUSTOM_PREFIX + this.id
 }

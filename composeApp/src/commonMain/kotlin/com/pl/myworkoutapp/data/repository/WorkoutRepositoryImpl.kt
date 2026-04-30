@@ -11,6 +11,7 @@ import com.pl.myworkoutapp.domain.model.workout.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlin.collections.map
 
 //TODO - rozdzielić na 2 repo
 class WorkoutRepositoryImpl(
@@ -124,6 +125,12 @@ class WorkoutRepositoryImpl(
         return workoutDao.observeLatestBasedOn(
             builtinIds.map { it.asRawString() }.toSet()
         ).map { entities ->
+            entities.map { it.toDomain() }
+        }
+    }
+
+    override fun observeMainCustomWorkouts(): Flow<List<CustomWorkout>> {
+        return workoutDao.observeMainCustomWorkouts().map { entities ->
             entities.map { it.toDomain() }
         }
     }

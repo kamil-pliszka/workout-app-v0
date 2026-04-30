@@ -35,7 +35,8 @@ fun WorkoutItemExercise(
     onClick: () -> Unit
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth().background(color = DesertWhite).height(IntrinsicSize.Min).clickable { onClick() }
+        modifier = Modifier.fillMaxWidth().background(color = DesertWhite).height(IntrinsicSize.Min)
+            .clickable { onClick() }
     ) {
         // 🔹 LEWA STRONA (timeline)
         TimeLinePart(

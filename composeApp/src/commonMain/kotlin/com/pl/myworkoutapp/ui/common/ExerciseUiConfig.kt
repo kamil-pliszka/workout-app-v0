@@ -46,12 +46,10 @@ fun BuiltInExerciseId.getNameResource(): StringResource = when (this) {
 }
 
 
-
-
 fun BuiltInExerciseId.getImageResource(): DrawableResource = when (this) {
     BuiltInExerciseId.JUMPING_JACKS -> Res.drawable.ic_jumping_jacks
     BuiltInExerciseId.PUSH_UP -> Res.drawable.ic_push_up
-    BuiltInExerciseId.TRICEPS_DIPS_ON_CHAIR ->Res.drawable.ic_triceps_dip_on_chair
+    BuiltInExerciseId.TRICEPS_DIPS_ON_CHAIR -> Res.drawable.ic_triceps_dip_on_chair
     BuiltInExerciseId.PLANK -> Res.drawable.ic_plank1
     BuiltInExerciseId.SIDE_PLANK_LEFT -> Res.drawable.ic_side_plank_left
     BuiltInExerciseId.SIDE_PLANK_RIGHT -> Res.drawable.ic_side_plank_right

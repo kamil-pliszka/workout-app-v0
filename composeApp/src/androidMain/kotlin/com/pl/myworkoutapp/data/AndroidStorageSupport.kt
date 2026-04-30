@@ -42,16 +42,17 @@ class AndroidStorageSupport(
         file.absolutePath
     }*/
 
-    override suspend fun copyTmpToFinal(fromPath: String, toFilename: String): String = withContext(Dispatchers.IO) {
-        val finalFile = File(context.filesDir, toFilename)
-        val tmpFile = File(fromPath)
+    override suspend fun copyTmpToFinal(fromPath: String, toFilename: String): String =
+        withContext(Dispatchers.IO) {
+            val finalFile = File(context.filesDir, toFilename)
+            val tmpFile = File(fromPath)
 
-        tmpFile.copyTo(finalFile, overwrite = true)
+            tmpFile.copyTo(finalFile, overwrite = true)
 
-        Log.d(TAG, "Copied tmp file to: ${finalFile.absolutePath}")
+            Log.d(TAG, "Copied tmp file to: ${finalFile.absolutePath}")
 
-        finalFile.absolutePath
-    }
+            finalFile.absolutePath
+        }
 
     override suspend fun delete(path: String) {
         val file = File(path)

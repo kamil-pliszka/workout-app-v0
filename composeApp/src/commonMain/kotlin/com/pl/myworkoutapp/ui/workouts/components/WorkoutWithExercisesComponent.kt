@@ -2,9 +2,8 @@ package com.pl.myworkoutapp.ui.workouts.components
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,7 +32,8 @@ sealed interface WorkoutWithExercisesAction {
     object OnDeleteRequest : WorkoutWithExercisesAction
     object OnResetRequest : WorkoutWithExercisesAction
     object OnTuneRequest : WorkoutWithExercisesAction
-    data class ShowExerciseInfo(val key: Int, val exerciseId: ExerciseId) : WorkoutWithExercisesAction
+    data class ShowExerciseInfo(val key: Int, val exerciseId: ExerciseId) :
+        WorkoutWithExercisesAction
 }
 
 @Composable
@@ -70,17 +70,15 @@ fun WorkoutWithExercisesComponent(
         Column(
             //verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            if (workoutUiModel.items.isEmpty() && workout.workoutId is WorkoutId.Custom /*&& workout.workoutId.isNew()*/) {
+            if (workoutUiModel.items.isEmpty()) {
                 Row(
                     modifier = Modifier.fillMaxWidth().padding(top = 48.dp),
                     horizontalArrangement = Arrangement.Center
                 ) {
-                    Button(
-                        onClick = { onAction(WorkoutWithExercisesAction.OnOpenEditor) },
-                        //colors = cancelButtonColors,
-                    ) {
-                        Text(stringResource(Res.string.workout_add_items))
-                    }
+                    Text(
+                        stringResource(Res.string.workout_empty_items),
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
                 }
             }
             workoutUiModel.items.forEach { item ->
@@ -101,7 +99,7 @@ fun WorkoutItemRow(
     themeColor: Color,
     onAction: (WorkoutWithExercisesAction) -> Unit,
 ) {
-    val desc = when(item) {
+    val desc = when (item) {
         is CircuitUiItem -> "${item.title}"
         is ExerciseUiItem -> "${item.exerciseId}"
     }
@@ -119,7 +117,14 @@ fun WorkoutItemRow(
             is ExerciseUiItem -> WorkoutItemExercise(
                 item,
                 themeColor,
-                onClick = { onAction(WorkoutWithExercisesAction.ShowExerciseInfo(item.key, item.exerciseId)) }
+                onClick = {
+                    onAction(
+                        WorkoutWithExercisesAction.ShowExerciseInfo(
+                            item.key,
+                            item.exerciseId
+                        )
+                    )
+                }
             )
         }
     }
@@ -208,21 +213,21 @@ val EXE3 = ExerciseUiItem(
 
 val WARMUP = CircuitUiItem(
     phase = Phase.WARMUP,
-    structure = CircuitStructure.Standard(2),
+    structure = structureStandard(2),
     title = "na rozruch".asUiText(),
     progress = 0.47f
 )
 
 val TRAINING = CircuitUiItem(
     phase = Phase.MAIN,
-    structure = CircuitStructure.Standard(3),
+    structure = structureStandard(3),
     title = "trening właściwy".asUiText(),
     progress = 0.17f
 )
 
 val COOLDOWN = CircuitUiItem(
     phase = Phase.COOLDOWN,
-    structure = CircuitStructure.Standard(3),
+    structure = structureStandard(3),
     title = "na uspokojenie".asUiText(),
     progress = 0.71f
 )
@@ -258,7 +263,7 @@ val EXE_CD_2 = ExerciseUiItem(
 )
 
 fun List<WorkoutUiItem>.prepareKeys() = this.mapIndexed { index, item ->
-    when(item) {
+    when (item) {
         is CircuitUiItem -> item.copy(key = index)
         is ExerciseUiItem -> item.copy(key = index)
     }
@@ -359,6 +364,8 @@ fun WorkoutWithExercisesComponentPreviewNested() {//zagnieżdżone wersje
         imageUri = null,
         basedOn = BuiltInWorkoutId.MY_ABS_WORKOUT_WITH_SET.asWorkoutId(),
         difficulty = Difficulty.ADVANCED,
+        estimatedDuration = 13,
+        estimatedKcal = 567,
         items = listOf(
             //warmup
             circuitWith(

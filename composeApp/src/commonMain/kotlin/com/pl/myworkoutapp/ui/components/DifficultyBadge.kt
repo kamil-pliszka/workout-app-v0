@@ -27,10 +27,12 @@ fun Difficulty.toPresentation(): DifficultyPresentation = when (this) {
         text = Res.string.difficulty_beginner.asUiText(),
         color = Color(0xFF4CAF50) // zielony
     )
+
     Difficulty.INTERMEDIATE -> DifficultyPresentation(
         text = Res.string.difficulty_intermediate.asUiText(),
         color = Color(0xFFFF9800) // pomarańczowy
     )
+
     Difficulty.ADVANCED -> DifficultyPresentation(
         text = Res.string.difficulty_advanced.asUiText(),
         color = Color(0xFFF44336) // czerwony
@@ -53,7 +55,7 @@ fun DifficultyBadge(
         Text(
             text = text.asString(),
             style = MaterialTheme.typography.labelMedium,
-            color = Color.White
+            color = MaterialTheme.colorScheme.onPrimary
         )
     }
 }

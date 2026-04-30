@@ -28,9 +28,11 @@ fun WorkoutExecutionScreen(
         is WorkoutExecutionState.Running -> {
             RunningWorkoutView(/*state, viewModel*/)
         }
+
         is WorkoutExecutionState.Rest -> {
             RestView(/*state, viewModel*/)
         }
+
         is WorkoutExecutionState.Paused -> {
             Box(
                 modifier = Modifier.fillMaxSize(),
@@ -42,6 +44,7 @@ fun WorkoutExecutionScreen(
             }
             PausedView(/*state, viewModel*/)
         }
+
         is WorkoutExecutionState.Finished -> {
             //TODO - niepotrzebne przejscie stanu przez Composable
             onAction(WorkoutExecutionAction.OnExit)

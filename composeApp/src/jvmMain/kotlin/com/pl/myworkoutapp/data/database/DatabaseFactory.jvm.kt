@@ -9,7 +9,7 @@ import java.io.File
 actual class DatabaseFactory {
     actual fun create(): RoomDatabase.Builder<WorkoutDatabase> {
         val appDataDir = getAppDataDir()
-        if(!appDataDir.exists()) {
+        if (!appDataDir.exists()) {
             appDataDir.mkdirs()
         }
 

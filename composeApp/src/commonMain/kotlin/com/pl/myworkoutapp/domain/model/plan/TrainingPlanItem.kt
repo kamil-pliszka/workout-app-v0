@@ -15,6 +15,7 @@ data object RestDayItem : TrainingPlanItem
 
 data class WorkoutDayItem(
     val workoutId: WorkoutId,
-): TrainingPlanItem
+) : TrainingPlanItem
 
-fun List<TrainingPlanItem>.toTrainingDays() = this.mapIndexed { index, item -> TrainingDay(index + 1, item) }
+fun List<TrainingPlanItem>.toTrainingDays() =
+    this.mapIndexed { index, item -> TrainingDay(index + 1, item) }

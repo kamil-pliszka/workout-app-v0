@@ -35,21 +35,22 @@ class JvmStorageSupport : StorageSupport {
         file.absolutePath
     }*/
 
-    override suspend fun copyTmpToFinal(fromPath: String, toFilename: String): String = withContext(Dispatchers.IO) {
-        val appDataDir = getAppDataDir()
-        if(!appDataDir.exists()) {
-            appDataDir.mkdirs()
+    override suspend fun copyTmpToFinal(fromPath: String, toFilename: String): String =
+        withContext(Dispatchers.IO) {
+            val appDataDir = getAppDataDir()
+            if (!appDataDir.exists()) {
+                appDataDir.mkdirs()
+            }
+
+            val finalFile = File(appDataDir, toFilename)
+            val tmpFile = File(fromPath)
+
+            tmpFile.copyTo(finalFile, overwrite = true)
+
+            Log.d(TAG, "Copied tmp file to: ${finalFile.absolutePath}")
+
+            finalFile.absolutePath
         }
-
-        val finalFile = File(appDataDir, toFilename)
-        val tmpFile = File(fromPath)
-
-        tmpFile.copyTo(finalFile, overwrite = true)
-
-        Log.d(TAG, "Copied tmp file to: ${finalFile.absolutePath}")
-
-        finalFile.absolutePath
-    }
 
     override suspend fun delete(path: String) {
         val file = File(path)

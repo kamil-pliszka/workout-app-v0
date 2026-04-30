@@ -50,7 +50,7 @@ fun ExerciseEditorScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.Black.copy(alpha = 0.5f))
+            .background(MaterialTheme.colorScheme.scrim.copy(alpha = 0.5f))
             .clickable(
                 indication = null,
                 interactionSource = remember { MutableInteractionSource() }
@@ -64,7 +64,7 @@ fun ExerciseEditorScreen(
                 .fillMaxWidth()
                 .fillMaxHeight(0.99f)
                 .clip(RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp))
-                .background(Color.White)
+                .background(MaterialTheme.colorScheme.onPrimary)
                 .clickable(
                     indication = null,
                     interactionSource = remember { MutableInteractionSource() }
@@ -360,7 +360,7 @@ fun ExerciseImage(
 @Composable
 fun BasedOnSection(
     state: ExerciseEditorUiState,
-    onAction: (ExerciseEditorAction) -> Unit,
+    onAction1: (ExerciseEditorAction) -> Unit,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
 
@@ -429,7 +429,7 @@ fun ParametersSection(
                             text = stringResource(Res.string.exercise_editor_qty_value),
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
-                            )
+                        )
                     },
                     isError = state.displayError(ExeEditorField.DEFAULT_QUANTITY_VALUE),
                     maxLines = 1,
@@ -476,11 +476,53 @@ fun ParametersSection(
         )
 
         Column {
+            MetSection(state, onAction)
+            EstimationSection(state, onAction)
+        }
+    }
+}
+
+@Composable
+private fun MetSection(
+    state: ExerciseEditorUiState,
+    onAction: (ExerciseEditorAction) -> Unit,
+) {
+    OutlinedTextField(
+        value = state.exercise.met,
+        onValueChange = { onAction(ExerciseEditorAction.MetChanged(it)) },
+        label = { Text(stringResource(Res.string.exercise_editor_met)) },
+        isError = state.displayError(ExeEditorField.MET),
+        maxLines = 1,
+        singleLine = true,
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Decimal,
+            imeAction = ImeAction.Done
+        ),
+        modifier = Modifier.fillMaxWidth(),
+        supportingText = {
+            Text(
+                text = stringResource(Res.string.exercise_editor_met_info),
+                style = MaterialTheme.typography.bodySmall
+            )
+        }
+    )
+}
+
+@Composable
+private fun EstimationSection(
+    state: ExerciseEditorUiState,
+    onAction: (ExerciseEditorAction) -> Unit,
+) {
+    when (state.exercise.quantityType) {
+        QuantityType.REPS,
+        QuantityType.REPS_PER_SIDE -> {
             OutlinedTextField(
-                value = state.exercise.met,
-                onValueChange = { onAction(ExerciseEditorAction.MetChanged(it)) },
-                label = { Text(stringResource(Res.string.exercise_editor_met)) },
-                isError = state.displayError(ExeEditorField.MET),
+                value = state.exercise.secondsPerRep,
+                onValueChange = {
+                    onAction(ExerciseEditorAction.SecondsPerRepChanged(it))
+                },
+                label = { Text(stringResource(Res.string.exercise_editor_seconds_per_rep)) },
+                isError = state.displayError(ExeEditorField.SECONDS_PER_REP),
                 maxLines = 1,
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(
@@ -490,12 +532,38 @@ fun ParametersSection(
                 modifier = Modifier.fillMaxWidth(),
                 supportingText = {
                     Text(
-                        text = stringResource(Res.string.exercise_editor_met_info),
+                        text = stringResource(Res.string.exercise_editor_seconds_per_rep_info),
                         style = MaterialTheme.typography.bodySmall
                     )
                 }
             )
         }
+
+        QuantityType.DISTANCE -> {
+            OutlinedTextField(
+                value = state.exercise.metersPerSecond,
+                onValueChange = {
+                    onAction(ExerciseEditorAction.MetersPerSecondChanged(it))
+                },
+                label = { Text(stringResource(Res.string.exercise_editor_meters_per_second)) },
+                isError = state.displayError(ExeEditorField.METERS_PER_SECOND),
+                maxLines = 1,
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Decimal,
+                    imeAction = ImeAction.Done
+                ),
+                modifier = Modifier.fillMaxWidth(),
+                supportingText = {
+                    Text(
+                        text = stringResource(Res.string.exercise_editor_meters_per_second_info),
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+            )
+        }
+
+        else -> Unit
     }
 }
 

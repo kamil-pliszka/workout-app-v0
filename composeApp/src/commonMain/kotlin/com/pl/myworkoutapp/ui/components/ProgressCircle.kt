@@ -1,8 +1,7 @@
 package com.pl.myworkoutapp.ui.components
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,7 +25,7 @@ fun ProgressCircle(
             progress = { progress },
             strokeWidth = strokeWidth,
             color = trackColor,
-            trackColor = Color.LightGray,
+            trackColor = MaterialTheme.colorScheme.outlineVariant,//Color.LightGray,
             modifier = Modifier.fillMaxSize()
         )
 

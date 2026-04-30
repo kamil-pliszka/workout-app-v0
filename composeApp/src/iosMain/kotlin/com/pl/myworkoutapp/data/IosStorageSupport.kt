@@ -5,17 +5,8 @@ package com.pl.myworkoutapp.data
 import com.pl.myworkoutapp.core.Log
 import com.pl.myworkoutapp.domain.StorageSupport
 import kotlinx.cinterop.ExperimentalForeignApi
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
-import kotlinx.coroutines.withContext
-import platform.Foundation.NSCachesDirectory
-import platform.Foundation.NSDocumentDirectory
-import platform.Foundation.NSFileManager
-import platform.Foundation.NSFileSize
-import platform.Foundation.NSNumber
-import platform.Foundation.NSSearchPathForDirectoriesInDomains
-import platform.Foundation.NSUserDomainMask
-import kotlin.collections.emptyList
+import kotlinx.coroutines.*
+import platform.Foundation.*
 
 
 class IosStorageSupport : StorageSupport {

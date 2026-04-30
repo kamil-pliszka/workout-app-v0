@@ -1,7 +1,11 @@
 #### Exercise Description
-Jumping Jacks are a full-body dynamic exercise that improves cardiovascular endurance, coordination, and overall fitness. The movement involves jumping while simultaneously spreading the legs and raising the arms overhead.
+
+Jumping Jacks are a full-body dynamic exercise that improves cardiovascular endurance, coordination,
+and overall fitness. The movement involves jumping while simultaneously spreading the legs and
+raising the arms overhead.
 
 #### Tips
+
 - Stand upright with feet together and arms at your sides.
 - Jump while spreading your legs and raising your arms overhead.
 - Land softly on the balls of your feet to reduce joint impact.
@@ -10,6 +14,7 @@ Jumping Jacks are a full-body dynamic exercise that improves cardiovascular endu
 - Breathe evenly throughout the exercise.
 
 #### Common Mistakes
+
 - Landing heavily on the heels.
 - Using a limited range of motion.
 - Slouching or lacking core stability.

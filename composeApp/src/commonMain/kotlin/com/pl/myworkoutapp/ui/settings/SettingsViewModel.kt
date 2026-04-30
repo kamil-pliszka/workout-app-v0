@@ -33,7 +33,7 @@ class SettingsViewModel(
         observeProfile()
     }
 
-    private fun prepareInitialState() : SettingsUiState {
+    private fun prepareInitialState(): SettingsUiState {
         val versionHash = AppConfig.VERSION_HASH
         val instant = Instant.fromEpochSeconds(AppConfig.VERSION_EPOCH.toLong())
         val dateTime = instant.toLocalDateTime(TimeZone.currentSystemDefault())

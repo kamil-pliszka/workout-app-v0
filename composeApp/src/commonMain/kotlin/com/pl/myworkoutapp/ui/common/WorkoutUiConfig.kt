@@ -20,36 +20,42 @@ fun BuiltInWorkoutId.toUiConfig(): WorkoutUiConfig = when (this) {
         image = Res.drawable.ic_jumping_jacks,
         color = DarkBlue
     )
+
     BuiltInWorkoutId.SIX_PACK_20_MIN -> WorkoutUiConfig(
         name = Res.string.plans_belly_fat_burn.asUiText(),
         desc = Res.string.plans_belly_fat_burn.asUiText(),
         image = Res.drawable.ic_side_plank,
         color = BrillantBlue
     )
+
     BuiltInWorkoutId.LEGS_AND_GLUTES_10_MIN -> WorkoutUiConfig(
         name = Res.string.workouts_legs_and_glutes_10_min.asUiText(),
         desc = Res.string.workouts_legs_and_glutes_10_min_desc.asUiText(),
         image = Res.drawable.ic_plank1,
         color = PastelTurquoise
     )
+
     BuiltInWorkoutId.MY_ABS_WORKOUT_NO_SET -> WorkoutUiConfig(
         name = Res.string.workouts_my_abs_workout_no_set.asUiText(),
         desc = Res.string.workouts_my_abs_workout_no_set_desc.asUiText(),
         image = Res.drawable.ic_triceps_dip_on_chair,
         color = PastelGreen
     )
+
     BuiltInWorkoutId.MY_ABS_WORKOUT_WITH_SET -> WorkoutUiConfig(
         name = Res.string.workouts_my_abs_workout_with_set.asUiText(),
         desc = Res.string.workouts_my_abs_workout_with_set_desc.asUiText(),
         image = Res.drawable.ic_triceps_dip_on_chair,
         color = YellowGreen
     )
+
     BuiltInWorkoutId.MY_ABS_WORKOUT_SUPERSET -> WorkoutUiConfig(
         name = Res.string.workouts_my_abs_workout_with_superset.asUiText(),
         desc = Res.string.workouts_my_abs_workout_with_superset_desc.asUiText(),
         image = Res.drawable.ic_plank1,
         color = SilverGrey
     )
+
     BuiltInWorkoutId.TABATA_1 -> WorkoutUiConfig(
         name = Res.string.workouts_tabata_1.asUiText(),
         desc = Res.string.workouts_tabata_1_desc.asUiText(),

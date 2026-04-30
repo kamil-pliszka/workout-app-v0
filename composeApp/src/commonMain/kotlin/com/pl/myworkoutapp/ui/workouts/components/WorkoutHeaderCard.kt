@@ -59,7 +59,7 @@ fun WorkoutHeaderCard(
                         Brush.verticalGradient(
                             colors = listOf(
                                 Color.Transparent,
-                                Color.Black.copy(alpha = 0.6f),
+                                MaterialTheme.colorScheme.scrim.copy(alpha = 0.6f),
                                 Color.Transparent,
                             )
                         )
@@ -74,7 +74,7 @@ fun WorkoutHeaderCard(
             ) {
                 Text(
                     text = workout.name.asString(),
-                    color = Color.White,
+                    color = MaterialTheme.colorScheme.onPrimary,
                     //fontSize = 22.sp,
                     //fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.headlineMedium,
@@ -84,9 +84,12 @@ fun WorkoutHeaderCard(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(workout.durationText.asString(), color = Color.White)
+                    Text(
+                        workout.durationText.asString(),
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
                     Spacer(Modifier.width(12.dp))
-                    Text(workout.kcalText.asString(), color = Color.White)
+                    Text(workout.kcalText.asString(), color = MaterialTheme.colorScheme.onPrimary)
                 }
             }
 
@@ -117,7 +120,7 @@ fun WorkoutHeaderCard(
             Icon(
                 imageVector = Icons.Default.FavoriteBorder,
                 contentDescription = null,
-                tint = Color.White,
+                tint = MaterialTheme.colorScheme.onPrimary,
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .padding(12.dp)
@@ -137,6 +140,8 @@ fun WorkoutHeaderCardPreview() {
         imageUri = null,
         basedOn = BuiltInWorkoutId.MY_ABS_WORKOUT_WITH_SET.asWorkoutId(),
         difficulty = Difficulty.ADVANCED,
+        estimatedDuration = 123,
+        estimatedKcal = 2345,
         items = emptyList()
     ).toUi()
     WorkoutHeaderCard(

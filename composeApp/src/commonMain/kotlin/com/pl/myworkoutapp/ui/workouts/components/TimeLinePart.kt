@@ -32,16 +32,17 @@ fun TimeLinePart(
                                     moveTo(startX, 0f)
                                     lineTo(startX, size.height)
                                 }
+
                                 is TimeLineItemType.Triple -> {
                                     moveTo(startX, 0f)
                                     lineTo(startX, size.height)
-                                    moveTo(startX, size.height/2f)
+                                    moveTo(startX, size.height / 2f)
                                     lineTo(size.width, size.height / 2f)
                                 }
 
                                 is TimeLineItemType.End -> {
                                     moveTo(startX, 0f)
-                                    lineTo(startX, size.height/2f)
+                                    lineTo(startX, size.height / 2f)
                                     lineTo(size.width, size.height / 2f)
                                 }
 

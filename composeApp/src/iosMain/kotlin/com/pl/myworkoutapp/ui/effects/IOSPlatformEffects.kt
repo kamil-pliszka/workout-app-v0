@@ -2,9 +2,9 @@ package com.pl.myworkoutapp.ui.effects
 
 import platform.AVFAudio.AVSpeechSynthesizer
 import platform.AVFAudio.AVSpeechUtterance
-import platform.UIKit.UIApplication
 import platform.AudioToolbox.AudioServicesPlaySystemSound
 import platform.AudioToolbox.kSystemSoundID_Vibrate
+import platform.UIKit.UIApplication
 
 /**
  * uwagi

@@ -4,6 +4,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -16,20 +17,21 @@ import androidx.compose.ui.unit.dp
 fun TimelinePartDashed(
     isLast: Boolean,
     themeColor: Color,
+    dashColor: Color = MaterialTheme.colorScheme.outlineVariant
 ) {
     Box(
-        modifier = Modifier.Companion.width(24.dp),
-        contentAlignment = Alignment.Companion.TopCenter
+        modifier = Modifier.width(24.dp),
+        contentAlignment = Alignment.TopCenter
     ) {
         Canvas(
-            modifier = Modifier.Companion.fillMaxHeight()
+            modifier = Modifier.fillMaxHeight()
             //modifier = Modifier.matchParentSize()
         ) {
             val strokeWidth = 4f
-            val dash = PathEffect.Companion.dashPathEffect(floatArrayOf(10f, 10f))
+            val dash = PathEffect.dashPathEffect(floatArrayOf(10f, 10f))
             if (!isLast) {
                 drawLine(
-                    color = Color.Companion.LightGray,
+                    color = dashColor,
                     start = Offset(size.width / 2, 20f),
                     end = Offset(size.width / 2, size.height),
                     strokeWidth = strokeWidth,
@@ -39,7 +41,7 @@ fun TimelinePartDashed(
         }
         // 🔵 kropka
         Box(
-            modifier = Modifier.Companion
+            modifier = Modifier
                 .padding(top = 10.dp)
                 .size(12.dp)
                 .background(themeColor, CircleShape)

@@ -18,6 +18,8 @@ data class ExerciseEditorUiModel(
     val met: String = "", // string → łatwiejsza edycja
     val quantityType: QuantityType? = null,
     val defaultQuantityValue: String = "",// string → łatwiejsza edycja
+    val secondsPerRep: String = "",
+    val metersPerSecond: String = "",
 )
 
 data class ExerciseEditorUiState(
@@ -45,4 +47,6 @@ enum class ExeEditorField {
     QUANTITY_TYPE,
     IMAGE,
     DEFAULT_QUANTITY_VALUE,
+    SECONDS_PER_REP,
+    METERS_PER_SECOND,
 }

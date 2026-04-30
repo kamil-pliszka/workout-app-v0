@@ -1,7 +1,6 @@
 package com.pl.myworkoutapp.ui.workouts
 
 import com.pl.myworkoutapp.core.Log
-import com.pl.myworkoutapp.domain.model.workout.CircuitStructure
 import com.pl.myworkoutapp.ui.common.DropPosition
 import com.pl.myworkoutapp.ui.workouts.tree.*
 
@@ -14,6 +13,7 @@ import com.pl.myworkoutapp.ui.workouts.tree.*
  */
 class WorkoutDropPolicyArchived {
     private val TAG = "WorkoutDropPolicy"
+
     /**
      * UI może zwrócić pozycję, która semantycznie nie ma sensu dla targetu.
      * Normalizujemy ją zanim zaczniemy walidację / mutację.
@@ -73,7 +73,7 @@ class WorkoutDropPolicyArchived {
         if (source.key == target.key) return false
 
         // cannot drop into own subtree (cycle)
-        if (target.isDescendantOf(source.key)){
+        if (target.isDescendantOf(source.key)) {
             Log.d(TAG, "target.isDescendant")
             return false
         }
@@ -133,12 +133,12 @@ class WorkoutDropPolicyArchived {
             else -> target.parent
         } ?: return true
 
-        //TODO - doimplementować kiedyś
-        return when (targetCircuit.circuit.structure) {
-            is CircuitStructure.Tabata -> source is ExerciseNode
-            is CircuitStructure.EMOM -> source is ExerciseNode
-            is CircuitStructure.AMRAP -> source is ExerciseNode
-            is CircuitStructure.Standard -> true
+        //doimplementować kiedyś
+        return when (targetCircuit.circuit.structure.type) {
+            CircuitStructureType.Tabata -> source is ExerciseNode
+            CircuitStructureType.EMOM -> source is ExerciseNode
+            CircuitStructureType.AMRAP -> source is ExerciseNode
+            CircuitStructureType.Standard -> true
         }
     }
 }

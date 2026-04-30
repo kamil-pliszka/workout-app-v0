@@ -11,7 +11,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.pl.myworkoutapp.domain.model.exercise.BuiltInExerciseId
@@ -25,11 +24,11 @@ import org.jetbrains.compose.resources.stringResource
 sealed interface WorkoutExerciseInfoAction {
     object ShowExercisePicker : WorkoutExerciseInfoAction
     data class ChangeQuantity(val increase: Boolean) : WorkoutExerciseInfoAction
-    object ExercisePrev: WorkoutExerciseInfoAction
-    object ExerciseNext: WorkoutExerciseInfoAction
-    object ExerciseReset: WorkoutExerciseInfoAction
-    object ExerciseSave: WorkoutExerciseInfoAction
-    object CloseExerciseInfo: WorkoutExerciseInfoAction
+    object ExercisePrev : WorkoutExerciseInfoAction
+    object ExerciseNext : WorkoutExerciseInfoAction
+    object ExerciseReset : WorkoutExerciseInfoAction
+    object ExerciseSave : WorkoutExerciseInfoAction
+    object CloseExerciseInfo : WorkoutExerciseInfoAction
 }
 
 //OVERLAY SCREEN
@@ -70,7 +69,7 @@ private fun WorkoutExerciseInfoContent(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.Black.copy(alpha = 0.5f))
+            .background(MaterialTheme.colorScheme.scrim.copy(alpha = 0.5f))
             .clickable(
                 indication = null,
                 interactionSource = remember { MutableInteractionSource() }
@@ -82,7 +81,7 @@ private fun WorkoutExerciseInfoContent(
                 .fillMaxWidth()
                 .fillMaxHeight(0.95f)
                 .clip(RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp))
-                .background(Color.White)
+                .background(MaterialTheme.colorScheme.onPrimary)
         ) {
             Spacer(Modifier.height(8.dp))
             // HEADER
@@ -101,7 +100,7 @@ private fun WorkoutExerciseInfoContent(
                 }
             }
 
-           Column(
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f)
@@ -153,12 +152,11 @@ fun NextPrev(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .clip(RoundedCornerShape(16.dp))
-            //.background(Color.LightGray)
             .background(MaterialTheme.colorScheme.primaryContainer)
         //.padding(horizontal = 12.dp, vertical = 8.dp)
     ) {
         IconButton(
-            onClick = { onAction(WorkoutExerciseInfoAction.ExercisePrev)},
+            onClick = { onAction(WorkoutExerciseInfoAction.ExercisePrev) },
             enabled = current > 1,
         ) {
             Icon(
@@ -170,7 +168,7 @@ fun NextPrev(
         Text("$current/$total")
 
         IconButton(
-            onClick = { onAction(WorkoutExerciseInfoAction.ExerciseNext)},
+            onClick = { onAction(WorkoutExerciseInfoAction.ExerciseNext) },
             enabled = current < total
         ) {
             Icon(painter = painterResource(Res.drawable.ic_skip_next), contentDescription = "Next")
@@ -187,11 +185,14 @@ private fun RowScope.BottomButtons(
     Box(modifier = Modifier.weight(4f)) {
         if (exerciseInfo.isDirty) {
             Button(
-                onClick = { onAction(WorkoutExerciseInfoAction.ExerciseReset)},
+                onClick = { onAction(WorkoutExerciseInfoAction.ExerciseReset) },
                 colors = buttonColors(containerColor = MaterialTheme.colorScheme.outline),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Icon(painter = painterResource(Res.drawable.ic_reset_settings), contentDescription = null)
+                Icon(
+                    painter = painterResource(Res.drawable.ic_reset_settings),
+                    contentDescription = null
+                )
                 Spacer(Modifier.width(8.dp))
                 Text(stringResource(Res.string.btn_reset))
             }

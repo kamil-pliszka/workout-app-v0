@@ -1,6 +1,5 @@
 package com.pl.myworkoutapp.ui.workouts.details
 
-import com.pl.myworkoutapp.domain.model.workout.CircuitStructure
 import com.pl.myworkoutapp.domain.model.workout.Phase
 import com.pl.myworkoutapp.ui.common.EmptyUiText
 import com.pl.myworkoutapp.ui.common.UiText
@@ -23,31 +22,40 @@ data class CircuitEditorUiState(
     val tabataRestSec: String = "10",
 )
 
-fun CircuitEditorUiState.toStructure() = when (structureType) {
-    CircuitStructureType.Standard -> CircuitStructure.Standard(rounds.toInt())
-    CircuitStructureType.EMOM -> CircuitStructure.EMOM(emomMinutes.toInt())
-    CircuitStructureType.AMRAP -> CircuitStructure.AMRAP(amrapMinutes.toInt() * 60)
-    CircuitStructureType.Tabata -> CircuitStructure.Tabata(
-        rounds = tabataRounds.toInt(),
-        workSec = tabataWorkSec.toInt(),
-        restSec = tabataRestSec.toInt()
+fun CircuitEditorUiState.toStructure(): CircuitUiStructure = when (structureType) {
+    CircuitStructureType.Standard -> structureStandard(
+        rounds.toInt()
+    )
+
+    CircuitStructureType.EMOM -> structureEMOM(
+        emomMinutes.toInt()
+    )
+
+    CircuitStructureType.AMRAP -> structureAMRAP(
+        amrapMinutes.toInt()
+    )
+
+    CircuitStructureType.Tabata -> structureTabata(
+        tabataRounds.toInt(),
+        tabataWorkSec.toInt(),
+        tabataRestSec.toInt()
     )
 }
 
-fun CircuitUiItem.toCircuitEditorUiState() : CircuitEditorUiState = CircuitEditorUiState(
+fun CircuitUiItem.toCircuitEditorUiState(): CircuitEditorUiState = CircuitEditorUiState(
     isNew = false,
     phase = phase,
     name = title,
-    structureType = structure.toStructureType(),
-    rounds = if (structure is CircuitStructure.Standard) structure.rounds.toString() else "",
-    emomMinutes = if (structure is CircuitStructure.EMOM) structure.minutes.toString() else "",
-    amrapMinutes = if (structure is CircuitStructure.AMRAP) structure.durationSec.toString() else "",
-    tabataRounds = if (structure is CircuitStructure.Tabata) structure.rounds.toString() else "",
-    tabataWorkSec = if (structure is CircuitStructure.Tabata) structure.workSec.toString() else "",
-    tabataRestSec = if (structure is CircuitStructure.Tabata) structure.restSec.toString() else "",
+    structureType = structure.type,
+    rounds = if (structure.type == CircuitStructureType.Standard) structure.rounds.toString() else "",
+    emomMinutes = if (structure.type == CircuitStructureType.EMOM) structure.emomMinutes.toString() else "",
+    amrapMinutes = if (structure.type == CircuitStructureType.AMRAP) structure.amrapMinutes.toString() else "",
+    tabataRounds = if (structure.type == CircuitStructureType.Tabata) structure.rounds.toString() else "",
+    tabataWorkSec = if (structure.type == CircuitStructureType.Tabata) structure.tabataWorkSec.toString() else "",
+    tabataRestSec = if (structure.type == CircuitStructureType.Tabata) structure.tabataRestSec.toString() else "",
 )
 
-fun CircuitEditorUiState.toCircuitUiItem() : CircuitUiItem = CircuitUiItem(
+fun CircuitEditorUiState.toCircuitUiItem(): CircuitUiItem = CircuitUiItem(
     phase = phase,
     structure = toStructure(),
     title = name,

@@ -10,6 +10,7 @@ data class ExerciseWithMarkdown(
     val exercise: Exercise,
     val descriptionMarkdown: String?,
 )
+
 class GetExerciseInfoUseCase(
     private val repository: WorkoutRepository
 ) {
@@ -22,7 +23,7 @@ class GetExerciseInfoUseCase(
                 else -> null
             }
         }*/
-        val descExerciseId: BuiltInExerciseId? = when(exercise) {
+        val descExerciseId: BuiltInExerciseId? = when (exercise) {
             is BuiltInExercise -> exercise.id.toBuiltInExerciseId()
             is CustomExercise -> exercise.basedOn?.toBuiltInExerciseId()
         }

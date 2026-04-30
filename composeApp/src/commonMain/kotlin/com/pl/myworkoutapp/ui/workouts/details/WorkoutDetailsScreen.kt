@@ -14,7 +14,9 @@ import com.pl.myworkoutapp.ui.common.ConfirmationDialog
 import com.pl.myworkoutapp.ui.exercises.ExercisePickerScreen
 import com.pl.myworkoutapp.ui.workouts.components.WorkoutExerciseInfoScreen
 import com.pl.myworkoutapp.ui.workouts.components.WorkoutWithExercisesComponent
-import com.pl.myworkoutapp.ui.workouts.details.WorkoutViewAction.*
+import com.pl.myworkoutapp.ui.workouts.details.WorkoutViewAction.DeleteCancel
+import com.pl.myworkoutapp.ui.workouts.details.WorkoutViewAction.DeleteConfirm
+import com.pl.myworkoutapp.ui.workouts.details.WorkoutViewAction.ExercisePicked
 import com.pl.myworkoutapp.ui.workouts.tree.transform
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
@@ -55,7 +57,7 @@ fun WorkoutDetailsScreen(
         if (state.mode.session.modal is WorkoutEditModal.ExercisePicker) {
             ExercisePickerScreen(
                 currentExerciseId = state.mode.session.modal.currentExerciseId,
-                onResult = { exerciseId -> onEditAction(WorkoutEditAction.ExercisePicked(exerciseId))},
+                onResult = { exerciseId -> onEditAction(WorkoutEditAction.ExercisePicked(exerciseId)) },
             )
         }
     }
@@ -88,9 +90,14 @@ fun WorkoutDetailsScreen(
             is WorkoutViewModal.ExercisePicker ->
                 ExercisePickerScreen(
                     currentExerciseId = state.mode.session.activeExercise?.draft?.exerciseId,
-                    onResult = { exerciseId -> onViewAction(ExercisePicked(exerciseId))},
+                    onResult = { exerciseId -> onViewAction(ExercisePicked(exerciseId)) },
                 )
+
             is WorkoutViewModal.ConfirmReset -> {
+                //obydwa przebiegi: reset/delete robią to samo:
+                //usuń workout i wróć do fallbacku / zamknij ekran
+                //jedyna różnica jest z punktu widzenia usera, bo widzi inne buttony akcji
+                //UI wysyła jedną intencję: “usuń workout”
                 ConfirmationDialog(
                     title = stringResource(Res.string.workout_view_reset_title),
                     text = stringResource(Res.string.workout_view_reset_question),
@@ -104,11 +111,13 @@ fun WorkoutDetailsScreen(
                     },
                 )
             }
+
             is WorkoutViewModal.ConfirmDelete -> {
                 ConfirmationDialog(
                     title = stringResource(Res.string.workout_view_delete_title),
                     text = stringResource(Res.string.workout_view_delete_question),
                     onConfirm = {
+                        //patrz komentarz do: is WorkoutViewModal.ConfirmReset
                         onViewAction(DeleteConfirm)
                     },
                     confirmText = stringResource(Res.string.btn_delete),
@@ -118,6 +127,7 @@ fun WorkoutDetailsScreen(
                     },
                 )
             }
+
             null -> Unit
         }
     }
@@ -138,12 +148,16 @@ private fun BoxScope.WorkoutDetailBottomButtons(
             Row(
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                OutlinedButton( // Use Outlined for secondary action
+                OutlinedButton(
+                    // Use Outlined for secondary action
                     modifier = Modifier.weight(1f),
                     onClick = { onViewAction(WorkoutViewAction.ResetWorkout) },
                     colors = buttonColors(containerColor = MaterialTheme.colorScheme.outline),
                 ) {
-                    Icon(painter = painterResource(Res.drawable.ic_reset_settings), contentDescription = null)
+                    Icon(
+                        painter = painterResource(Res.drawable.ic_reset_settings),
+                        contentDescription = null
+                    )
                     Spacer(Modifier.width(8.dp))
                     Text(stringResource(Res.string.workout_reset))
                 }
@@ -151,7 +165,10 @@ private fun BoxScope.WorkoutDetailBottomButtons(
                     modifier = Modifier.weight(1f),
                     onClick = { onViewAction(WorkoutViewAction.SaveWorkout) }
                 ) {
-                    Icon(painter = painterResource(Res.drawable.ic_check), contentDescription = null)
+                    Icon(
+                        painter = painterResource(Res.drawable.ic_check),
+                        contentDescription = null
+                    )
                     Spacer(Modifier.width(8.dp))
                     Text(stringResource(Res.string.btn_save))
                 }

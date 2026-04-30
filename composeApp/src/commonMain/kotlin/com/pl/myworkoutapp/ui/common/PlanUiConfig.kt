@@ -20,12 +20,14 @@ fun BuiltInTrainingPlanId.toUiConfig(): PlanUiConfig = when (this) {
         image = Res.drawable.ic_plank1,
         color = Blue
     )
+
     BuiltInTrainingPlanId.SIX_PACK_ABS -> PlanUiConfig(
         name = Res.string.plans_six_pack_abs.asUiText(),
         desc = Res.string.plans_six_pack_abs.asUiText(),//TODO
         image = Res.drawable.ic_plank1,
         color = holoGreen
     )
+
     BuiltInTrainingPlanId.ROCK_SOLID_ABS -> PlanUiConfig(
         name = Res.string.plans_rock_solid_abs.asUiText(),
         desc = Res.string.plans_rock_solid_abs.asUiText(),//TODO

@@ -9,6 +9,7 @@ import com.pl.myworkoutapp.data.prefs.DataStoreProvider
 import com.pl.myworkoutapp.data.repository.AppSettingRepositoryImpl
 import com.pl.myworkoutapp.data.repository.WorkoutRepositoryImpl
 import com.pl.myworkoutapp.domain.AppSettingRepository
+import com.pl.myworkoutapp.domain.BuiltInWorkoutCatalog
 import com.pl.myworkoutapp.domain.WorkoutRepository
 import com.pl.myworkoutapp.domain.usecase.*
 import com.pl.myworkoutapp.ui.app.AppStateHolder
@@ -52,6 +53,7 @@ val sharedModule = module {
     singleOf(::ExerciseEditorCoordinator)
     singleOf(::AppNavigator)
     singleOf(::MessageCoordinator)
+    singleOf(::BuiltInWorkoutCatalog)
 
     //UC
     singleOf(::GetWorkoutWithExercisesUseCase)
@@ -60,6 +62,10 @@ val sharedModule = module {
     singleOf(::GetExerciseWithDefaultQuantityUseCase)
     singleOf(::GetMainWorkoutsUseCase)
     singleOf(::DeleteCustomWorkoutAndResolveFallbackUseCase)
+    singleOf(::ValidateWorkoutUseCase)
+    singleOf(::EstimateWorkoutMetricsUseCase)
+    singleOf(::ResolveWorkoutMetricsUseCase)
+    singleOf(::ResolveWorkoutExercisesUseCase)
 
     //jeśli delegate ma stan per ekran wtedy factoryOf, jeśli nie będzie miał stanu wtedy singleOf
     singleOf(::CircuitEditorDelegate)

@@ -22,14 +22,15 @@ interface WorkoutRepository {
     suspend fun getHistory(): List<WorkoutSession>
     suspend fun getWorkouts(): List<Workout>
 
-    suspend fun getWorkout(workoutId : WorkoutId): Workout
+    suspend fun getWorkout(workoutId: WorkoutId): Workout
 
     suspend fun getExercise(exerciseId: ExerciseId): Exercise
     suspend fun saveCustomWorkout(customWorkout: CustomWorkout): WorkoutId.Custom
 
     suspend fun saveCustomExercise(customExercise: CustomExercise): ExerciseId.Custom
     fun observeCustomExercises(): Flow<List<CustomExercise>>
-    fun observeLatestBasedOn(builtinIds: Set<WorkoutId.BuiltIn>) : Flow<List<CustomWorkout>>
-    suspend fun findLatestBasedOn(builtInId : WorkoutId.BuiltIn) : CustomWorkout?
+    fun observeLatestBasedOn(builtinIds: Set<WorkoutId.BuiltIn>): Flow<List<CustomWorkout>>
+    fun observeMainCustomWorkouts(): Flow<List<CustomWorkout>>
+    suspend fun findLatestBasedOn(builtInId: WorkoutId.BuiltIn): CustomWorkout?
     suspend fun deleteWorkout(id: WorkoutId.Custom)
 }

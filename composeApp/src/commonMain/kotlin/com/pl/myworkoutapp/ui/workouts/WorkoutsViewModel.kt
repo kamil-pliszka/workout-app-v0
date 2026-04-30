@@ -37,7 +37,7 @@ class WorkoutsViewModel(
 
     fun onAction(action: WorkoutsAction) {
         println("Got action: $action")
-        when(action) {
+        when (action) {
             is WorkoutsAction.OnPageChanged -> Unit
             is WorkoutsAction.ShowWorkoutDetails -> showWorkoutDetails(action.workoutId)
             WorkoutsAction.AddExercise -> addExercise()

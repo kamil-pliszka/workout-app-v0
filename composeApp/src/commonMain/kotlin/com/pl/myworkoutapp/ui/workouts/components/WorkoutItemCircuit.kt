@@ -12,7 +12,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.pl.myworkoutapp.domain.model.workout.CircuitStructure
 import com.pl.myworkoutapp.domain.model.workout.Phase
 import com.pl.myworkoutapp.ui.common.asUiText
 import com.pl.myworkoutapp.ui.components.ProgressCircle
@@ -38,11 +37,11 @@ fun WorkoutItemCircuit(
     themeColor: Color,
     onClick: () -> Unit
 ) {
-    val crounds = when (circuit.structure) {
-        is CircuitStructure.AMRAP -> 1
-        is CircuitStructure.EMOM -> 1
-        is CircuitStructure.Standard -> circuit.structure.rounds
-        is CircuitStructure.Tabata -> circuit.structure.rounds
+    val crounds = when (circuit.structure.type) {
+        CircuitStructureType.AMRAP -> 1
+        CircuitStructureType.EMOM -> 1
+        CircuitStructureType.Standard -> circuit.structure.rounds
+        CircuitStructureType.Tabata -> circuit.structure.rounds
     }
     Row(
         modifier = Modifier.fillMaxWidth().background(color = DesertWhite).height(IntrinsicSize.Min)
@@ -122,7 +121,7 @@ val CIRCUIT_ITEM_WM = CircuitUiItem(
     isCurrent = false,
     isDone = true,
     phase = Phase.WARMUP,
-    structure = CircuitStructure.Standard(2),
+    structure = structureStandard(2),
     title = "ROZGRZEWECZKA".asUiText(),
 )
 
@@ -132,7 +131,7 @@ val CIRCUIT_ITEM_WM = CircuitUiItem(
 fun CircuitPreviewBasic() {
     WorkoutItemCircuit(
         circuit = CIRCUIT_ITEM_WM.copy(
-            structure = CircuitStructure.AMRAP(300)
+            structure = structureAMRAP(5)
         ),
         themeColor = PureGreen,
         onClick = { }
@@ -144,7 +143,7 @@ fun CircuitPreviewBasic() {
 fun CircuitPreviewTimeLine() {
     WorkoutItemCircuit(
         circuit = CIRCUIT_ITEM_WM.copy(
-            structure = CircuitStructure.EMOM(12)
+            structure = structureEMOM(12)
         ).with(
             TimeLineItemType.Vertical(Color.Green),
             TimeLineItemType.Triple(Color.Magenta),
@@ -160,7 +159,7 @@ fun CircuitPreviewTimeLine() {
 fun CircuitPreviewProgress1() {
     WorkoutItemCircuit(
         circuit = CIRCUIT_ITEM_WM.copy(
-            structure = CircuitStructure.Standard(7),
+            structure = structureStandard(7),
             isDone = false,
             progress = 0.4f
         ).with(
@@ -176,7 +175,7 @@ fun CircuitPreviewProgress1() {
 fun CircuitPreviewProgress2() {
     WorkoutItemCircuit(
         circuit = CIRCUIT_ITEM_WM.copy(
-            structure = CircuitStructure.Tabata(
+            structure = structureTabata(
                 rounds = 8,
                 workSec = 30,
                 restSec = 15

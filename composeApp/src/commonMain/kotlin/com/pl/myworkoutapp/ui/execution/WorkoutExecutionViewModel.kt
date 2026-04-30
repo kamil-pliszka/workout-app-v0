@@ -38,6 +38,7 @@ class WorkoutExecutionViewModel(
             appStateHolder.setThemeColor(PearlOpalGreen)
         }
     }
+
     fun onScreenExited() {
         if (isActive) {
             isActive = false
@@ -49,7 +50,7 @@ class WorkoutExecutionViewModel(
 
     fun onAction(action: WorkoutExecutionAction) {
         println("Got action: $action")
-        when(action) {
+        when (action) {
             WorkoutExecutionAction.OnScreenEntered -> onScreenEntered()
             WorkoutExecutionAction.OnScreenExited -> onScreenExited()
             WorkoutExecutionAction.OnExit -> {
@@ -57,7 +58,6 @@ class WorkoutExecutionViewModel(
             }
         }
     }
-
 
 
     // start pierwszego ćwiczenia

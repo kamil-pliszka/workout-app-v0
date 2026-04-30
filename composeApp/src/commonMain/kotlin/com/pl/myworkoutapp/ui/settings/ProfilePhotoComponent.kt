@@ -29,7 +29,7 @@ fun ProfilePhotoComponent(
         modifier = Modifier
             .fillMaxWidth()     // dopasowuje wysokość do Row (czyli lewej kolumny)
             .aspectRatio(1f)     // wymusza kwadrat
-        //.background(Color.Green)
+        //.background(MaterialTheme.colorScheme.secondary)
         ,
         contentAlignment = Alignment.Center
     ) {

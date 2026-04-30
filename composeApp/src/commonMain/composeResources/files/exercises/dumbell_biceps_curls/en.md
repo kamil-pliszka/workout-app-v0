@@ -1,7 +1,11 @@
 #### Exercise Description
-Dumbbell Biceps Curls are a classic strength exercise targeting the biceps. The movement involves flexing the elbows to lift dumbbells, helping to build arm strength and muscle mass while improving control.
+
+Dumbbell Biceps Curls are a classic strength exercise targeting the biceps. The movement involves
+flexing the elbows to lift dumbbells, helping to build arm strength and muscle mass while improving
+control.
 
 #### Tips
+
 - Stand upright with dumbbells at your sides, palms facing forward.
 - Keep your elbows close to your torso throughout the movement.
 - Curl the weights slowly up to shoulder level.
@@ -10,6 +14,7 @@ Dumbbell Biceps Curls are a classic strength exercise targeting the biceps. The 
 - Breathe steadily – exhale while lifting the weights.
 
 #### Common Mistakes
+
 - Swinging the body and using momentum.
 - Letting the elbows drift away from the body.
 - Dropping the weights too quickly.

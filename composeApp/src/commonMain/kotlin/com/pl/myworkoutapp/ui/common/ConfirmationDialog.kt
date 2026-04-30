@@ -21,12 +21,12 @@ fun ConfirmationDialog(
     text: String = stringResource(Res.string.confirmation_are_you_sure),
     onConfirm: () -> Unit,
     //confirmContent: @Composable RowScope.() -> Unit = { Text("OK") },
-    confirmText : String = stringResource(Res.string.confirmation_confitm_text),
-    confirmButtonColors : ButtonColors = ButtonDefaults.buttonColors(),
+    confirmText: String = stringResource(Res.string.confirmation_confitm_text),
+    confirmButtonColors: ButtonColors = ButtonDefaults.buttonColors(),
     confirmTextColor: Color = Color.Unspecified,
     onCancel: () -> Unit,
-    cancelText : String = stringResource(Res.string.confirmation_cancel_text),
-    cancelButtonColors : ButtonColors = ButtonDefaults.buttonColors(),
+    cancelText: String = stringResource(Res.string.confirmation_cancel_text),
+    cancelButtonColors: ButtonColors = ButtonDefaults.buttonColors(),
     cancelTextColor: Color = Color.Unspecified,
 ) {
 
@@ -69,7 +69,7 @@ fun ConfirmationDialog(
                     Button(
                         onClick = onConfirm,
                         colors = confirmButtonColors,
-                        ) {
+                    ) {
                         Text(confirmText, color = confirmTextColor)
                     }
                 }
@@ -88,8 +88,8 @@ private fun ConfirmPreview() {
             confirmText = stringResource(Res.string.btn_delete),
             confirmButtonColors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.error),
             //confirmTextColor = MaterialTheme.colorScheme.onError,
-            onConfirm = {  },
-            onCancel = {  },
+            onConfirm = { },
+            onCancel = { },
         )
     }
 }

@@ -3,10 +3,7 @@ package com.pl.myworkoutapp.ui.effects
 import android.Manifest
 import android.app.Activity
 import android.content.Context
-import android.os.Build
-import android.os.VibrationEffect
-import android.os.Vibrator
-import android.os.VibratorManager
+import android.os.*
 import android.speech.tts.TextToSpeech
 import android.view.WindowManager
 import androidx.annotation.RequiresPermission
@@ -34,7 +31,12 @@ class AndroidPlatformEffects(private val activityProvider: () -> Activity?) : Pl
             @Suppress("DEPRECATION")
             activity.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         }
-        vibrator.vibrate(VibrationEffect.createOneShot(durationMs, VibrationEffect.DEFAULT_AMPLITUDE))
+        vibrator.vibrate(
+            VibrationEffect.createOneShot(
+                durationMs,
+                VibrationEffect.DEFAULT_AMPLITUDE
+            )
+        )
     }
 
     override fun playSound(type: SoundType) {

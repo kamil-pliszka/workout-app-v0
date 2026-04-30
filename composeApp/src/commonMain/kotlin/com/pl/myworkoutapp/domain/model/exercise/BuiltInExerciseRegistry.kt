@@ -15,9 +15,11 @@ object BuiltInExerciseRegistry {
 
     //private val CUSTOM_EXERCISES = mutableMapOf<Int, CustomExercise>()
 
-    fun get(id: BuiltInExerciseId) : BuiltInExercise = BUILT_IN_EXERCISES[id] ?: error("Missing built-in: $id")
-    fun getAllId() : Set<BuiltInExerciseId> = BUILT_IN_EXERCISES.keys
-    fun getAll() : Collection<BuiltInExercise> = BUILT_IN_EXERCISES.values
+    fun get(id: BuiltInExerciseId): BuiltInExercise =
+        BUILT_IN_EXERCISES[id] ?: error("Missing built-in: $id")
+
+    fun getAllId(): Set<BuiltInExerciseId> = BUILT_IN_EXERCISES.keys
+    fun getAll(): Collection<BuiltInExercise> = BUILT_IN_EXERCISES.values
 
     //kod dotyczący CustomExercise będzie przeniesiony do jakiegoś repo w przyszłości
     //fun getCustomExercise(id: Int) = CUSTOM_EXERCISES[id]

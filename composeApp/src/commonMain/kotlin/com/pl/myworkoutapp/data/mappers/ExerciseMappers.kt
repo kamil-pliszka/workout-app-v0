@@ -3,7 +3,9 @@ package com.pl.myworkoutapp.data.mappers
 import com.pl.myworkoutapp.data.database.CustomExerciseEntity
 import com.pl.myworkoutapp.domain.model.exercise.*
 
-fun String.toBuiltInExerciseId(): ExerciseId.BuiltIn = BuiltInExerciseId.valueOf(this).asExerciseId()
+fun String.toBuiltInExerciseId(): ExerciseId.BuiltIn =
+    BuiltInExerciseId.valueOf(this).asExerciseId()
+
 fun ExerciseId.BuiltIn.asRawString() = this.id.name
 fun CustomExercise.toEntity() = CustomExerciseEntity(
     id = id.toLong(),
@@ -16,7 +18,9 @@ fun CustomExercise.toEntity() = CustomExerciseEntity(
     equipment = equipment.name,
     quantityType = quantityType.name,
     met = met,
-    defaultQuantityVal = defaultQuantityValue
+    defaultQuantityVal = defaultQuantityValue,
+    secondsPerRep = secondsPerRep,
+    metersPerSecond = metersPerSecond,
 )
 
 
@@ -31,5 +35,7 @@ fun CustomExerciseEntity.toDomain() = CustomExercise(
     equipment = Equipment.valueOf(equipment),
     met = met,
     quantityType = QuantityType.valueOf(quantityType),
-    defaultQuantityValue = defaultQuantityVal
+    defaultQuantityValue = defaultQuantityVal,
+    secondsPerRep = secondsPerRep,
+    metersPerSecond = metersPerSecond,
 )

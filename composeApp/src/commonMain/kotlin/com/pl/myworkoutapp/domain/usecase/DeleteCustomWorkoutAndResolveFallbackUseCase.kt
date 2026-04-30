@@ -1,7 +1,8 @@
 package com.pl.myworkoutapp.domain.usecase
 
 import com.pl.myworkoutapp.domain.WorkoutRepository
-import com.pl.myworkoutapp.domain.model.workout.*
+import com.pl.myworkoutapp.domain.model.workout.CustomWorkout
+import com.pl.myworkoutapp.domain.model.workout.WorkoutId
 
 /**
  * Usuwa istneiejący CustomWorkout i zwraca identyfikator workout który został odkryty
@@ -12,7 +13,7 @@ class DeleteCustomWorkoutAndResolveFallbackUseCase(
 ) {
     suspend fun execute(
         workoutId: WorkoutId,
-    ) : WorkoutId? {
+    ): WorkoutId? {
         println("Delete workout: $workoutId")
 
         val workout = repository.getWorkout(workoutId)

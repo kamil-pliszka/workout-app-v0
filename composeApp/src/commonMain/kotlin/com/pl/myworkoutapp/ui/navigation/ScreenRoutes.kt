@@ -3,6 +3,7 @@ package com.pl.myworkoutapp.ui.navigation
 const val WORKOUT_EXECUTION_ROUTE_PREFIX = "workout_execution"
 const val WORKOUT_DETAILS_ROUTE_PREFIX = "workout_details"
 const val EXERCISE_EDITOR_ROUTE_PREFIX = "exe_editor"
+
 sealed class ScreenRoutes(val route: String) {
     // com.pl.myworkoutapp.androidapp.main
     data object Plans : ScreenRoutes("plans")
@@ -17,9 +18,11 @@ sealed class ScreenRoutes(val route: String) {
     data object WorkoutExecution : ScreenRoutes("$WORKOUT_EXECUTION_ROUTE_PREFIX/{workoutId}") {
         fun create(workoutId: String) = "$WORKOUT_EXECUTION_ROUTE_PREFIX/$workoutId"
     }
+
     data object WorkoutDetails : ScreenRoutes("$WORKOUT_DETAILS_ROUTE_PREFIX/{workoutId}") {
         fun create(workoutId: String) = "$WORKOUT_DETAILS_ROUTE_PREFIX/$workoutId"
     }
+
     data object ExerciseEditor : ScreenRoutes("$EXERCISE_EDITOR_ROUTE_PREFIX/{exerciseId}") {
         fun create(exerciseId: String) = "$EXERCISE_EDITOR_ROUTE_PREFIX/$exerciseId"
     }

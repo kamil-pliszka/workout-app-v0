@@ -65,8 +65,8 @@ fun CustomDeleteDialog(
 private fun CustomDeleteDialogPreview() {
     AppTheme {
         CustomDeleteDialog(
-            onDismiss = {  },
-            onConfirm = {  },
+            onDismiss = { },
+            onConfirm = { },
         )
     }
 }

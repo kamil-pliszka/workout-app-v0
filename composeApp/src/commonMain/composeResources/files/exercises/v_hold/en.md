@@ -1,7 +1,10 @@
 #### Exercise Description
-V-Hold is an isometric core exercise that strengthens the rectus abdominis and deep core muscles. It involves holding the body in a “V” position with both the torso and legs lifted off the ground.
+
+V-Hold is an isometric core exercise that strengthens the rectus abdominis and deep core muscles. It
+involves holding the body in a “V” position with both the torso and legs lifted off the ground.
 
 #### Tips
+
 - Sit on the floor and lift both your legs and upper body simultaneously.
 - Keep your back as straight as possible without excessive rounding.
 - Extend your arms toward your legs or forward for balance.
@@ -10,6 +13,7 @@ V-Hold is an isometric core exercise that strengthens the rectus abdominis and d
 - Breathe steadily and under control.
 
 #### Common Mistakes
+
 - Rounding the lower back.
 - Letting legs or torso drop.
 - Lack of core engagement.

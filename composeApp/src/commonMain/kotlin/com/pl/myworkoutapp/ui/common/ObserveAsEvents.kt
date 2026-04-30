@@ -19,7 +19,7 @@ fun <T> ObserveAsEvents(
     LaunchedEffect(events, key1, key2, lifecycleOwner) {
         lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
             //withContext(Dispatchers.Main.immediate) { - mozna bezpiecznie usunac
-                events.collect(onEvent)
+            events.collect(onEvent)
             //}
         }
     }

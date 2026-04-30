@@ -10,7 +10,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.pl.myworkoutapp.domain.model.workout.CircuitStructure
 import com.pl.myworkoutapp.domain.model.workout.Phase
 import com.pl.myworkoutapp.ui.common.EmptyUiText
 import com.pl.myworkoutapp.ui.common.asUiText
@@ -128,7 +127,7 @@ fun WorkoutEditableItemCircuit(
 
 val CIRCUIT_EDITABLE_ITEM_WM = CircuitUiItem(
     phase = Phase.WARMUP,
-    structure = CircuitStructure.Standard(2),
+    structure = structureStandard(2),
     title = "ROZGRZEWECZKA".asUiText(),
 )
 
@@ -139,7 +138,7 @@ fun CircuitEditablePreviewBasic() {
     AppTheme {
         WorkoutEditableItemCircuit(
             circuit = CIRCUIT_EDITABLE_ITEM_WM.copy(
-                structure = CircuitStructure.AMRAP(300)
+                structure = structureAMRAP(12)
             ),
             themeColor = PureGreen,
             onClick = { },
@@ -155,7 +154,7 @@ fun CircuitEditablePreviewTimeLine() {
     AppTheme {
         WorkoutEditableItemCircuit(
             circuit = CIRCUIT_EDITABLE_ITEM_WM.copy(
-                structure = CircuitStructure.EMOM(12)
+                structure = structureEMOM(12)
             ).with(
                 TimeLineItemType.Vertical(Color.Green),
                 TimeLineItemType.Triple(Color.Magenta),
@@ -176,7 +175,7 @@ fun CircuitEditablePreviewProgress1() {
 
         WorkoutEditableItemCircuit(
             circuit = CIRCUIT_EDITABLE_ITEM_WM.copy(
-                structure = CircuitStructure.Standard(7),
+                structure = structureStandard(7),
             ).with(
                 TimeLineItemType.End(Color.Red),
             ),
@@ -195,11 +194,11 @@ fun CircuitEditablePreviewProgress2() {
         WorkoutEditableItemCircuit(
             circuit = CIRCUIT_EDITABLE_ITEM_WM.copy(
                 title = EmptyUiText,
-                structure = CircuitStructure.Tabata(
+                structure = structureTabata(
                     rounds = 8,
                     workSec = 30,
                     restSec = 15
-                ),
+                )
             ).with(
                 TimeLineItemType.Triple(Color.Red),
             ),

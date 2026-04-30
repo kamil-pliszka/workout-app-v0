@@ -102,6 +102,9 @@
     <string name="workout_add_exercise">Exercise</string>
     <string name="workout_add_circuit">Circuit</string>
     <string name="workout_add_items">Add workout items</string>
+    <string name="workout_empty_items">There are no items in workout</string>
+    <string name="workout_initial_name">My workout</string>
+    <string name="workout_initial_desc">My workout description</string>
 
     <string name="workout_editor_delete_title">Delete element</string>
     <string name="workout_editor_delete_question">Are you sure you want to delete element?</string>
@@ -110,6 +113,19 @@
     <string name="workout_view_reset_title">Reset changes</string>
     <string name="workout_view_reset_question">Are you sure to reset changes in workout?</string>
     <string name="workout_delete_success">Operation was successful</string>
+
+    <string name="workout_validation_err_empty_circuit">Empty circuit</string>
+    <string name="workout_validation_err_empty_workout">Empty workout</string>
+
+    <string name="workout_duration_hours">%1$d h</string>
+    <string name="workout_duration_hours_minutes">%1$d h %2$d min</string>
+    <string name="workout_duration_minute_seconds">%1$d m %2$d s</string>
+    <string name="workout_duration_minutes">%1$d min</string>
+    <string name="workout_duration_seconds">%1$d s</string>
+    <string name="workout_duration_unknown">-</string>
+    <string name="workout_duration_zero">0</string>
+    <string name="workout_kcal_unknown">-</string>
+    <string name="workout_kcal_pattern">≈ %1$d kCal</string>
 
     <string name="circuit_label">Circuit</string>
     <string name="circuit_label_new">Circuit (new)</string>
@@ -158,6 +174,10 @@
     <string name="exercise_editor_params">Parameters</string>
     <string name="exercise_editor_met">MET</string>
     <string name="exercise_editor_met_info">For example: 6 = moderate intensity</string>
+    <string name="exercise_editor_seconds_per_rep">Seconds per rep</string>
+    <string name="exercise_editor_seconds_per_rep_info">For example: 3.0 = pushup</string>
+    <string name="exercise_editor_meters_per_second">Meters per second</string>
+    <string name="exercise_editor_meters_per_second_info">For example: 2.8 = avg running</string>
     <string name="exercise_editor_choose_value">Choose...</string>
     <string name="exercise_editor_add_exercise">Add exercise</string>
     <string name="exercise_editor_edit_exercise">Edit exercise</string>

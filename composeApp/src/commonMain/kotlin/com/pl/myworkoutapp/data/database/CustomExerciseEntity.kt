@@ -21,4 +21,6 @@ data class CustomExerciseEntity(
     val quantityType: String,
     val defaultQuantityVal: Int,
     val updatedAt: Long = 0,
+    val secondsPerRep: Double?,
+    val metersPerSecond: Double?,
 )

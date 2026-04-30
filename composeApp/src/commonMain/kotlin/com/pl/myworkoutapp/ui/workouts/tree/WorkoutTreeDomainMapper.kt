@@ -50,7 +50,7 @@ fun transform(workout: Workout, exercises: Set<Exercise>): WorkoutWithExercisesU
 
     val rootNodes = workout.items.toTree(exercisesMap)
     val itemsUi = rootNodes.normalizeToUi().mapIndexed { idx, item ->
-        when(item) {
+        when (item) {
             is CircuitUiItem -> item.copy(key = idx)
             is ExerciseUiItem -> item.copy(key = idx)
         }
@@ -75,7 +75,7 @@ fun TreeNode.toDomain(): WorkoutItem =
         is CircuitNode -> Circuit(
             phase = circuit.phase,
             name = null,
-            structure = circuit.structure,
+            structure = circuit.structure.toDomain(),
             items = children.toDomain()
         )
     }

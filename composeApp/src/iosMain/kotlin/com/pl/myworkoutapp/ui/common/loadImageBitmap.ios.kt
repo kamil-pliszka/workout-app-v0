@@ -2,9 +2,7 @@ package com.pl.myworkoutapp.ui.common
 
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.toComposeImageBitmap
-import kotlinx.cinterop.ExperimentalForeignApi
-import kotlinx.cinterop.addressOf
-import kotlinx.cinterop.usePinned
+import kotlinx.cinterop.*
 import org.jetbrains.skia.Image
 import platform.Foundation.NSData
 import platform.Foundation.dataWithContentsOfFile

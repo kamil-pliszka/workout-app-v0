@@ -60,10 +60,10 @@ sealed interface WorkoutViewAction {
     data object OpenEditor : WorkoutViewAction
     data object OnBack : WorkoutViewAction
     data object DeleteRequest : WorkoutViewAction
-    data object ResetRequest: WorkoutViewAction
+    data object ResetRequest : WorkoutViewAction
     data object TuneRequest : WorkoutViewAction
-    data object DeleteConfirm: WorkoutViewAction
-    data object DeleteCancel: WorkoutViewAction
+    data object DeleteConfirm : WorkoutViewAction
+    data object DeleteCancel : WorkoutViewAction
 }
 
 fun WorkoutExerciseInfoAction.toWorkoutViewAction(): WorkoutViewAction = when (this) {
@@ -178,16 +178,20 @@ class WorkoutViewReducer(
                     modal = WorkoutViewModal.ConfirmDelete
                 )
             )
+
             WorkoutViewAction.ResetRequest -> WorkoutViewResult(
                 state = session.copy(
                     modal = WorkoutViewModal.ConfirmReset
                 )
             )
+
             WorkoutViewAction.DeleteCancel -> WorkoutViewResult(
                 state = session.copy(modal = null)
             )
+
             WorkoutViewAction.DeleteConfirm ->
                 WorkoutViewResult(session, WorkoutViewEffect.DeleteWorkout)
+
             WorkoutViewAction.TuneRequest -> TODO() //celowy wyjątek
         }
     }

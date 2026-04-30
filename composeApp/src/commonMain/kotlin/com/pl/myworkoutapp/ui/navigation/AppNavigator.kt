@@ -24,6 +24,7 @@ class AppNavigator {
             "Failed to emit navigation event: $event"
         }
     }
+
     fun closeDialog() {
         tryEmitEvent(AppNavigatorEvent.PopBackStack)
     }

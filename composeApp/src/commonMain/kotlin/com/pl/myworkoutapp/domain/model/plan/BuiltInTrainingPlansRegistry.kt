@@ -10,11 +10,12 @@ object BuiltInTrainingPlansRegistry {
         SixPackAbsPlan,
     ).associateByUnique { it.id }
 
-    fun get(id: BuiltInTrainingPlanId) = BUILT_INS[id] ?: error("Missing built-in training plan: $id")
+    fun get(id: BuiltInTrainingPlanId) =
+        BUILT_INS[id] ?: error("Missing built-in training plan: $id")
 
     fun getAllId(): Set<BuiltInTrainingPlanId> = BUILT_INS.keys
 
-    fun getAll() : List<TrainingPlan> = BUILT_INS.values.toList()
+    fun getAll(): List<TrainingPlan> = BUILT_INS.values.toList()
 
 
     init {

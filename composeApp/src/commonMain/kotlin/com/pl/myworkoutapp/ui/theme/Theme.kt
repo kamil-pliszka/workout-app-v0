@@ -23,36 +23,40 @@ import org.jetbrains.compose.resources.Font
 //    Font(fontResource("fonts/EurostileExtended-BlackItalic.otf"))
 //)
 
-val EurostileExt @Composable get() = FontFamily(
-    Font(
-        resource = Res.font.eurostile_extended_black_italic,
-        //weight = FontWeight.Bold
+val EurostileExt
+    @Composable get() = FontFamily(
+        Font(
+            resource = Res.font.eurostile_extended_black_italic,
+            //weight = FontWeight.Bold
+        )
     )
-)
-val EurostileBoldItalic @Composable get() = FontFamily(
-    Font(
-        //resource = Res.font.eurostile_bold_italic2,//kiepskie polskie literki
-        resource = Res.font.eurostile_bold_iItalic,//kiepskie polskie literki
-        //weight = FontWeight.Bold
+val EurostileBoldItalic
+    @Composable get() = FontFamily(
+        Font(
+            //resource = Res.font.eurostile_bold_italic2,//kiepskie polskie literki
+            resource = Res.font.eurostile_bold_iItalic,//kiepskie polskie literki
+            //weight = FontWeight.Bold
+        )
     )
-)
 
 
-val Orbitron @Composable get() = FontFamily(
-    Font(
-        //resource = Res.font.eurostile_bold_italic2,//kiepskie polskie literki
-        resource = Res.font.orbitron_variable,//kiepskie polskie literki
-        //weight = FontWeight.Bold
+val Orbitron
+    @Composable get() = FontFamily(
+        Font(
+            //resource = Res.font.eurostile_bold_italic2,//kiepskie polskie literki
+            resource = Res.font.orbitron_variable,//kiepskie polskie literki
+            //weight = FontWeight.Bold
+        )
     )
-)
 
-val RobotoItalicVariable @Composable get() = FontFamily(
-    Font(
-        //resource = Res.font.eurostile_bold_italic2,//kiepskie polskie literki
-        resource = Res.font.roboto_italic_variable,//kiepskie polskie literki
-        //weight = FontWeight.Bold
+val RobotoItalicVariable
+    @Composable get() = FontFamily(
+        Font(
+            //resource = Res.font.eurostile_bold_italic2,//kiepskie polskie literki
+            resource = Res.font.roboto_italic_variable,//kiepskie polskie literki
+            //weight = FontWeight.Bold
+        )
     )
-)
 
 /*
 // 2. TYPOGRAPHY
@@ -85,14 +89,15 @@ private val AppTypography = Typography(
 //    text: TextStyle = MaterialTheme.typography.bodyLarge,
 
 private val defaultTypography = Typography()
-val AppTypography: Typography @Composable get() = Typography(
-    //bodyLarge = defaultTypography.bodyLarge.copy(fontFamily = EurostileBoldItalic),
-    //bodyLarge = defaultTypography.bodyLarge.copy(fontFamily = EurostileExt),
-    //bodyLarge = defaultTypography.bodyLarge.copy(fontFamily = Orbitron),
-    //bodyLarge = defaultTypography.bodyLarge.copy(fontFamily = RobotoItalicVariable),
-    //displayLarge = defaultTypography.displayLarge.copy(fontFamily = RobotoItalicVariable),
-    //displaySmall = defaultTypography.displaySmall.copy(fontFamily = RobotoItalicVariable, fontSize = 22.sp),
-)
+val AppTypography: Typography
+    @Composable get() = Typography(
+        //bodyLarge = defaultTypography.bodyLarge.copy(fontFamily = EurostileBoldItalic),
+        //bodyLarge = defaultTypography.bodyLarge.copy(fontFamily = EurostileExt),
+        //bodyLarge = defaultTypography.bodyLarge.copy(fontFamily = Orbitron),
+        //bodyLarge = defaultTypography.bodyLarge.copy(fontFamily = RobotoItalicVariable),
+        //displayLarge = defaultTypography.displayLarge.copy(fontFamily = RobotoItalicVariable),
+        //displaySmall = defaultTypography.displaySmall.copy(fontFamily = RobotoItalicVariable, fontSize = 22.sp),
+    )
 
 // 3. COLOR SCHEMES
 private val LightColors = lightColorScheme(

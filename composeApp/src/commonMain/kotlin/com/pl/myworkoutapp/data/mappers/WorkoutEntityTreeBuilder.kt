@@ -33,6 +33,7 @@ class WorkoutEntityTreeBuilder {
                     require(children.isEmpty())
                     item
                 }
+
                 is Circuit -> {
                     item.copy(
                         items = children.map { buildNode(it) }

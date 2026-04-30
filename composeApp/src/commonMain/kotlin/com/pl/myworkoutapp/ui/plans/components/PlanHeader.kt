@@ -34,9 +34,11 @@ fun PlanHeader(
             .height(180.dp)
             .clip(RoundedCornerShape(16.dp))
             .background(
-                Brush.horizontalGradient(listOf(
-                    plan.themeColor,
-                    plan.themeColor.copy(alpha = 0.7f))
+                Brush.horizontalGradient(
+                    listOf(
+                        plan.themeColor,
+                        plan.themeColor.copy(alpha = 0.7f)
+                    )
                 )
             )
     ) {
@@ -58,7 +60,7 @@ fun PlanHeader(
                     Brush.verticalGradient(
                         listOf(
                             Color.Transparent,
-                            Color.Black.copy(alpha = 0.6f)
+                            MaterialTheme.colorScheme.scrim.copy(alpha = 0.6f)
                         )
                     )
                 )
@@ -77,12 +79,12 @@ fun PlanHeader(
             Text(
                 text = plan.name.asString(),
                 style = MaterialTheme.typography.titleLarge,
-                color = Color.White
+                color = MaterialTheme.colorScheme.onPrimary
             )
             Text(
                 text = plan.desc.asString(),
                 style = MaterialTheme.typography.bodyMedium,
-                color = Color.White
+                color = MaterialTheme.colorScheme.onPrimary
             )
         }
     }

@@ -27,7 +27,11 @@ sealed interface WorkoutViewModal {
 }
 
 sealed interface WorkoutEditModal {
-    data class ExercisePicker(val context: ExercisePickerContext, val currentExerciseId: ExerciseId?) : WorkoutEditModal
+    data class ExercisePicker(
+        val context: ExercisePickerContext,
+        val currentExerciseId: ExerciseId?
+    ) : WorkoutEditModal
+
     data object ConfirmDiscardChanges : WorkoutEditModal
     data class ConfirmDeleteItem(val key: Int) : WorkoutEditModal
 }
@@ -68,7 +72,7 @@ data class WorkoutEditSession(
 
     val editableCircuit: CircuitEditorUiState? = null,
     val editingCircuitItemKey: Int? = null,
-    ) : ExerciseInteractionHost<WorkoutEditSession> {
+) : ExerciseInteractionHost<WorkoutEditSession> {
 
     override fun withWorkout(workout: WorkoutWithExercisesUiModel): WorkoutEditSession =
         copy(workout = workout)

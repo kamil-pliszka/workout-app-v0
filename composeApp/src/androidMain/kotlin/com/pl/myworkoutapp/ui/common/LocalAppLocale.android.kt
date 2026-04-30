@@ -1,8 +1,6 @@
 package com.pl.myworkoutapp.ui.common
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.ProvidedValue
-import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.runtime.*
 import java.util.Locale
 
 actual object LocalAppLocale {

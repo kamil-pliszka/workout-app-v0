@@ -1,7 +1,11 @@
 #### Exercise Description
-Butt Bridge (glute bridge) is an exercise that primarily targets the glutes and the posterior chain, including the hamstrings and lower back. It involves lifting the hips from a lying position, improving strength, stability, and hip mobility.
+
+Butt Bridge (glute bridge) is an exercise that primarily targets the glutes and the posterior chain,
+including the hamstrings and lower back. It involves lifting the hips from a lying position,
+improving strength, stability, and hip mobility.
 
 #### Tips
+
 - Place your feet flat on the ground, hip-width apart.
 - Engage your glutes before lifting your hips.
 - Raise your hips until your body forms a straight line from knees to shoulders.
@@ -10,6 +14,7 @@ Butt Bridge (glute bridge) is an exercise that primarily targets the glutes and 
 - Breathe steadily – exhale while lifting your hips.
 
 #### Common Mistakes
+
 - Overarching the lower back instead of engaging the glutes.
 - Lifting hips too high at the expense of proper form.
 - Lack of core and glute engagement.

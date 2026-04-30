@@ -10,7 +10,7 @@ import java.io.File
 actual class DataStoreProvider {
     actual fun createDataStore(fileName: String): DataStore<Preferences> {
         val appDataDir = getAppDataDir()
-        if(!appDataDir.exists()) {
+        if (!appDataDir.exists()) {
             appDataDir.mkdirs()
         }
 

@@ -57,7 +57,7 @@ fun DayCard(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Column(modifier = Modifier.weight(1f)){
+                    Column(modifier = Modifier.weight(1f)) {
                         Text(
                             text = stringResource(Res.string.plans_day_number, day.dayIndex),
                             style = MaterialTheme.typography.titleMedium
@@ -84,6 +84,7 @@ fun DayCard(
                                     modifier = Modifier
                                 )
                             }
+
                             DayType.Workout -> {
                                 //można coś pokazać
                             }
@@ -97,6 +98,7 @@ fun DayCard(
                                     modifier = Modifier
                                 )
                             }
+
                             is DayProgress.InProgress -> {
                                 ProgressCircle(
                                     progress = day.dayProgress.progress,
@@ -106,6 +108,7 @@ fun DayCard(
                                     size = 40.dp
                                 )
                             }
+
                             DayProgress.NotStarted -> {
                                 //nic
                             }

@@ -5,6 +5,7 @@ import java.util.logging.Logger
 
 actual object Log {
     private val logger: Logger = Logger.getLogger(Log::class.java.name)
+
     init {
         logger.level = Level.FINE
     }

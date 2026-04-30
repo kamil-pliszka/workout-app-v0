@@ -4,7 +4,6 @@ import com.pl.myworkoutapp.domain.model.Difficulty
 
 data class CustomWorkout(
     override val id: WorkoutId.Custom,
-    //override val id: WorkoutId, //może być typu WorkoutId.BuiltIn gdy zapisywany jest zmieniony workout typu BuiltIn
     val name: String?,
     val description: String?,
     // imageUri w domenie jest OK w tym wypadku, bo nie jest typem UI, tylko reprezentacją zasobu
@@ -15,6 +14,9 @@ data class CustomWorkout(
     val basedOn: WorkoutId.BuiltIn?,
 
     override val difficulty: Difficulty,
-    //override val estimatedDuration: Int, //in seconds
     override val items: List<WorkoutItem>,
+
+    override val estimatedDuration: Int? = null,//in seconds
+    override val baseKcalPerKg: Double? = null,
+    override val estimatedKcal: Int? = null,
 ) : Workout

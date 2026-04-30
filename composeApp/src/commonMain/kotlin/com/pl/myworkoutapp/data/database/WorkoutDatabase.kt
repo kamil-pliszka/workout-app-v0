@@ -11,7 +11,7 @@ import androidx.room.*
     DbTypeConverters::class
 )
 @ConstructedBy(WorkoutDatabaseConstructor::class)
-abstract class WorkoutDatabase: RoomDatabase() {
+abstract class WorkoutDatabase : RoomDatabase() {
     abstract val exerciseDao: ExerciseDao
     abstract val workoutDao: WorkoutDao
 

@@ -54,7 +54,7 @@ val PREVIEW_PLAN = PlanUiModel(
     days = List(10) { idx ->
         val isRestDay = idx % 3 == 2
         PlanDayUiModel(
-            desc = "${(idx*171+13)%37} ćwiczeń / ${((idx+56)*14%43)} min / ${((idx + 6) * 131 % 431)} kcal".asUiText(),//TODO
+            desc = "${(idx * 171 + 13) % 37} ćwiczeń / ${((idx + 56) * 14 % 43)} min / ${((idx + 6) * 131 % 431)} kcal".asUiText(),//TODO
             dayIndex = idx + 1,
             dayType = if (isRestDay) DayType.Rest else DayType.Workout,
             dayProgress = when {

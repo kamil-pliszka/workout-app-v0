@@ -12,6 +12,7 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.*
+import com.pl.myworkoutapp.ui.theme.AppTheme
 
 
 //https://www.francescvilarino.com/segmented-progress-bar
@@ -100,21 +101,23 @@ private fun DrawScope.drawSegments(
 @Preview
 @Composable
 fun SegmentedProgressIndicatorPreview() {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(Color.LightGray)
-            .padding(16.dp)
-    ) {
-        SegmentedProgressIndicator(
-            progress = 0.37f,
-            modifier = Modifier.fillMaxWidth(),
-            color = Color.Magenta,
-            //backgroundColor = Color.LightGray,
-            progressHeight = 32.dp,
-            numberOfSegments = 3,
-            segmentGap = 16.dp
-        )
+    AppTheme {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(MaterialTheme.colorScheme.outlineVariant)
+                .padding(16.dp)
+        ) {
+            SegmentedProgressIndicator(
+                progress = 0.37f,
+                modifier = Modifier.fillMaxWidth(),
+                color = MaterialTheme.colorScheme.secondary, //Color.Magenta,
+                //backgroundColor = Color.LightGray,
+                progressHeight = 32.dp,
+                numberOfSegments = 3,
+                segmentGap = 16.dp
+            )
 
+        }
     }
 }

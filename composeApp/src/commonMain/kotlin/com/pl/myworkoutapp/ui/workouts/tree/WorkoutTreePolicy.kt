@@ -1,7 +1,7 @@
 package com.pl.myworkoutapp.ui.workouts.tree
 
-import com.pl.myworkoutapp.domain.model.workout.CircuitStructure
 import com.pl.myworkoutapp.ui.common.DropPosition
+import com.pl.myworkoutapp.ui.workouts.CircuitStructureType
 
 class WorkoutTreePolicy {
 
@@ -74,7 +74,7 @@ class WorkoutTreePolicy {
         }
     }
 
-    private fun CircuitNode.canContainCircuit() : Boolean {
+    private fun CircuitNode.canContainCircuit(): Boolean {
         //TODO - do zaimplementowania kiedys
         //I tu już masz miejsce na reguły typu:
         //tabata nie może zawierać circuit
@@ -110,11 +110,11 @@ class WorkoutTreePolicy {
     ): Boolean {
         if (target !is CircuitNode) return false
 
-        return when (target.circuit.structure) {
-            is CircuitStructure.Standard -> true
-            is CircuitStructure.Tabata -> source is ExerciseNode
-            is CircuitStructure.EMOM -> source is ExerciseNode
-            is CircuitStructure.AMRAP -> source is ExerciseNode
+        return when (target.circuit.structure.type) {
+            CircuitStructureType.Standard -> true
+            CircuitStructureType.Tabata -> source is ExerciseNode
+            CircuitStructureType.EMOM -> source is ExerciseNode
+            CircuitStructureType.AMRAP -> source is ExerciseNode
         }
     }
 
@@ -140,11 +140,11 @@ class WorkoutTreePolicy {
         source: TreeNode,
         parent: CircuitNode
     ): Boolean {
-        return when (parent.circuit.structure) {
-            is CircuitStructure.Standard -> true
-            is CircuitStructure.Tabata -> source is ExerciseNode
-            is CircuitStructure.EMOM -> source is ExerciseNode
-            is CircuitStructure.AMRAP -> source is ExerciseNode
+        return when (parent.circuit.structure.type) {
+            CircuitStructureType.Standard -> true
+            CircuitStructureType.Tabata -> source is ExerciseNode
+            CircuitStructureType.EMOM -> source is ExerciseNode
+            CircuitStructureType.AMRAP -> source is ExerciseNode
         }
     }
 }

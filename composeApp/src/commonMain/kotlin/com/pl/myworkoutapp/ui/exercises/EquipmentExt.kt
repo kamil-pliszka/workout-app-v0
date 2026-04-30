@@ -21,7 +21,6 @@ fun Equipment.asUiText(): UiText {
 }
 
 
-
 fun Equipment.getImageResource(): DrawableResource = when (this) {
     Equipment.BODYWEIGHT -> Res.drawable.ic_equipment_bodyweight
     Equipment.DUMBBELLS -> Res.drawable.ic_equipment_dumbbells

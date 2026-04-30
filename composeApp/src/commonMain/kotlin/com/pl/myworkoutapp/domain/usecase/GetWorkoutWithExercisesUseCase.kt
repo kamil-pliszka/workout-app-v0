@@ -2,30 +2,33 @@ package com.pl.myworkoutapp.domain.usecase
 
 import com.pl.myworkoutapp.domain.WorkoutRepository
 import com.pl.myworkoutapp.domain.model.exercise.Exercise
-import com.pl.myworkoutapp.domain.model.workout.*
-import kotlinx.coroutines.*
+import com.pl.myworkoutapp.domain.model.workout.Workout
+import com.pl.myworkoutapp.domain.model.workout.WorkoutId
 
 data class WorkoutWithExercises(
-    val workout : Workout,
+    val workout: Workout,
     val exercises: Set<Exercise>,
 )
+
 class GetWorkoutWithExercisesUseCase(
-    private val repository: WorkoutRepository
+    private val repository: WorkoutRepository,
+    private val resolveWorkoutExerciseUC: ResolveWorkoutExercisesUseCase,
+    private val estimateWorkoutMetricsUC: EstimateWorkoutMetricsUseCase,
 ) {
     suspend fun execute(workoutId: WorkoutId): WorkoutWithExercises {
         val workout = repository.getWorkout(workoutId)
-        // 1. Identify unique exercise IDs
-        val exerciseIds = workout.items.extractExerciseIds()
 
-        // 2. Fetch all required exercises in parallel
-        val exercises = coroutineScope {
-            exerciseIds.map { id ->
-                async { repository.getExercise(id) }
-            }.awaitAll().toSet()
-        }
+        val exercises = resolveWorkoutExerciseUC.execute(workout.items)
+
+        //przy pobraniu konkretnego workout przeliczamy metryki
+        val metrics = estimateWorkoutMetricsUC.execute(
+            workout.items, exercises
+        )
 
         return WorkoutWithExercises(
-            workout = workout,
+            workout = workout
+                .withMetrics(metrics)
+                .withEstimatedKcalForWeight(100.0),
             exercises = exercises
         )
     }

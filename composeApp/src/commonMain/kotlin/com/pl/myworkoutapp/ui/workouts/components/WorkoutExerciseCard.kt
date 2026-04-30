@@ -13,6 +13,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.pl.myworkoutapp.ui.theme.AppTheme
 import myworkoutapplication.composeapp.generated.resources.*
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
@@ -29,7 +30,7 @@ fun ExerciseCard(
         modifier = Modifier
             .fillMaxWidth()
             .height(140.dp)
-            .border(1.dp, Color.LightGray, RoundedCornerShape(8.dp))
+            .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(8.dp))
             .clip(RoundedCornerShape(8.dp))
     ) {
         Image(
@@ -43,14 +44,14 @@ fun ExerciseCard(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .background(
-                    Color.Gray.copy(alpha = 0.8f),
+                    MaterialTheme.colorScheme.outline.copy(alpha = 0.8f),
                     RoundedCornerShape(topStart = 8.dp)
                 )
                 .padding(horizontal = 8.dp, vertical = 4.dp)
         ) {
             Text(
                 text = qty,
-                color = Color.White
+                color = MaterialTheme.colorScheme.onPrimary
             )
         }
         //DONE flag
@@ -72,7 +73,6 @@ fun ExerciseCard(
 }
 
 
-
 @Composable
 fun ExerciseCardEditable(
     name: String,
@@ -85,7 +85,7 @@ fun ExerciseCardEditable(
         modifier = Modifier
             .fillMaxWidth()
             .height(80.dp)
-            .border(1.dp, Color.LightGray, RoundedCornerShape(8.dp))
+            .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(8.dp))
             .clip(RoundedCornerShape(8.dp))
     ) {
         Text(
@@ -104,14 +104,14 @@ fun ExerciseCardEditable(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .background(
-                    Color.Gray.copy(alpha = 0.8f),
+                    MaterialTheme.colorScheme.outline.copy(alpha = 0.8f),
                     RoundedCornerShape(topStart = 8.dp)
                 )
                 .padding(horizontal = 8.dp, vertical = 4.dp)
         ) {
             Text(
                 text = qty,
-                color = Color.White
+                color = MaterialTheme.colorScheme.onPrimary
             )
         }
         //DONE flag
@@ -135,23 +135,27 @@ fun ExerciseCardEditable(
 @Preview
 @Composable
 fun ExerciseCardPreview() {
-    ExerciseCard(
-        qty = "x 37",
-        icon = Res.drawable.ic_jumping_jacks,
-        isDone = true,
-        isCurrent = true,
-        themeColor = Color.Cyan
-    )
+    AppTheme {
+        ExerciseCard(
+            qty = "x 37",
+            icon = Res.drawable.ic_jumping_jacks,
+            isDone = true,
+            isCurrent = true,
+            themeColor = MaterialTheme.colorScheme.secondary
+        )
+    }
 }
 
 @Preview
 @Composable
 fun ExerciseCardEditablePreview() {
-    ExerciseCardEditable(
-        name = "Nazwa ćwiczenia",
-        qty = "x 31",
-        icon = Res.drawable.ic_flying_witch1,
-        isDone = true,
-        themeColor = Color.Cyan
-    )
+    AppTheme {
+        ExerciseCardEditable(
+            name = "Nazwa ćwiczenia",
+            qty = "x 31",
+            icon = Res.drawable.ic_flying_witch1,
+            isDone = true,
+            themeColor = MaterialTheme.colorScheme.secondary
+        )
+    }
 }

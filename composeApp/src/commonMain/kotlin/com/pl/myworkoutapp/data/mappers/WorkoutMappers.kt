@@ -18,6 +18,9 @@ fun CustomWorkout.toEntity() = CustomWorkoutEntity(
     imageUri = imageUri,
     basedOn = basedOn?.asRawString(),
     difficulty = difficulty.name,
+    estimatedDuration = estimatedDuration,
+    baseKcalPerKg = baseKcalPerKg,
+    estimatedKcal = estimatedKcal,
 )
 
 fun CustomWorkoutEntity.toDomain() = CustomWorkout(
@@ -27,6 +30,9 @@ fun CustomWorkoutEntity.toDomain() = CustomWorkout(
     imageUri = imageUri,
     basedOn = basedOn?.toBuiltInWorkoutId(),
     difficulty = Difficulty.valueOf(difficulty),
+    estimatedDuration = estimatedDuration,
+    baseKcalPerKg = baseKcalPerKg,
+    estimatedKcal = estimatedKcal,
     items = emptyList()
 )
 
@@ -83,7 +89,7 @@ fun serializeStructure(structure: CircuitStructure): Pair<String, String?> =
         is CircuitStructure.Standard -> "STANDARD" to structure.rounds.toString()
         is CircuitStructure.EMOM -> "EMOM" to structure.minutes.toString()
         is CircuitStructure.AMRAP -> "AMRAP" to structure.durationSec.toString()
-        is CircuitStructure.Tabata -> "TABATA" to "${structure.workSec},${structure.restSec}"
+        is CircuitStructure.Tabata -> "TABATA" to "${structure.rounds},${structure.workSec},${structure.restSec}"
     }
 
 fun deserializeStructure(type: String, data: String?): CircuitStructure {
