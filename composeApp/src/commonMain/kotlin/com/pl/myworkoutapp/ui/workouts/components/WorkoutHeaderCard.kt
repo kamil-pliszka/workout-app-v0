@@ -1,6 +1,7 @@
 package com.pl.myworkoutapp.ui.workouts.components
 
-import androidx.compose.foundation.*
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -15,10 +16,10 @@ import androidx.compose.ui.unit.dp
 import com.pl.myworkoutapp.domain.model.Difficulty
 import com.pl.myworkoutapp.domain.model.workout.*
 import com.pl.myworkoutapp.ui.components.DifficultyBadge
+import com.pl.myworkoutapp.ui.components.UiImageComponent
 import com.pl.myworkoutapp.ui.theme.EurostileExt
 import com.pl.myworkoutapp.ui.workouts.WorkoutUiModel
 import com.pl.myworkoutapp.ui.workouts.toUi
-import org.jetbrains.compose.resources.painterResource
 
 
 @Composable
@@ -44,11 +45,11 @@ fun WorkoutHeaderCard(
             )
         ) {
             // Tło (obraz)
-            Image(
-                painter = painterResource(workout.imageUrl),
-                contentDescription = null,
+            UiImageComponent(
+                modifier = Modifier.fillMaxSize().padding(16.dp),
+                contentDescription = "workout image",
+                image = workout.image,
                 contentScale = ContentScale.Fit,
-                modifier = Modifier.fillMaxSize().padding(16.dp)
             )
 
             // Gradient overlay (czytelność tekstu)
@@ -141,9 +142,9 @@ fun WorkoutHeaderCardPreview() {
         basedOn = BuiltInWorkoutId.MY_ABS_WORKOUT_WITH_SET.asWorkoutId(),
         difficulty = Difficulty.ADVANCED,
         estimatedDuration = 123,
-        estimatedKcal = 2345,
+        baseKcalPerKg = 234.5,
         items = emptyList()
-    ).toUi()
+    ).toUi(WorkoutMetrics(345))
     WorkoutHeaderCard(
         workout = workoutUiModel,
         onClick = {}

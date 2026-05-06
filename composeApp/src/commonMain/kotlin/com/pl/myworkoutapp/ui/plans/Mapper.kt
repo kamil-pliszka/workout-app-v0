@@ -11,13 +11,13 @@ fun TrainingPlan.toUi(): PlanUiModel {
         id = id.name,
         name = config.name,
         desc = config.desc,
-        imageUrl = config.image,
+        image = config.image,
         themeColor = config.color,
         days = days.mapIndexed { index, day ->
             PlanDayUiModel(
                 desc = "TODO-desc".asUiText(),//TODO
                 dayIndex = index + 1,
-                dayType = if (day.item is RestDayItem) DayType.Rest else DayType.Workout,
+                dayType = if (day.item is RestDayItem) DayType.RestDay else DayType.WorkoutDay,
                 dayProgress = DayProgress.NotStarted,//TODO
                 isCurrent = false,//TODO
             )

@@ -38,6 +38,10 @@ class AppSettingRepositoryImpl(
             )
         }.distinctUntilChanged() //UserProfile jest data class
 
+    override val weightFlow: Flow<Double> =
+        userProfileFlow.map { it.weightKg?.toDouble() ?: 100.0 }.distinctUntilChanged()
+
+
     //override suspend fun getLanguageOnce(): String = languageFlow.first()
     override suspend fun getLanguageOnce(): String =
         dataStore.data

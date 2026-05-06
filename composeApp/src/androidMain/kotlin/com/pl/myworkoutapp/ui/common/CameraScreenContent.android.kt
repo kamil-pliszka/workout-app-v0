@@ -4,6 +4,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.core.content.FileProvider
 import java.io.File
 
@@ -12,18 +13,23 @@ actual fun CameraScreenContent(
     onResult: (String?) -> Unit,
 ) {
     val context = LocalContext.current
+    val isInPreview = LocalInspectionMode.current
 
     val capturedFile = remember {
         val timestamp = System.currentTimeMillis()
         File(context.filesDir, "_tmp_camera_$timestamp.jpeg")
     }
 
-    val uri = remember {
-        FileProvider.getUriForFile(
-            context,
-            "${context.packageName}.fileprovider",
-            capturedFile
-        )
+    val uri = remember(isInPreview) {
+        if (isInPreview) {
+            null
+        } else {
+            FileProvider.getUriForFile(
+                context,
+                "${context.packageName}.fileprovider",
+                capturedFile
+            )
+        }
     }
 
     val launcher = rememberLauncherForActivityResult(
@@ -39,9 +45,9 @@ actual fun CameraScreenContent(
     var launched by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
-        if (!launched) {
+        if (!launched && !isInPreview) {
             launched = true
-            launcher.launch(uri)
+            uri?.let { launcher.launch(it) }
         }
     }
 }

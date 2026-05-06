@@ -14,12 +14,14 @@ import com.pl.myworkoutapp.ui.workouts.details.ExerciseInteractionAction.Open
 import com.pl.myworkoutapp.ui.workouts.details.ExerciseInteractionAction.Prev
 import com.pl.myworkoutapp.ui.workouts.details.ExerciseInteractionAction.Reset
 import com.pl.myworkoutapp.ui.workouts.details.ExerciseInteractionAction.Save
+import com.pl.myworkoutapp.ui.workouts.details.ExercisePickerContext.*
 import com.pl.myworkoutapp.ui.workouts.details.WorkoutEditEffect.CloseEditor
 import com.pl.myworkoutapp.ui.workouts.details.WorkoutEditEffect.LoadExerciseForList
 import com.pl.myworkoutapp.ui.workouts.details.WorkoutEditEffect.LoadExerciseForPreview
 import com.pl.myworkoutapp.ui.workouts.details.WorkoutEditEffect.LoadExerciseInfo
 import com.pl.myworkoutapp.ui.workouts.details.WorkoutEditEffect.ResetDraft
 import com.pl.myworkoutapp.ui.workouts.details.WorkoutEditEffect.SaveDraft
+import com.pl.myworkoutapp.ui.workouts.details.WorkoutEditModal.*
 import com.pl.myworkoutapp.ui.workouts.tree.WorkoutTreeMutation
 import com.pl.myworkoutapp.ui.workouts.tree.WorkoutTreeMutationHandler
 
@@ -89,6 +91,14 @@ sealed interface WorkoutEditAction {
     data object CloseEditor : WorkoutEditAction
     data object ShowExercisePicker : WorkoutEditAction
     data class ExerciseReplaced(val info: ExerciseInfoUiModel) : WorkoutEditAction
+
+    data object OpenMetadataEditor : WorkoutEditAction
+    data object CancelMetadataEditor : WorkoutEditAction
+    data object SaveMetadataEditor : WorkoutEditAction
+
+    data class UpdateMetadataName(val value: String) : WorkoutEditAction
+    data class UpdateMetadataDescription(val value: String) : WorkoutEditAction
+    data class UpdateMetadataImage(val value: UiImage) : WorkoutEditAction
 }
 
 fun WorkoutExerciseInfoAction.toWorkoutEditAction(): WorkoutEditAction = when (this) {
@@ -136,6 +146,7 @@ class WorkoutEditReducer(
     private val circuitReducer: CircuitEditorDelegate,
     private val workoutTreeMutationHandler: WorkoutTreeMutationHandler
 ) {
+    @Suppress("PrivatePropertyName")
     private val TAG = "WorkoutEditReducer"
 
     fun reduce(
@@ -200,8 +211,8 @@ class WorkoutEditReducer(
             //FAB action
             WorkoutEditAction.AddExercise -> WorkoutEditResult(
                 state = session.copy(
-                    modal = WorkoutEditModal.ExercisePicker(
-                        ExercisePickerContext.AddExercise, null
+                    modal = ExercisePicker(
+                        AddExercise, null
                     )
                 )
             )
@@ -227,7 +238,7 @@ class WorkoutEditReducer(
 
             is WorkoutEditAction.DeleteItem -> WorkoutEditResult(
                 state = session.copy(
-                    modal = WorkoutEditModal.ConfirmDeleteItem(action.key)
+                    modal = ConfirmDeleteItem(action.key)
                 )
             )
 
@@ -257,8 +268,8 @@ class WorkoutEditReducer(
             is WorkoutEditAction.ExerciseExchangeStart -> WorkoutEditResult(
                 //tryb zmiany ćwiczenia po kliknięciu ikony exchange na ćwiczeniu w liście
                 state = session.copy(
-                    modal = WorkoutEditModal.ExercisePicker(
-                        ExercisePickerContext.ReplaceListItem(action.key),
+                    modal = ExercisePicker(
+                        ReplaceListItem(action.key),
                         action.currentExerciseId
                     )
                 )
@@ -269,8 +280,8 @@ class WorkoutEditReducer(
                 //val key = session.activeExercise?.key ?: return WorkoutEditResult(session)
                 WorkoutEditResult(
                     state = session.copy(
-                        modal = WorkoutEditModal.ExercisePicker(
-                            ExercisePickerContext.ReplacePreview,
+                        modal = ExercisePicker(
+                            ReplacePreview,
                             session.activeExercise?.draft?.exerciseId
                         )
                     )
@@ -280,6 +291,64 @@ class WorkoutEditReducer(
             is WorkoutEditAction.ChangeQuantityOnList -> WorkoutEditResult(
                 changeQuantityOnList(session, action.key, action.increase)
             )
+
+            WorkoutEditAction.OpenMetadataEditor -> {
+                WorkoutEditResult(
+                    state = session.copy(
+                        editableMetadata = WorkoutMetadataDraft(
+                            image = session.workout.workout.image,
+                            name = session.workout.workout.name,
+                            description = session.workout.workout.desc,
+                        )
+                    )
+                )
+            }
+
+            WorkoutEditAction.CancelMetadataEditor -> {
+                WorkoutEditResult(
+                    state = session.copy(editableMetadata = null)
+                )
+            }
+
+            WorkoutEditAction.SaveMetadataEditor -> {
+                val draft = session.editableMetadata ?: return WorkoutEditResult(session)
+                WorkoutEditResult(
+                    state = session.copy(
+                        workout = session.workout.copy(
+                            workout = session.workout.workout.copy(
+                                image = draft.image,
+                                name = draft.name,
+                                desc = draft.description,
+                            )
+                        ),
+                        editableMetadata = null,
+                    )
+                )
+            }
+
+            is WorkoutEditAction.UpdateMetadataName -> {
+                WorkoutEditResult(
+                    state = session.copy(
+                        editableMetadata = session.editableMetadata?.copy(name = action.value.asUiText())
+                    )
+                )
+            }
+
+            is WorkoutEditAction.UpdateMetadataDescription -> {
+                WorkoutEditResult(
+                    state = session.copy(
+                        editableMetadata = session.editableMetadata?.copy(description = action.value.asUiText())
+                    )
+                )
+            }
+
+            is WorkoutEditAction.UpdateMetadataImage -> {
+                WorkoutEditResult(
+                    state = session.copy(
+                        editableMetadata = session.editableMetadata?.copy(image = action.value)
+                    )
+                )
+            }
         }
     }
 
@@ -350,7 +419,7 @@ class WorkoutEditReducer(
         session: WorkoutEditSession,
         exerciseId: ExerciseId?
     ): WorkoutEditResult {
-        val modal = session.modal as? WorkoutEditModal.ExercisePicker
+        val modal = session.modal as? ExercisePicker
             ?: return WorkoutEditResult(session)
 
         if (exerciseId == null) {
@@ -360,18 +429,18 @@ class WorkoutEditReducer(
         }
 
         return when (modal.context) {
-            ExercisePickerContext.AddExercise ->
+            AddExercise ->
                 WorkoutEditResult(
                     state = session.copy(modal = null),
                     effect = LoadExerciseForList(modal.context, exerciseId)
                 )
 
-            is ExercisePickerContext.ReplaceListItem -> WorkoutEditResult(
+            is ReplaceListItem -> WorkoutEditResult(
                 state = session.copy(modal = null),
                 effect = LoadExerciseForList(modal.context, exerciseId)
             )
 
-            is ExercisePickerContext.ReplacePreview ->
+            is ReplacePreview ->
                 WorkoutEditResult(
                     state = session.copy(modal = null),
                     effect = LoadExerciseForPreview(exerciseId)
@@ -385,13 +454,13 @@ class WorkoutEditReducer(
         exercise: ExerciseUiItem
     ): WorkoutEditResult {
         return when (context) {
-            ExercisePickerContext.AddExercise ->
+            AddExercise ->
                 addExercise(session.copy(modal = null), exercise)
 
-            is ExercisePickerContext.ReplaceListItem ->
+            is ReplaceListItem ->
                 exchangeExercise(session.copy(modal = null), context.key, exercise)
 
-            ExercisePickerContext.ReplacePreview -> {
+            ReplacePreview -> {
                 Log.e(TAG, "Invalid ReplacePreview in exercisePickedLoaded")
                 WorkoutEditResult(session)
             }

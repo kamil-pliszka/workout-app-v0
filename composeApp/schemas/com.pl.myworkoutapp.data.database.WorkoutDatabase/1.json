@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "fda0ca22119fd08d5d9c0419e8e11f52",
+    "identityHash": "1985834d9a70b0fd42fe7b2c72a63176",
     "entities": [
       {
         "tableName": "CustomExerciseEntity",
@@ -198,7 +198,7 @@
       },
       {
         "tableName": "CustomWorkoutEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `planId` INTEGER, `name` TEXT, `description` TEXT, `imageUri` TEXT, `basedOn` TEXT, `difficulty` TEXT NOT NULL, `updatedAt` INTEGER NOT NULL, `estimatedDuration` INTEGER, `baseKcalPerKg` REAL, `estimatedKcal` INTEGER)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `planId` INTEGER, `name` TEXT, `description` TEXT, `imageUri` TEXT, `basedOn` TEXT, `difficulty` TEXT NOT NULL, `updatedAt` INTEGER NOT NULL, `estimatedDuration` INTEGER NOT NULL, `baseKcalPerKg` REAL NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -246,17 +246,14 @@
           {
             "fieldPath": "estimatedDuration",
             "columnName": "estimatedDuration",
-            "affinity": "INTEGER"
+            "affinity": "INTEGER",
+            "notNull": true
           },
           {
             "fieldPath": "baseKcalPerKg",
             "columnName": "baseKcalPerKg",
-            "affinity": "REAL"
-          },
-          {
-            "fieldPath": "estimatedKcal",
-            "columnName": "estimatedKcal",
-            "affinity": "INTEGER"
+            "affinity": "REAL",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -434,7 +431,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'fda0ca22119fd08d5d9c0419e8e11f52')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '1985834d9a70b0fd42fe7b2c72a63176')"
     ]
   }
 }

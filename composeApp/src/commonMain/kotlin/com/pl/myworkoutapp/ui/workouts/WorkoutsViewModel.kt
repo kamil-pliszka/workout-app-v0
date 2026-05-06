@@ -26,10 +26,10 @@ class WorkoutsViewModel(
 
     private fun observeWorkouts() {
         viewModelScope.launch {
-            getMainWorkoutsUseCase.execute().collect { workouts ->
+            getMainWorkoutsUseCase.execute().collect { workoutsWithMetrics ->
                 _state.value = WorkoutsUiState(
                     isLoading = false,
-                    workouts = workouts.map { it.toUi() }
+                    workouts = workoutsWithMetrics.map { it.workout.toUi(it.metrics) }
                 )
             }
         }

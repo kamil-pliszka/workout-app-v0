@@ -19,8 +19,6 @@ data class CustomWorkoutEntity(
     val basedOn: String?, //WorkoutId.BuiltIn?,
     val difficulty: String, //Difficulty,
     val updatedAt: Long = 0,
-    //val items: List<WorkoutItem>,
-    val estimatedDuration: Int?,//in seconds
-    val baseKcalPerKg: Double?,
-    val estimatedKcal: Int?,
+    val estimatedDuration: Int,//in seconds
+    val baseKcalPerKg: Double,
 )

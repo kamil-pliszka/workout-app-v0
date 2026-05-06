@@ -16,6 +16,7 @@
     <string name="btn_add">Add</string>
     <string name="btn_choose">Choose</string>
     <string name="btn_back">Back</string>
+    <string name="btn_edit">Edit</string>
 
     <string name="navigation_plans">Plans</string>
     <string name="navigation_workouts">Workouts</string>
@@ -105,6 +106,9 @@
     <string name="workout_empty_items">There are no items in workout</string>
     <string name="workout_initial_name">My workout</string>
     <string name="workout_initial_desc">My workout description</string>
+    <string name="workout_details">Workout details</string>
+    <string name="workout_desc">Description</string>
+    <string name="workout_name">Name</string>
 
     <string name="workout_editor_delete_title">Delete element</string>
     <string name="workout_editor_delete_question">Are you sure you want to delete element?</string>
@@ -115,7 +119,10 @@
     <string name="workout_delete_success">Operation was successful</string>
 
     <string name="workout_validation_err_empty_circuit">Empty circuit</string>
-    <string name="workout_validation_err_empty_workout">Empty workout</string>
+    <string name="workout_validation_err_empty_workout">Empty workout items</string>
+    <string name="workout_validation_err_empty_desc">Empty description</string>
+    <string name="workout_validation_err_empty_name">Empty name</string>
+    <string name="workout_validation_err_empty_image">Empty image</string>
 
     <string name="workout_duration_hours">%1$d h</string>
     <string name="workout_duration_hours_minutes">%1$d h %2$d min</string>

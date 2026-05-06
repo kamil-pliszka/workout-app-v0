@@ -16,8 +16,7 @@ fun Exercise.toUi(): ExerciseInfoUiModel = when (this) {
             customDesc = null,
             descExerciseId = id.toBuiltInExerciseId(),
             descriptionMarkdown = null, //będzie ustawione w VM
-            icon = config.image,
-            imagePath = null,
+            image = config.image.asUiImage(),
             equipment = equipment,
         )
     }
@@ -40,14 +39,10 @@ fun Exercise.toUi(): ExerciseInfoUiModel = when (this) {
             },
             descExerciseId = basedOn?.toBuiltInExerciseId(),
             descriptionMarkdown = null, //będzie ustawione w VM
-            icon = when {
-                !imageUri.isNullOrEmpty() -> null
-                configBase != null -> configBase.image
-                else -> null
-            },
-            imagePath = when {
-                !imageUri.isNullOrEmpty() -> imageUri
-                else -> null
+            image = when {
+                !imageUri.isNullOrEmpty() -> imageUri.asUiImage()
+                configBase != null -> configBase.image.asUiImage()
+                else -> UiImage.Empty
             },
             equipment = equipment,
         )
@@ -64,8 +59,7 @@ suspend fun Exercise.toSearchUi(): ExercisePickerListItem = when (this) {
             muscle = muscle,
             equipment = equipment,
             exerciseType = exerciseType,
-            icon = config.image,
-            imagePath = null,
+            image = config.image.asUiImage(),
         )
     }
 
@@ -82,15 +76,11 @@ suspend fun Exercise.toSearchUi(): ExercisePickerListItem = when (this) {
             muscle = muscle,
             equipment = equipment,
             exerciseType = exerciseType,
-            icon = when {
-                !imageUri.isNullOrEmpty() -> null
-                configBase != null -> configBase.image
-                else -> null
-            },
-            imagePath = when {
-                !imageUri.isNullOrEmpty() -> imageUri
-                else -> null
-            },
+            image = when {
+                !imageUri.isNullOrEmpty() -> imageUri.asUiImage()
+                configBase != null -> configBase.image.asUiImage()
+                else -> UiImage.Empty
+            }
         )
     }
 }

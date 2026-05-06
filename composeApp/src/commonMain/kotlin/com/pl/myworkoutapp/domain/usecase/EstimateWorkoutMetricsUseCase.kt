@@ -4,7 +4,7 @@ import com.pl.myworkoutapp.domain.model.exercise.*
 import com.pl.myworkoutapp.domain.model.workout.*
 import kotlin.math.roundToInt
 
-data class WorkoutMetrics(
+data class WorkoutBaseMetrics(
     val durationSeconds: Int,
     val baseKcalPerKg: Double
 )
@@ -18,41 +18,18 @@ private fun List<ItemMetrics>.sum(): ItemMetrics = this.fold(0.0 to 0.0) { (dur,
     (dur + item.durationSeconds) to (kcal + item.baseKcalPerKg)
 }.let { (dur, kcal) -> ItemMetrics(dur, kcal) }
 
-fun Workout.withMetrics(metrics: WorkoutMetrics) = when (this) {
-    is BuiltInWorkout -> copy(
-        estimatedDuration = metrics.durationSeconds,
-        baseKcalPerKg = metrics.baseKcalPerKg
-    )
-
-    is CustomWorkout -> copy(
-        estimatedDuration = metrics.durationSeconds,
-        baseKcalPerKg = metrics.baseKcalPerKg
-    )
-}
-
-fun Workout.withEstimatedKcalForWeight(weight: Double) = when (this) {
-    is BuiltInWorkout -> copy(
-        estimatedKcal = ((baseKcalPerKg ?: 0.0) * weight).roundToInt()
-    )
-
-    is CustomWorkout -> copy(
-        estimatedKcal = ((baseKcalPerKg ?: 0.0) * weight).roundToInt()
-    )
-}
-
-
 class EstimateWorkoutMetricsUseCase {
     fun execute(
         items: List<WorkoutItem>,
         exercises: Set<Exercise>
-    ): WorkoutMetrics {
+    ): WorkoutBaseMetrics {
         val exercisesMap: Map<ExerciseId, Exercise> = exercises.associateBy { it.id }
 
         val itemsSum = items.map { item ->
             estimateItem(item, exercisesMap)
         }.sum()
 
-        return WorkoutMetrics(
+        return WorkoutBaseMetrics(
             durationSeconds = itemsSum.durationSeconds.roundToInt(),
             baseKcalPerKg = itemsSum.baseKcalPerKg
         )

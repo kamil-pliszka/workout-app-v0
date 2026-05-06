@@ -7,6 +7,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -15,8 +16,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.pl.myworkoutapp.domain.model.Difficulty
+import com.pl.myworkoutapp.ui.common.UiImage
+import com.pl.myworkoutapp.ui.common.asUiImage
 import com.pl.myworkoutapp.ui.common.asUiText
+import com.pl.myworkoutapp.ui.common.loadImageBitmap
 import com.pl.myworkoutapp.ui.components.DifficultyBadge
+import com.pl.myworkoutapp.ui.components.UiImageComponent
 import com.pl.myworkoutapp.ui.plans.PlanUiModel
 import com.pl.myworkoutapp.ui.theme.holoRed
 import myworkoutapplication.composeapp.generated.resources.Res
@@ -43,13 +48,13 @@ fun PlanHeader(
             )
     ) {
         // IMAGE (po prawej)
-        Image(
-            painter = painterResource(plan.imageUrl),
-            contentDescription = null,
+        UiImageComponent(
             modifier = Modifier
                 .align(Alignment.CenterEnd)
                 .padding(end = 8.dp)
-                .fillMaxHeight()
+                .fillMaxHeight(),
+            contentDescription = "plan image",
+            image = plan.image,
         )
 
         //overlay
@@ -95,7 +100,7 @@ val PREVIEW_PLAN = PlanUiModel(
     name = "Najlepsiejszy plan treningowy".asUiText(),
     desc = "Dużo wyzwań i odpoczynku ;)\nktóż tego nie lubi".asUiText(),
     //imageUrl = Res.drawable.ic_rest_day1,
-    imageUrl = Res.drawable.ic_plank1,
+    image = Res.drawable.ic_plank1.asUiImage(),
     days = emptyList(),
     isInProgress = true,
     difficulty = Difficulty.BEGINNER,

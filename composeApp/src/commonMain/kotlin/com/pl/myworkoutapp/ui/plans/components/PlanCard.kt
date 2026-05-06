@@ -8,6 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.pl.myworkoutapp.domain.model.Difficulty
+import com.pl.myworkoutapp.ui.common.asUiImage
 import com.pl.myworkoutapp.ui.common.asUiText
 import com.pl.myworkoutapp.ui.plans.*
 import com.pl.myworkoutapp.ui.theme.TrafficPurple
@@ -50,12 +51,12 @@ val PREVIEW_CARD_PLAN = PlanUiModel(
     name = "Najlepsiejszy plan treningowy".asUiText(),
     desc = "Dużo wyzwań i odpoczynku ;)\nktóż tego nie lubi".asUiText(),
     //imageUrl = Res.drawable.ic_rest_day1,
-    imageUrl = Res.drawable.ic_plank1,
+    image = Res.drawable.ic_plank1.asUiImage(),
     days = List(10) { idx ->
         val isRestDay = idx % 3 == 2
         PlanDayUiModel(
             dayIndex = idx + 1,
-            dayType = if (isRestDay) DayType.Rest else DayType.Workout,
+            dayType = if (isRestDay) DayType.RestDay else DayType.WorkoutDay,
             dayProgress = when {
                 idx < 4 -> DayProgress.Done
                 idx == 4 -> DayProgress.InProgress(0.3f)

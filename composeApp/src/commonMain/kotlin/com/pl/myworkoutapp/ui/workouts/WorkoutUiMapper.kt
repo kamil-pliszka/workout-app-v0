@@ -8,6 +8,8 @@ import com.pl.myworkoutapp.domain.usecase.WorkoutValidationError
 import com.pl.myworkoutapp.ui.common.*
 import com.pl.myworkoutapp.ui.exercises.toUi
 import com.pl.myworkoutapp.ui.theme.*
+import com.pl.myworkoutapp.ui.workouts.tree.toDomain
+import com.pl.myworkoutapp.ui.workouts.tree.toTree
 import myworkoutapplication.composeapp.generated.resources.*
 import kotlin.math.abs
 
@@ -17,7 +19,7 @@ private val CustomThemeColors = listOf(
     holoRed,
 )
 
-fun Workout.toUi(): WorkoutUiModel = when (this) {
+fun Workout.toUi(metrics: WorkoutMetrics): WorkoutUiModel = when (this) {
     is BuiltInWorkout -> {
         val config = id.toBuiltInWorkoutId().toUiConfig()
         WorkoutUiModel(
@@ -26,11 +28,11 @@ fun Workout.toUi(): WorkoutUiModel = when (this) {
             difficulty = difficulty,
             name = config.name,
             desc = config.desc,
-            imageUrl = config.image,
+            image = config.image.asUiImage(),
             isInProgress = false, //TODO
             themeColor = config.color,
             durationText = estimatedDuration.toWorkoutDurationLabel().asUiText(),
-            kcalText = estimatedKcal.toWorkoutKcalText(),
+            kcalText = metrics.estimatedKcal.toWorkoutKcalText(),
         )
     }
 
@@ -50,15 +52,15 @@ fun Workout.toUi(): WorkoutUiModel = when (this) {
                 configBase != null -> configBase.desc
                 else -> EmptyUiText
             },
-            imageUrl = when {
-                !imageUri.isNullOrEmpty() -> Res.drawable.ic_flying_witch1 //TODO
-                configBase != null -> configBase.image
-                else -> Res.drawable.compose_multiplatform //TODO
+            image = when {
+                !imageUri.isNullOrEmpty() -> imageUri.asUiImage()
+                configBase != null -> configBase.image.asUiImage()
+                else -> UiImage.Empty
             },
             isInProgress = false, //TODO
             themeColor = CustomThemeColors[abs(id.hashCode()) % CustomThemeColors.size], //TODO
             durationText = estimatedDuration.toWorkoutDurationLabel().asUiText(),
-            kcalText = estimatedKcal.toWorkoutKcalText(),
+            kcalText = metrics.estimatedKcal.toWorkoutKcalText(),
         )
     }
 }
@@ -75,7 +77,7 @@ fun WorkoutExercise.toUiBase(exercise: Exercise): ExerciseUiItem = when (exercis
             quantityType = this.quantity.type,
             quantityValue = this.quantity.value,
             name = config.name.asUiText(),
-            icon = config.image,
+            image = config.image.asUiImage(),
         )
     }
 
@@ -93,10 +95,10 @@ fun WorkoutExercise.toUiBase(exercise: Exercise): ExerciseUiItem = when (exercis
                 configBase != null -> configBase.name.asUiText()
                 else -> EmptyUiText
             },
-            icon = when {
-                !exercise.imageUri.isNullOrEmpty() -> Res.drawable.ic_flying_witch1 //TODO
-                configBase != null -> configBase.image
-                else -> Res.drawable.compose_multiplatform //TODO
+            image = when {
+                !exercise.imageUri.isNullOrEmpty() -> exercise.imageUri.asUiImage()
+                configBase != null -> configBase.image.asUiImage()
+                else -> UiImage.Empty
             }
         )
     }
@@ -200,7 +202,7 @@ fun prepareInitialWorkout() = WorkoutUiModel(
     basedOn = null,
     name = Res.string.workout_initial_name.asUiText(),
     desc = Res.string.workout_initial_desc.asUiText(),
-    imageUrl = Res.drawable.ic_flying_witch1,//TODO
+    image = UiImage.Empty,
     isInProgress = false,
     difficulty = Difficulty.INTERMEDIATE,
     themeColor = PearlOpalGreen,
@@ -208,9 +210,32 @@ fun prepareInitialWorkout() = WorkoutUiModel(
     kcalText = EmptyUiText,
 )
 
+//uwaga, nie wszystko tutaj zostało przygotowane, nie ma min name i description, które muszą zostać przygotowane w funkcji suspend
+fun WorkoutWithExercisesUiModel.toCustomWorkoutForSaving() = CustomWorkout(
+    id = when (workout.workoutId) {
+        is WorkoutId.BuiltIn -> WorkoutId.Custom.NEW
+        is WorkoutId.Custom -> workout.workoutId
+    },
+    name = "", //workout.name,
+    description = "", //workout.desc,
+    imageUri = workout.image.localImagePath(),
+    basedOn = when (workout.workoutId) {
+        is WorkoutId.BuiltIn -> workout.workoutId
+        is WorkoutId.Custom -> workout.basedOn
+    },
+    difficulty = workout.difficulty,
+    estimatedDuration = 0,
+    baseKcalPerKg = 0.0,
+    items = items.toTree().toDomain(),
+)
+
+
 fun WorkoutValidationError.asUiText(): UiText = when (this) {
     WorkoutValidationError.EmptyCircuit -> Res.string.workout_validation_err_empty_circuit.asUiText()
     WorkoutValidationError.EmptyWorkout -> Res.string.workout_validation_err_empty_workout.asUiText()
+    WorkoutValidationError.EmptyName -> Res.string.workout_validation_err_empty_name.asUiText()
+    WorkoutValidationError.EmptyDescription -> Res.string.workout_validation_err_empty_desc.asUiText()
+    WorkoutValidationError.EmptyImage -> Res.string.workout_validation_err_empty_image.asUiText()
 }
 
 sealed interface DurationLabel {

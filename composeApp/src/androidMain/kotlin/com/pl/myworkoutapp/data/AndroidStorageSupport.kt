@@ -42,6 +42,7 @@ class AndroidStorageSupport(
         file.absolutePath
     }*/
 
+    //flow już gwarantuje, że fromPath to realny lokalny tmp file
     override suspend fun copyTmpToFinal(fromPath: String, toFilename: String): String =
         withContext(Dispatchers.IO) {
             val finalFile = File(context.filesDir, toFilename)

@@ -129,9 +129,23 @@ class WorkoutRepositoryImpl(
         }
     }
 
+    override fun observeLatestBasedOnIds(builtinIds: Set<WorkoutId.BuiltIn>): Flow<List<WorkoutId.Custom>> {
+        return workoutDao.observeLatestBasedOnIds(
+            builtinIds.map { it.asRawString() }.toSet()
+        ).map { listOfIds ->
+            listOfIds.map { it.asWorkoutId() }
+        }
+    }
+
     override fun observeMainCustomWorkouts(): Flow<List<CustomWorkout>> {
         return workoutDao.observeMainCustomWorkouts().map { entities ->
             entities.map { it.toDomain() }
+        }
+    }
+
+    override fun observeMainCustomWorkoutsIds(): Flow<List<WorkoutId.Custom>> {
+        return workoutDao.observeMainCustomWorkoutsIds().map { listOfIds ->
+            listOfIds.map { it.asWorkoutId() }
         }
     }
 

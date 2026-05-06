@@ -35,6 +35,7 @@ class JvmStorageSupport : StorageSupport {
         file.absolutePath
     }*/
 
+    //flow już gwarantuje, że fromPath to realny lokalny tmp file
     override suspend fun copyTmpToFinal(fromPath: String, toFilename: String): String =
         withContext(Dispatchers.IO) {
             val appDataDir = getAppDataDir()

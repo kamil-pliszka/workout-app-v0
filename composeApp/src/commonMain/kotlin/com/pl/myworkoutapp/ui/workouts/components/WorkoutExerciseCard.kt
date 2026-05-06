@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -13,6 +14,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.pl.myworkoutapp.ui.common.UiImage
+import com.pl.myworkoutapp.ui.common.asUiImage
+import com.pl.myworkoutapp.ui.common.loadImageBitmap
+import com.pl.myworkoutapp.ui.components.UiImageComponent
 import com.pl.myworkoutapp.ui.theme.AppTheme
 import myworkoutapplication.composeapp.generated.resources.*
 import org.jetbrains.compose.resources.DrawableResource
@@ -21,7 +26,7 @@ import org.jetbrains.compose.resources.painterResource
 @Composable
 fun ExerciseCard(
     qty: String,
-    icon: DrawableResource,
+    image: UiImage,
     isDone: Boolean,
     isCurrent: Boolean,
     themeColor: Color,
@@ -33,12 +38,13 @@ fun ExerciseCard(
             .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(8.dp))
             .clip(RoundedCornerShape(8.dp))
     ) {
-        Image(
-            painter = painterResource(icon),
-            contentDescription = null,
-            contentScale = ContentScale.Fit,
+        UiImageComponent(
             modifier = Modifier.matchParentSize(),
+            contentDescription = "exe image",
+            image = image,
+            contentScale = ContentScale.Fit,
         )
+
         // 🔹 badge (czas / powtórzenia)
         Box(
             modifier = Modifier
@@ -138,7 +144,7 @@ fun ExerciseCardPreview() {
     AppTheme {
         ExerciseCard(
             qty = "x 37",
-            icon = Res.drawable.ic_jumping_jacks,
+            image = Res.drawable.ic_jumping_jacks.asUiImage(),
             isDone = true,
             isCurrent = true,
             themeColor = MaterialTheme.colorScheme.secondary

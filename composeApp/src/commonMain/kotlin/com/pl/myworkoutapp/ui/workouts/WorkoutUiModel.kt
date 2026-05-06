@@ -8,7 +8,6 @@ import com.pl.myworkoutapp.domain.model.exercise.QuantityType
 import com.pl.myworkoutapp.domain.model.workout.Phase
 import com.pl.myworkoutapp.domain.model.workout.WorkoutId
 import com.pl.myworkoutapp.ui.common.*
-import org.jetbrains.compose.resources.DrawableResource
 
 @Immutable
 data class WorkoutUiModel(
@@ -16,7 +15,7 @@ data class WorkoutUiModel(
     val basedOn: WorkoutId.BuiltIn?,
     val name: UiText,
     val desc: UiText,
-    val imageUrl: DrawableResource,
+    val image: UiImage,
     val isInProgress: Boolean,
     val difficulty: Difficulty,
     val themeColor: Color,
@@ -70,7 +69,7 @@ data class ExerciseUiItem(
     val quantityType: QuantityType,
     val quantityValue: Int,
     val name: UiText,
-    val icon: DrawableResource //TODO - to powinna być albo ikona albo ścieżka do obrazka
+    val image: UiImage
 ) : WorkoutUiItem
 
 enum class CircuitStructureType {

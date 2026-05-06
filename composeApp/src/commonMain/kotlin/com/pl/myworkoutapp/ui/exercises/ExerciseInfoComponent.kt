@@ -1,11 +1,9 @@
 package com.pl.myworkoutapp.ui.exercises
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.intl.Locale
@@ -16,7 +14,7 @@ import com.mikepenz.markdown.m3.Markdown
 import com.mikepenz.markdown.m3.markdownTypography
 import com.pl.myworkoutapp.domain.model.exercise.*
 import com.pl.myworkoutapp.ui.common.loadExerciseDescription
-import com.pl.myworkoutapp.ui.common.loadImageBitmap
+import com.pl.myworkoutapp.ui.components.UiImageComponent
 import com.pl.myworkoutapp.ui.theme.*
 import kotlinx.coroutines.*
 import myworkoutapplication.composeapp.generated.resources.*
@@ -46,30 +44,14 @@ fun ExerciseInfoComponent(
                 fontFamily = EurostileExt
             )
 
-            exerciseInfo.icon?.let { icon ->
-                Icon(
-                    painter = painterResource(icon),
-                    contentDescription = "exercise icon",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .heightIn(max = 160.dp),
-                    tint = LuminousGreen.copy(alpha = 0.5f),
-                )
-            }
-            exerciseInfo.imagePath?.let { imagePath ->
-                val bitmap = remember(imagePath) {
-                    loadImageBitmap(imagePath)
-                }
-                bitmap?.let {
-                    Image(
-                        bitmap = it,
-                        contentDescription = "exercise image",
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .heightIn(max = 180.dp),
-                    )
-                }
-            }
+            UiImageComponent(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(max = 160.dp),
+                contentDescription = "exercise image",
+                image = exerciseInfo.image,
+                tint = LuminousGreen.copy(alpha = 0.5f)
+            )
 
             if (showQuantity) {
                 QuantityPicker(

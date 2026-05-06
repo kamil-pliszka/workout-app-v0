@@ -8,7 +8,7 @@ import com.pl.myworkoutapp.ui.workouts.*
 /**
  * Dokouje przekształcenia, ale tylko dla ćwiczeń typu builtin (te nie wymagają dostępu do repo)
  */
-fun transform(workout: Workout): WorkoutWithExercisesUiModel {
+fun transform(workout: Workout, metrics: WorkoutMetrics): WorkoutWithExercisesUiModel {
     val exerciseIds = workout.items.extractExerciseIds()
     val exercises = exerciseIds.map { id ->
         when (id) {
@@ -16,7 +16,7 @@ fun transform(workout: Workout): WorkoutWithExercisesUiModel {
             is ExerciseId.Custom -> error("Custom not supported")
         }
     }.toSet()
-    return transform(workout, exercises)
+    return transform(workout, metrics, exercises)
 }
 
 fun List<WorkoutItem>.toTree(
@@ -44,9 +44,9 @@ fun List<WorkoutItem>.toTree(
     }
 }
 
-fun transform(workout: Workout, exercises: Set<Exercise>): WorkoutWithExercisesUiModel {
+fun transform(workout: Workout, metrics: WorkoutMetrics, exercises: Set<Exercise>): WorkoutWithExercisesUiModel {
     val exercisesMap = exercises.associateBy { it.id }
-    val workoutUiModel = workout.toUi()
+    val workoutUiModel = workout.toUi(metrics)
 
     val rootNodes = workout.items.toTree(exercisesMap)
     val itemsUi = rootNodes.normalizeToUi().mapIndexed { idx, item ->

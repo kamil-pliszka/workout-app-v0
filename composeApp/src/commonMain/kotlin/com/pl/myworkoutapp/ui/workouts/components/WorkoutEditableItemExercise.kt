@@ -1,6 +1,7 @@
 package com.pl.myworkoutapp.ui.workouts.components
 
-import androidx.compose.foundation.*
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -15,12 +16,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.pl.myworkoutapp.domain.model.exercise.QuantityType
 import com.pl.myworkoutapp.domain.model.exercise.asExerciseId
-import com.pl.myworkoutapp.ui.common.asUiText
+import com.pl.myworkoutapp.ui.common.*
+import com.pl.myworkoutapp.ui.components.UiImageComponent
 import com.pl.myworkoutapp.ui.exercises.qtyValueAsUiText
 import com.pl.myworkoutapp.ui.theme.*
 import com.pl.myworkoutapp.ui.workouts.*
 import myworkoutapplication.composeapp.generated.resources.*
-import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
@@ -57,7 +58,7 @@ fun WorkoutEditableItemExercise(
             WorkoutEditableItemExerciseCard(
                 //name = exercise.name.asString(),
                 //qty = exercise.quantityValue.qtyValueAsUiText(exercise.quantityType).asString(),
-                icon = exercise.icon,
+                image = exercise.image,
                 themeColor = themeColor,
             )
 
@@ -113,7 +114,7 @@ fun WorkoutEditableItemExercise(
 
 @Composable
 fun WorkoutEditableItemExerciseCard(
-    icon: DrawableResource,
+    image: UiImage,
     themeColor: Color,
 ) {
     Box(
@@ -129,10 +130,10 @@ fun WorkoutEditableItemExerciseCard(
             )
             .clip(RoundedCornerShape(8.dp))
     ) {
-        Image(
+        UiImageComponent(
             modifier = Modifier.widthIn(max = 80.dp).align(Alignment.Center),
-            painter = painterResource(icon),
-            contentDescription = "exe",
+            contentDescription = "exe image",
+            image = image,
             contentScale = ContentScale.Fit,
         )
     }
@@ -180,7 +181,7 @@ val EDITABLE_EXERCISE_ITEM_1 = ExerciseUiItem(
     quantityType = QuantityType.REPS,
     quantityValue = 13,
     name = "Loty na miotle długie".asUiText(),
-    icon = Res.drawable.ic_triceps_dip_on_chair,
+    image = Res.drawable.ic_triceps_dip_on_chair.asUiImage(),
 )
 val EDITABLE_EXERCISE_ITEM_2 = ExerciseUiItem(
     isCurrent = false,
@@ -189,7 +190,7 @@ val EDITABLE_EXERCISE_ITEM_2 = ExerciseUiItem(
     quantityType = QuantityType.REPS,
     quantityValue = 13,
     name = "Loty na miotle długie".asUiText(),
-    icon = Res.drawable.ic_bent_leg_twist,
+    image = Res.drawable.ic_bent_leg_twist.asUiImage(),
 )
 
 @Preview

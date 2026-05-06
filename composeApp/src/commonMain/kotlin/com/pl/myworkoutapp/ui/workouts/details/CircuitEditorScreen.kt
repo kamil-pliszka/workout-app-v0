@@ -3,19 +3,17 @@
 package com.pl.myworkoutapp.ui.workouts.details
 
 import androidx.compose.animation.*
-import androidx.compose.foundation.*
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.material3.SegmentedButtonDefaults.itemShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.FocusRequester.Companion.FocusRequesterFactory.component1
 import androidx.compose.ui.focus.FocusRequester.Companion.FocusRequesterFactory.component2
@@ -27,6 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.pl.myworkoutapp.domain.model.workout.Phase
 import com.pl.myworkoutapp.ui.common.asUiText
+import com.pl.myworkoutapp.ui.components.BaseOverlayScreen
 import com.pl.myworkoutapp.ui.theme.AppTheme
 import com.pl.myworkoutapp.ui.workouts.CircuitStructureType
 import com.pl.myworkoutapp.ui.workouts.asUiText
@@ -44,79 +43,51 @@ fun CircuitEditorScreen(
 ) {
     // Backdrop / Scrim
     // brzydko, ale jednolicie z pozostałymi ekranami
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.scrim.copy(alpha = 0.5f))
-            .clickable(
-                indication = null,
-                interactionSource = remember { MutableInteractionSource() }
-            ) { onCancel() }
-    ) {
-        Column(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .fillMaxWidth()
-                .fillMaxHeight(0.99f) // Slightly less than 1.0 to show it's an overlay
-                .clip(RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp))
-                .background(MaterialTheme.colorScheme.surface)
-                .imePadding() // Ensures UI moves up when keyboard appears
-                .clickable(
-                    indication = null,
-                    interactionSource = remember { MutableInteractionSource() }
-                ) { /* Consume clicks to prevent closing */ }
-        ) {
+    BaseOverlayScreen(
+        headerContent = {
             CircuitEditorHeader(
                 isNew = state.isNew,
                 onClose = onCancel
             )
-
-            // Content area
-            Box(modifier = Modifier.weight(1f)) {
-                CircuitEditorContent(
-                    modifier = Modifier,
-                    state = state,
-                    onEditorAction = onEditorAction,
-                )
-            }
-
-            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-
+        },
+        mainContent = {
+            CircuitEditorContent(
+                modifier = Modifier,
+                state = state,
+                onEditorAction = onEditorAction,
+            )
+        },
+        bottomContent = {
             CircuitEditorBottomButtons(
                 onSave = onSave,
                 saveEnabled = state.isValid
             )
-        }
-    }
+        },
+        maxHeight = 0.99f,
+        onCancel = onCancel
+    )
 }
 
 @Composable
-private fun CircuitEditorHeader(
+private fun RowScope.CircuitEditorHeader(
     isNew: Boolean,
     onClose: () -> Unit
 ) {
-    Row(
+    Text(
+        text = if (isNew) stringResource(Res.string.circuit_label_new)
+        else stringResource(Res.string.circuit_label_edit),
+        style = MaterialTheme.typography.titleLarge,
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 8.dp, vertical = 4.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            text = if (isNew) stringResource(Res.string.circuit_label_new)
-            else stringResource(Res.string.circuit_label_edit),
-            style = MaterialTheme.typography.titleLarge,
-            modifier = Modifier
-                .weight(1f)
-                .padding(start = 16.dp),
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
+            .weight(1f)
+            .padding(start = 16.dp),
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis
+    )
+    IconButton(onClick = onClose) {
+        Icon(
+            painter = painterResource(Res.drawable.ic_close),
+            contentDescription = stringResource(Res.string.btn_close)
         )
-        IconButton(onClick = onClose) {
-            Icon(
-                painter = painterResource(Res.drawable.ic_close),
-                contentDescription = stringResource(Res.string.btn_close)
-            )
-        }
     }
 }
 
@@ -125,27 +96,14 @@ fun CircuitEditorBottomButtons(
     onSave: () -> Unit,
     saveEnabled: Boolean
 ) {
-    Box {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-                .navigationBarsPadding(),
-            horizontalArrangement = Arrangement.spacedBy(
-                space = 16.dp,
-                alignment = Alignment.CenterHorizontally
-            ),
-        ) {
-            Button(
-                onClick = onSave,
-                //modifier = Modifier.weight(1f),
-                enabled = saveEnabled
-            ) {
-                Icon(painter = painterResource(Res.drawable.ic_check), contentDescription = null)
-                Spacer(Modifier.width(8.dp))
-                Text(stringResource(Res.string.btn_save))
-            }
-        }
+    Button(
+        onClick = onSave,
+        //modifier = Modifier.weight(1f),
+        enabled = saveEnabled
+    ) {
+        Icon(painter = painterResource(Res.drawable.ic_check), contentDescription = null)
+        Spacer(Modifier.width(8.dp))
+        Text(stringResource(Res.string.btn_save))
     }
 }
 

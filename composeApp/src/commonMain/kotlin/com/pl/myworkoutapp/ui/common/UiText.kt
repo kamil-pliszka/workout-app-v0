@@ -2,8 +2,7 @@ package com.pl.myworkoutapp.ui.common
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
-import org.jetbrains.compose.resources.StringResource
-import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.resources.*
 
 @Immutable
 sealed interface UiText {
@@ -28,6 +27,16 @@ sealed interface UiText {
             is Empty -> ""
         }
     }
+    suspend fun loadString() : String {
+        return when (this) {
+            is DynamicString -> value
+            is StringResourceId -> {
+                val resolvedArgs = args.map { if (it is UiText) it.loadString() else it }
+                getString(resource = id, formatArgs = resolvedArgs.toTypedArray())
+            }
+            is Empty -> ""
+        }
+    }
 }
 
 /**
@@ -41,3 +50,13 @@ fun StringResource.asUiText(vararg args: Any) = UiText.StringResourceId(this, ar
 fun String?.asUiText() = this?.let { UiText.DynamicString(it) } ?: UiText.Empty
 
 val EmptyUiText = UiText.Empty
+
+//@Composable
+//fun List<UiText>.joinAsString(separator: String = "\n"): String {
+//    return joinToString(separator) { it.asString() }
+//}
+
+suspend fun List<UiText>.joinToString(separator: String = "\n"): String {
+    val strings = map { it.loadString() }
+    return strings.joinToString(separator)
+}

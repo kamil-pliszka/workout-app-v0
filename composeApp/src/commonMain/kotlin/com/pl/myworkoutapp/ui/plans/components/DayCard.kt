@@ -77,7 +77,7 @@ fun DayCard(
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         when (day.dayType) {
-                            DayType.Rest -> {
+                            DayType.RestDay -> {
                                 Image(
                                     painter = painterResource(if (day.dayIndex % 2 == 0) Res.drawable.ic_rest_day1 else Res.drawable.ic_rest_day2),
                                     contentDescription = "Rest day icon",
@@ -85,7 +85,7 @@ fun DayCard(
                                 )
                             }
 
-                            DayType.Workout -> {
+                            DayType.WorkoutDay -> {
                                 //można coś pokazać
                             }
                         }
@@ -146,7 +146,7 @@ fun DayCardPreviewRestDay1() {
         PlanDayUiModel(
             desc = "Dzien odpoczynku".asUiText(),
             dayIndex = 13,
-            dayType = DayType.Rest,
+            dayType = DayType.RestDay,
             dayProgress = DayProgress.NotStarted,
             isCurrent = false,
         ),
@@ -162,7 +162,7 @@ fun DayCardPreviewRestDay2() {
         PlanDayUiModel(
             desc = "Dzien laby".asUiText(),
             dayIndex = 14,
-            dayType = DayType.Rest,
+            dayType = DayType.RestDay,
             dayProgress = DayProgress.Done,
             isCurrent = false,
         ),
@@ -179,7 +179,7 @@ fun DayCardPreviewDone() {
             desc = "Dzień ćwiczeń zrobiony".asUiText(),
             dayIndex = 12,
             dayProgress = DayProgress.Done,
-            dayType = DayType.Workout,
+            dayType = DayType.WorkoutDay,
             isCurrent = false,
         ),
         themeColor = FernGreen,
@@ -196,7 +196,7 @@ fun DayCardPreviewDoneRest() {
             desc = "Dzień odpoczynku zrobiony".asUiText(),
             dayIndex = 12,
             dayProgress = DayProgress.Done,
-            dayType = DayType.Rest,
+            dayType = DayType.RestDay,
             isCurrent = false,
         ),
         themeColor = FernGreen,
@@ -212,7 +212,7 @@ fun DayCardPreviewCurrentStart() {
             desc = "Ciężki dzień".asUiText(),
             dayIndex = 14,
             isCurrent = true,
-            dayType = DayType.Workout,
+            dayType = DayType.WorkoutDay,
             dayProgress = DayProgress.NotStarted,
         ),
         themeColor = FernGreen,
@@ -228,7 +228,7 @@ fun DayCardPreviewCurrentResume() {
             desc = "Ciężki dzień".asUiText(),
             dayIndex = 14,
             isCurrent = true,
-            dayType = DayType.Workout,
+            dayType = DayType.WorkoutDay,
             dayProgress = DayProgress.InProgress(0.37f),
         ),
         themeColor = FernGreen,
@@ -244,7 +244,7 @@ fun DayCardPreviewProgressNotCurrent() {
             desc = "W trakcie".asUiText(),
             dayIndex = 10,
             isCurrent = false,
-            dayType = DayType.Workout,
+            dayType = DayType.WorkoutDay,
             dayProgress = DayProgress.InProgress(0.41f),
         ),
         themeColor = FernGreen,

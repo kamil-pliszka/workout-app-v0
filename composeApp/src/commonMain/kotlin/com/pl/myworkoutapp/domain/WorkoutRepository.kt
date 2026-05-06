@@ -30,7 +30,9 @@ interface WorkoutRepository {
     suspend fun saveCustomExercise(customExercise: CustomExercise): ExerciseId.Custom
     fun observeCustomExercises(): Flow<List<CustomExercise>>
     fun observeLatestBasedOn(builtinIds: Set<WorkoutId.BuiltIn>): Flow<List<CustomWorkout>>
+    fun observeLatestBasedOnIds(builtinIds: Set<WorkoutId.BuiltIn>): Flow<List<WorkoutId.Custom>>
     fun observeMainCustomWorkouts(): Flow<List<CustomWorkout>>
+    fun observeMainCustomWorkoutsIds(): Flow<List<WorkoutId.Custom>>
     suspend fun findLatestBasedOn(builtInId: WorkoutId.BuiltIn): CustomWorkout?
     suspend fun deleteWorkout(id: WorkoutId.Custom)
 }

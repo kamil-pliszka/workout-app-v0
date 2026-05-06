@@ -1,13 +1,11 @@
 package com.pl.myworkoutapp.ui.workouts.components
 
 import androidx.compose.foundation.*
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.material3.ButtonDefaults.buttonColors
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -15,6 +13,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.pl.myworkoutapp.domain.model.exercise.BuiltInExerciseId
 import com.pl.myworkoutapp.domain.model.exercise.BuiltInExerciseRegistry
+import com.pl.myworkoutapp.ui.components.BaseOverlayScreen
 import com.pl.myworkoutapp.ui.exercises.*
 import com.pl.myworkoutapp.ui.theme.AppTheme
 import myworkoutapplication.composeapp.generated.resources.*
@@ -66,44 +65,24 @@ private fun WorkoutExerciseInfoContent(
     showExchangeButton: Boolean,
     onAction: (WorkoutExerciseInfoAction) -> Unit,
 ) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.scrim.copy(alpha = 0.5f))
-            .clickable(
-                indication = null,
-                interactionSource = remember { MutableInteractionSource() }
-            ) { /* consume click */ }
-    ) {
-        Column(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .fillMaxWidth()
-                .fillMaxHeight(0.95f)
-                .clip(RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp))
-                .background(MaterialTheme.colorScheme.onPrimary)
-        ) {
-            Spacer(Modifier.height(8.dp))
-            // HEADER
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "", //""V CRUNCH",
-                    style = MaterialTheme.typography.headlineMedium,
-                    modifier = Modifier.weight(1f)
-                )
-                if (showExchangeButton) {
-                    TextButton(onClick = { onAction(WorkoutExerciseInfoAction.ShowExercisePicker) }) {
-                        Text(stringResource(Res.string.workout_change))
-                    }
+    BaseOverlayScreen(
+        headerContent = {
+            Text(
+                text = "", //""V CRUNCH",
+                style = MaterialTheme.typography.headlineMedium,
+                modifier = Modifier.weight(1f)
+            )
+            if (showExchangeButton) {
+                TextButton(onClick = { onAction(WorkoutExerciseInfoAction.ShowExercisePicker) }) {
+                    Text(stringResource(Res.string.workout_change))
                 }
             }
-
+        },
+        mainContent = {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(1f)
+                    //.weight(1f)
                     //.height(IntrinsicSize.Min)
                     .verticalScroll(rememberScrollState())
             ) {
@@ -121,24 +100,16 @@ private fun WorkoutExerciseInfoContent(
                     }
                 )
             }
-
-            Row(
-                modifier = Modifier
-                    //.align(Alignment.BottomCenter)
-                    //.background(Color.Red)
-                    .fillMaxWidth()
-                    .padding(16.dp)
-                    .height(48.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                BottomButtons(
-                    exerciseInfo = exerciseInfo,
-                    onAction = onAction,
-                )
-            }
-        }
-    }
+        },
+        bottomContent = {
+            BottomButtons(
+                exerciseInfo = exerciseInfo,
+                onAction = onAction,
+            )
+        },
+        maxHeight = 0.95f,
+        onCancel = { }
+    )
 }
 
 @Composable

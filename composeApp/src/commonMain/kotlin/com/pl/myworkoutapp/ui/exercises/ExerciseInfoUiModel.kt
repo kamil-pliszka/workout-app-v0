@@ -1,8 +1,8 @@
 package com.pl.myworkoutapp.ui.exercises
 
 import com.pl.myworkoutapp.domain.model.exercise.*
+import com.pl.myworkoutapp.ui.common.UiImage
 import com.pl.myworkoutapp.ui.common.UiText
-import org.jetbrains.compose.resources.DrawableResource
 
 
 data class ExerciseInfoUiModel(
@@ -16,8 +16,7 @@ data class ExerciseInfoUiModel(
     val customDesc: UiText?,
     val descExerciseId: BuiltInExerciseId?,//
     val descriptionMarkdown: String?,
-    val icon: DrawableResource?,
-    val imagePath: String?,
+    val image: UiImage,
     val position: Int? = null,
     val total: Int? = null,
 )

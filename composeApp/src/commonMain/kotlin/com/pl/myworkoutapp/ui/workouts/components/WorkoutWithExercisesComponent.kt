@@ -17,6 +17,7 @@ import com.pl.myworkoutapp.domain.model.workout.builtin.AbsWorkouts.MY_ABS_WORKO
 import com.pl.myworkoutapp.domain.model.workout.builtin.AbsWorkouts.MY_WORKOUT_NO_SET
 import com.pl.myworkoutapp.domain.model.workout.builtin.withRepsPerSide
 import com.pl.myworkoutapp.ui.common.EmptyUiText
+import com.pl.myworkoutapp.ui.common.asUiImage
 import com.pl.myworkoutapp.ui.common.asUiText
 import com.pl.myworkoutapp.ui.components.CircleIconButton
 import com.pl.myworkoutapp.ui.theme.*
@@ -178,7 +179,7 @@ val PREVIEW_WORKOUT = WorkoutUiModel(
     basedOn = null,
     name = "Twój workout ABS".asUiText(),
     desc = "Opis workouta, potrzebny bądź nie".asUiText(),
-    imageUrl = Res.drawable.ic_flying_witch1,
+    image = Res.drawable.ic_flying_witch1.asUiImage(),
     isInProgress = false,
     difficulty = Difficulty.ADVANCED,
     themeColor = PearlOpalGreen,
@@ -192,7 +193,7 @@ val EXE1 = ExerciseUiItem(
     quantityType = QuantityType.REPS,
     quantityValue = 13,
     name = "Lot na miotle".asUiText(),
-    icon = Res.drawable.ic_flying_witch,
+    image = Res.drawable.ic_flying_witch.asUiImage(),
 )
 
 val EXE2 = ExerciseUiItem(
@@ -200,7 +201,7 @@ val EXE2 = ExerciseUiItem(
     quantityType = QuantityType.REPS,
     quantityValue = 13,
     name = "Lot na miotle".asUiText(),
-    icon = Res.drawable.ic_flying_witch1,
+    image = Res.drawable.ic_flying_witch1.asUiImage(),
 )
 
 val EXE3 = ExerciseUiItem(
@@ -208,7 +209,7 @@ val EXE3 = ExerciseUiItem(
     quantityType = QuantityType.REPS,
     quantityValue = 13,
     name = "Lot na miotle".asUiText(),
-    icon = Res.drawable.ic_side_plank,
+    image = Res.drawable.ic_side_plank.asUiImage(),
 )
 
 val WARMUP = CircuitUiItem(
@@ -237,14 +238,14 @@ val EXE_WM_1 = ExerciseUiItem(
     quantityType = QuantityType.REPS,
     quantityValue = 13,
     name = "ruszaj się".asUiText(),
-    icon = Res.drawable.ic_jumping_jacks,
+    image = Res.drawable.ic_jumping_jacks.asUiImage(),
 )
 val EXE_WM_2 = ExerciseUiItem(
     exerciseId = 123L.asExerciseId(),
     quantityType = QuantityType.REPS,
     quantityValue = 13,
     name = "fiku miku".asUiText(),
-    icon = Res.drawable.ic_push_up,
+    image = Res.drawable.ic_push_up.asUiImage(),
 )
 
 val EXE_CD_1 = ExerciseUiItem(
@@ -252,14 +253,14 @@ val EXE_CD_1 = ExerciseUiItem(
     quantityType = QuantityType.REPS,
     quantityValue = 13,
     name = "fiku miku".asUiText(),
-    icon = Res.drawable.ic_rest_day0,
+    image = Res.drawable.ic_rest_day0.asUiImage(),
 )
 val EXE_CD_2 = ExerciseUiItem(
     exerciseId = 123L.asExerciseId(),
     quantityType = QuantityType.REPS,
     quantityValue = 13,
     name = "fiku miku".asUiText(),
-    icon = Res.drawable.ic_rest_day2,
+    image = Res.drawable.ic_rest_day2.asUiImage(),
 )
 
 fun List<WorkoutUiItem>.prepareKeys() = this.mapIndexed { index, item ->
@@ -365,7 +366,7 @@ fun WorkoutWithExercisesComponentPreviewNested() {//zagnieżdżone wersje
         basedOn = BuiltInWorkoutId.MY_ABS_WORKOUT_WITH_SET.asWorkoutId(),
         difficulty = Difficulty.ADVANCED,
         estimatedDuration = 13,
-        estimatedKcal = 567,
+        baseKcalPerKg = 567.0,
         items = listOf(
             //warmup
             circuitWith(
@@ -392,7 +393,7 @@ fun WorkoutWithExercisesComponentPreviewNested() {//zagnieżdżone wersje
         )
     )
     //val workoutUiModel = transform(workoutDomain)
-    val workoutUiModel = transform(workoutDomain)
+    val workoutUiModel = transform(workoutDomain, WorkoutMetrics(567))
     WorkoutWithExercisesComponent(
         workoutUiModel = workoutUiModel,
         onAction = { },
@@ -403,7 +404,7 @@ fun WorkoutWithExercisesComponentPreviewNested() {//zagnieżdżone wersje
 @Preview(locale = "pl")
 @Composable
 fun WorkoutWithExercisesComponentPreviewAbsWithSet() {//rozgrzewka, trening, wychłodzenie
-    val workoutUiModel = transform(MY_ABS_WORKOUT_WITH_SET)
+    val workoutUiModel = transform(MY_ABS_WORKOUT_WITH_SET, WorkoutMetrics(567))
     WorkoutWithExercisesComponent(
         workoutUiModel = workoutUiModel,
         onAction = { },
@@ -414,7 +415,7 @@ fun WorkoutWithExercisesComponentPreviewAbsWithSet() {//rozgrzewka, trening, wyc
 @Preview(locale = "pl")
 @Composable
 fun WorkoutWithExercisesComponentPreviewAbsNoSet() {//pojedyńczy poziom, ok 30 ćwiczeń
-    val workoutUiModel = transform(MY_WORKOUT_NO_SET)
+    val workoutUiModel = transform(MY_WORKOUT_NO_SET, WorkoutMetrics(567))
     WorkoutWithExercisesComponent(
         workoutUiModel = workoutUiModel,
         onAction = { },

@@ -20,7 +20,6 @@ fun CustomWorkout.toEntity() = CustomWorkoutEntity(
     difficulty = difficulty.name,
     estimatedDuration = estimatedDuration,
     baseKcalPerKg = baseKcalPerKg,
-    estimatedKcal = estimatedKcal,
 )
 
 fun CustomWorkoutEntity.toDomain() = CustomWorkout(
@@ -32,7 +31,6 @@ fun CustomWorkoutEntity.toDomain() = CustomWorkout(
     difficulty = Difficulty.valueOf(difficulty),
     estimatedDuration = estimatedDuration,
     baseKcalPerKg = baseKcalPerKg,
-    estimatedKcal = estimatedKcal,
     items = emptyList()
 )
 

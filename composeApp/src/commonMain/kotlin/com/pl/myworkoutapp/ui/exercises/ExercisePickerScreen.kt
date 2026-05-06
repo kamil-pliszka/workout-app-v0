@@ -17,8 +17,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.pl.myworkoutapp.domain.model.exercise.*
+import com.pl.myworkoutapp.ui.common.UiImage
+import com.pl.myworkoutapp.ui.common.asUiImage
+import com.pl.myworkoutapp.ui.common.loadImageBitmap
+import com.pl.myworkoutapp.ui.components.UiImageComponent
 import com.pl.myworkoutapp.ui.navigation.AppNavigator
 import com.pl.myworkoutapp.ui.theme.AppTheme
+import com.pl.myworkoutapp.ui.theme.LuminousGreen
 import myworkoutapplication.composeapp.generated.resources.*
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -383,13 +388,11 @@ fun ExerciseItem(
         verticalAlignment = Alignment.CenterVertically
     ) {
         // 🔹 Ikona
-        item.icon?.let {
-            Image(
-                painter = painterResource(it),
-                contentDescription = null,
-                modifier = Modifier.size(80.dp)
-            )
-        }
+        UiImageComponent(
+            modifier = Modifier.size(80.dp),
+            contentDescription = "exercise image",
+            image = item.image,
+        )
 
         Spacer(Modifier.width(12.dp))
 
@@ -510,8 +513,7 @@ val EXE_1 = ExercisePickerListItem(
     muscle = MuscleGroup.ARMS,
     equipment = Equipment.BODYWEIGHT,
     exerciseType = ExerciseType.STRENGTH,
-    icon = Res.drawable.ic_flying_witch1,
-    imagePath = null
+    image = Res.drawable.ic_flying_witch1.asUiImage(),
 )
 val EXE_2 = ExercisePickerListItem(
     exerciseId = BuiltInExerciseId.FLUTTER_KICKS.asExerciseId(),
@@ -520,8 +522,7 @@ val EXE_2 = ExercisePickerListItem(
     muscle = MuscleGroup.ABS,
     equipment = Equipment.KETTLEBELL,
     exerciseType = ExerciseType.CARDIO,
-    icon = Res.drawable.ic_flutter_kicks,
-    imagePath = null
+    image = Res.drawable.ic_flutter_kicks.asUiImage(),
 )
 
 val EXE_CURR = ExercisePickerListItem(
@@ -531,8 +532,7 @@ val EXE_CURR = ExercisePickerListItem(
     muscle = MuscleGroup.BACK,
     equipment = Equipment.MACHINE,
     exerciseType = ExerciseType.MOBILITY,
-    icon = Res.drawable.ic_bent_leg_twist,
-    imagePath = null
+    image = Res.drawable.ic_bent_leg_twist.asUiImage(),
 )
 
 @Preview

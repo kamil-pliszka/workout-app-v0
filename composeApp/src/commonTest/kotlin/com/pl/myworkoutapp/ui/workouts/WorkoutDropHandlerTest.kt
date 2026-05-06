@@ -67,7 +67,7 @@ class WorkoutDropHandlerTest {
             basedOn = null,
             name = "Test Workout".asUiText(),
             desc = EmptyUiText,
-            imageUrl = Res.drawable.compose_multiplatform,
+            image = Res.drawable.compose_multiplatform.asUiImage(),
             isInProgress = false,
             difficulty = Difficulty.BEGINNER,
             themeColor = Color.Transparent,
@@ -83,6 +83,6 @@ class WorkoutDropHandlerTest {
         quantityType = QuantityType.REPS,
         quantityValue = 10,
         name = "Exercise $key".asUiText(),
-        icon = Res.drawable.compose_multiplatform
+        image = Res.drawable.compose_multiplatform.asUiImage()
     )
 }

@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.tooling.preview.Preview
 import com.pl.myworkoutapp.domain.model.Difficulty
+import com.pl.myworkoutapp.ui.common.asUiImage
 import com.pl.myworkoutapp.ui.common.asUiText
 import com.pl.myworkoutapp.ui.plans.components.PlanCard
 import com.pl.myworkoutapp.ui.theme.TurquoiseBlue
@@ -50,13 +51,13 @@ val PREVIEW_PLAN = PlanUiModel(
     id = "test",
     name = "Najlepsiejszy plan treningowy.".asUiText(),
     desc = "Krótki opis planu trengowego".asUiText(),
-    imageUrl = Res.drawable.ic_plank1,
+    image = Res.drawable.ic_plank1.asUiImage(),
     days = List(10) { idx ->
         val isRestDay = idx % 3 == 2
         PlanDayUiModel(
             desc = "${(idx * 171 + 13) % 37} ćwiczeń / ${((idx + 56) * 14 % 43)} min / ${((idx + 6) * 131 % 431)} kcal".asUiText(),//TODO
             dayIndex = idx + 1,
-            dayType = if (isRestDay) DayType.Rest else DayType.Workout,
+            dayType = if (isRestDay) DayType.RestDay else DayType.WorkoutDay,
             dayProgress = when {
                 idx < 4 -> DayProgress.Done
                 idx == 4 -> DayProgress.InProgress(0.3f)

@@ -1,10 +1,12 @@
 package com.pl.myworkoutapp.domain.usecase
 
-import com.pl.myworkoutapp.domain.BuiltInWorkoutCatalog
+import com.pl.myworkoutapp.domain.AppSettingRepository
+import com.pl.myworkoutapp.domain.WorkoutHydrator
 import com.pl.myworkoutapp.domain.WorkoutRepository
 import com.pl.myworkoutapp.domain.model.workout.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlin.math.roundToInt
 
 /**
  * Zwraca listę workoutów na głównej liście workouts,
@@ -18,24 +20,24 @@ import kotlinx.coroutines.flow.combine
  */
 class GetMainWorkoutsUseCase(
     private val repository: WorkoutRepository,
-    private val catalog: BuiltInWorkoutCatalog
+    private val hydrator: WorkoutHydrator,
+    private val appSettingRepository: AppSettingRepository,
 ) {
-    fun execute(
-        weightKg : Double = 100.0, //TODO - na razie zahardkodowana wartość
-    ): Flow<List<Workout>> {
+    fun execute(): Flow<List<WorkoutWithMetrics>> {
         val builtInWorkouts = listOf(
             //tutaj wybieramy konkretne zestawy i określamy ich kolejność
-            catalog.get(BuiltInWorkoutId.MY_ABS_WORKOUT_NO_SET),
-            catalog.get(BuiltInWorkoutId.MY_ABS_WORKOUT_WITH_SET),
-            catalog.get(BuiltInWorkoutId.MY_ABS_WORKOUT_SUPERSET),
-            catalog.get(BuiltInWorkoutId.SIX_PACK_20_MIN),
+            BuiltInWorkoutRegistry.get(BuiltInWorkoutId.MY_ABS_WORKOUT_NO_SET),
+            BuiltInWorkoutRegistry.get(BuiltInWorkoutId.MY_ABS_WORKOUT_WITH_SET),
+            BuiltInWorkoutRegistry.get(BuiltInWorkoutId.MY_ABS_WORKOUT_SUPERSET),
+            BuiltInWorkoutRegistry.get(BuiltInWorkoutId.SIX_PACK_20_MIN),
         )
         val builtInIds = builtInWorkouts.map { it.id }.toSet()
 
         return combine(
             repository.observeLatestBasedOn(builtInIds),
-            repository.observeMainCustomWorkouts()
-        ) { latestCustoms, standaloneCustoms ->
+            repository.observeMainCustomWorkouts(),
+            appSettingRepository.weightFlow
+        ) { latestCustoms, standaloneCustoms, weightKg ->
 
             val customMap = latestCustoms.associateBy { it.basedOn }
 
@@ -44,7 +46,13 @@ class GetMainWorkoutsUseCase(
             }
 
             (mainBuiltIns + standaloneCustoms).map {
-                it.withEstimatedKcalForWeight(weightKg)
+                val hydrated = hydrator.hydrate(it.id)
+                WorkoutWithMetrics(
+                    workout = hydrated,
+                    metrics = WorkoutMetrics(
+                        estimatedKcal = (hydrated.baseKcalPerKg * weightKg).roundToInt()
+                    )
+                )
             }
         }
     }

@@ -9,7 +9,9 @@ import com.pl.myworkoutapp.domain.model.workout.toWorkoutIdOrNull
 import com.pl.myworkoutapp.domain.usecase.*
 import com.pl.myworkoutapp.ui.app.AppStateHolder
 import com.pl.myworkoutapp.ui.common.asUiText
+import com.pl.myworkoutapp.ui.common.joinToString
 import com.pl.myworkoutapp.ui.workouts.*
+import com.pl.myworkoutapp.ui.workouts.asUiText
 import com.pl.myworkoutapp.ui.workouts.details.WorkoutEditAction.ExerciseReplaced
 import com.pl.myworkoutapp.ui.workouts.details.WorkoutEditAction.SelectedExerciseLoaded
 import com.pl.myworkoutapp.ui.workouts.details.WorkoutEditAction.ShowLoadedExerciseInfo
@@ -20,6 +22,8 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import myworkoutapplication.composeapp.generated.resources.*
+import kotlin.collections.first
+import kotlin.collections.map
 import kotlin.coroutines.cancellation.CancellationException
 
 //Docelowa odpowiedzialność ViewModel
@@ -42,6 +46,7 @@ class WorkoutDetailsViewModel(
     savedStateHandle: SavedStateHandle,
     private val appStateHolder: AppStateHolder,
     private val saveWorkoutUseCase: SaveWorkoutUseCase,
+    private val validateWorkoutUseCase: ValidateWorkoutUseCase,
     private val getWorkoutWithExercisesUseCase: GetWorkoutWithExercisesUseCase,
     private val getExerciseInfoUseCase: GetExerciseInfoUseCase,
     private val getExerciseWithDefaultQuantityUseCase: GetExerciseWithDefaultQuantityUseCase,
@@ -50,6 +55,7 @@ class WorkoutDetailsViewModel(
     private val workoutEditReducer: WorkoutEditReducer,
     private val sessionCoordinator: WorkoutSessionCoordinator,
 ) : ViewModel() {
+    @Suppress("PrivatePropertyName")
     private val TAG = "WorkoutDetailsVM"
     private val workoutIdParam: String =
         savedStateHandle["workoutId"] ?: error("workoutId is required")
@@ -299,7 +305,7 @@ class WorkoutDetailsViewModel(
 
         try {
             val result = getWorkoutWithExercisesUseCase.execute(workoutId)
-            val uiWorkout = transform(result.workout, result.exercises)
+            val uiWorkout = transform(result.workout, result.metrics, result.exercises)
 
             _state.update {
                 it.copy(
@@ -325,11 +331,19 @@ class WorkoutDetailsViewModel(
         val workout = view.session.workout
 
         val savedWorkoutResult = try {
+            val savingWorkout = workout.toCustomWorkoutForSaving().copy(
+                name = workout.workout.name.loadString(),
+                description = workout.workout.desc.loadString(),
+            )
             saveWorkoutUseCase.execute(
-                workoutId = workout.workout.workoutId,
-                basedOn = workout.workout.basedOn,
-                difficulty = workout.workout.difficulty,
-                items = workout.items.toTree().toDomain()
+//                workoutId = workout.workout.workoutId,
+//                basedOn = workout.workout.basedOn,
+//                difficulty = workout.workout.difficulty,
+//                name = workout.workout.name.loadString(),
+//                description = workout.workout.desc.loadString(),
+//                imageUri = workout.workout.image.localImagePath(),
+//                items = workout.items.toTree().toDomain()
+                workout = savingWorkout
             )
         } catch (e: Throwable) {
             if (e is CancellationException) throw e
@@ -346,7 +360,8 @@ class WorkoutDetailsViewModel(
             is SaveWorkoutResult.ValidationError -> {
                 sendEvent(
                     WorkoutDetailsEvent.ShowError(
-                        savedWorkoutResult.errors.first().asUiText()
+                        savedWorkoutResult.errors.map { it.asUiText() }.joinToString().asUiText()
+                        //savedWorkoutResult.errors.first().asUiText()
                     )
                 )
             }
@@ -408,8 +423,23 @@ class WorkoutDetailsViewModel(
         }
     }
 
-    private fun saveEditor() {
+    private suspend fun saveEditor() {
         val edit = _state.value.mode as? WorkoutDetailsMode.Edit ?: return
+
+        val savingWorkout = edit.session.workout.toCustomWorkoutForSaving().copy(
+            name = edit.session.workout.workout.name.loadString(),
+            description = edit.session.workout.workout.desc.loadString(),
+        )
+        val errors = validateWorkoutUseCase.execute(savingWorkout)
+        if (errors.isNotEmpty()) {
+            sendEvent(
+                WorkoutDetailsEvent.ShowError(
+                    errors.map { it.asUiText() }.joinToString().asUiText()
+                )
+            )
+            return
+        }
+        //TODO - dorobić metryki
 
         appStateHolder.setWorkoutEditorActive(false)//pokazanie bottom nav bar
 

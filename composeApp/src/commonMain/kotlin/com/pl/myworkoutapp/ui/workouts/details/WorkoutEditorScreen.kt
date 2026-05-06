@@ -1,19 +1,15 @@
 package com.pl.myworkoutapp.ui.workouts.details
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.material3.ButtonDefaults.buttonColors
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
@@ -21,9 +17,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.pl.myworkoutapp.domain.model.exercise.ExerciseId
-import com.pl.myworkoutapp.domain.model.workout.BuiltInWorkoutId
-import com.pl.myworkoutapp.domain.model.workout.BuiltInWorkoutRegistry
+import com.pl.myworkoutapp.domain.model.workout.*
 import com.pl.myworkoutapp.ui.common.*
+import com.pl.myworkoutapp.ui.components.BaseOverlayScreen
 import com.pl.myworkoutapp.ui.theme.AppTheme
 import com.pl.myworkoutapp.ui.theme.EurostileExt
 import com.pl.myworkoutapp.ui.workouts.*
@@ -50,61 +46,38 @@ fun WorkoutEditorScreen(
     onCircuitEditorAction: (CircuitEditorAction) -> Unit,
 ) {
     // Backdrop / Scrim
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.scrim.copy(alpha = 0.5f))
-            .clickable(
-                indication = null,
-                interactionSource = remember { MutableInteractionSource() }
-            ) {
-                onEditAction(WorkoutEditAction.CloseEditor)
-            }
-    ) {
-        Column(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .fillMaxWidth()
-                .fillMaxHeight(0.99f) // Slightly less than 1.0 to show it's an overlay
-                .clip(RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp))
-                .background(MaterialTheme.colorScheme.surface)
-                .imePadding() // Ensures UI moves up when keyboard appears
-                .clickable(
-                    indication = null,
-                    interactionSource = remember { MutableInteractionSource() }
-                ) { /* Consume clicks to prevent closing */ }
-        ) {
+    BaseOverlayScreen(
+        headerContent = {
             WorkoutEditorHeader(
-                title = state.original.workout.name.asString(),
+                title = state.workout.workout.name.asString(),
+                onEditMetadata = { onEditAction(WorkoutEditAction.OpenMetadataEditor) },
                 onClose = { onEditAction(WorkoutEditAction.CloseEditor) }
             )
-
-            // Content area
-            Box(modifier = Modifier.weight(1f)) {
-                WorkoutEditorContent(
-                    state = state,
-                    events = events,
-                    onEditorAction = onEditAction,
-                    onExchangeAction = { key, exerciseId ->
-                        onEditAction(WorkoutEditAction.ExerciseExchangeStart(key, exerciseId))
-                    },
-                    onExerciseClick = { key, exerciseId ->
-                        onEditAction(WorkoutEditAction.ShowExerciseInfo(key, exerciseId))
-                    }
-                )
-            }
-
-            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-
+        },
+        mainContent = {
+            WorkoutEditorContent(
+                state = state,
+                events = events,
+                onEditorAction = onEditAction,
+                onExchangeAction = { key, exerciseId ->
+                    onEditAction(WorkoutEditAction.ExerciseExchangeStart(key, exerciseId))
+                },
+                onExerciseClick = { key, exerciseId ->
+                    onEditAction(WorkoutEditAction.ShowExerciseInfo(key, exerciseId))
+                }
+            )
+        },
+        bottomContent = {
             WorkoutEditorBottomButtons(
                 onReset = { onEditAction(WorkoutEditAction.ResetDraft) },
                 onSave = { onEditAction(WorkoutEditAction.SaveDraft) },
                 onAddExercise = { onEditAction(WorkoutEditAction.AddExercise) },
                 onAddCircuit = { onEditAction(WorkoutEditAction.AddCircuit) },
             )
-        }
-    }
-
+        },
+        maxHeight = 0.99f,
+        onCancel = { onEditAction(WorkoutEditAction.CloseEditor) }
+    )
 
     if (state.editableCircuit != null) {
         CircuitEditorScreen(
@@ -112,6 +85,13 @@ fun WorkoutEditorScreen(
             onEditorAction = onCircuitEditorAction,
             onSave = { onEditAction(WorkoutEditAction.SaveCircuitEditor) },
             onCancel = { onEditAction(WorkoutEditAction.CancelCircuitEditor) },
+        )
+    }
+
+    if (state.editableMetadata != null) {
+        WorkoutMetadataEditorScreen(
+            state = state.editableMetadata,
+            onAction = onEditAction,
         )
     }
 
@@ -141,32 +121,32 @@ fun WorkoutEditorScreen(
 }
 
 @Composable
-private fun WorkoutEditorHeader(
+private fun RowScope.WorkoutEditorHeader(
     title: String,
+    onEditMetadata: () -> Unit,
     onClose: () -> Unit
 ) {
-    Row(
+    Text(
+        text = title,
+        style = MaterialTheme.typography.titleLarge,
+        fontFamily = EurostileExt,
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 8.dp, vertical = 4.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.titleLarge,
-            fontFamily = EurostileExt,
-            modifier = Modifier
-                .weight(1f)
-                .padding(start = 16.dp),
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
+            .weight(1f)
+            .padding(start = 16.dp),
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis
+    )
+    IconButton(onClick = onEditMetadata) {
+        Icon(
+            painter = painterResource(Res.drawable.ic_edit),
+            contentDescription = stringResource(Res.string.btn_edit)
         )
-        IconButton(onClick = onClose) {
-            Icon(
-                painter = painterResource(Res.drawable.ic_close),
-                contentDescription = stringResource(Res.string.btn_close)
-            )
-        }
+    }
+    IconButton(onClick = onClose) {
+        Icon(
+            painter = painterResource(Res.drawable.ic_close),
+            contentDescription = stringResource(Res.string.btn_close)
+        )
     }
 }
 
@@ -181,12 +161,12 @@ fun WorkoutEditorBottomButtons(
     // Stan menu
     var menuExpanded by remember { mutableStateOf(false) }
 
-    Box {
+    Box(
+        modifier = Modifier.offset(y = (4).dp)//nie wiem czemu
+    ) {
         Row(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-                .navigationBarsPadding(),
+                .fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             OutlinedButton(
@@ -403,7 +383,7 @@ fun WorkoutEditableItemRow(
 @Composable
 private fun WorkoutEditorScreenPreviewNoSet() {
     val workout = BuiltInWorkoutRegistry.get(BuiltInWorkoutId.MY_ABS_WORKOUT_WITH_SET)
-    val workoutUiModel = transform(workout)
+    val workoutUiModel = transform(workout, WorkoutMetrics(567))
     AppTheme {
         WorkoutEditorScreen(
             state = WorkoutEditSession(
@@ -421,7 +401,7 @@ private fun WorkoutEditorScreenPreviewNoSet() {
 @Composable
 private fun WorkoutEditorScreenPreviewWithSet() {
     val workout = BuiltInWorkoutRegistry.get(BuiltInWorkoutId.MY_ABS_WORKOUT_NO_SET)
-    val workoutUiModel = transform(workout)
+    val workoutUiModel = transform(workout, WorkoutMetrics(567))
     AppTheme {
         WorkoutEditorScreen(
             state = WorkoutEditSession(

@@ -4,12 +4,11 @@ import androidx.compose.ui.graphics.Color
 import com.pl.myworkoutapp.domain.model.plan.BuiltInTrainingPlanId
 import com.pl.myworkoutapp.ui.theme.*
 import myworkoutapplication.composeapp.generated.resources.*
-import org.jetbrains.compose.resources.DrawableResource
 
 data class PlanUiConfig(
     val name: UiText,
     val desc: UiText,
-    val image: DrawableResource,
+    val image: UiImage,
     val color: Color
 )
 
@@ -17,21 +16,21 @@ fun BuiltInTrainingPlanId.toUiConfig(): PlanUiConfig = when (this) {
     BuiltInTrainingPlanId.BELLY_FAT_BURN -> PlanUiConfig(
         name = Res.string.plans_belly_fat_burn.asUiText(),
         desc = Res.string.plans_belly_fat_burn.asUiText(),//TODO
-        image = Res.drawable.ic_plank1,
+        image = Res.drawable.ic_plank1.asUiImage(),
         color = Blue
     )
 
     BuiltInTrainingPlanId.SIX_PACK_ABS -> PlanUiConfig(
         name = Res.string.plans_six_pack_abs.asUiText(),
         desc = Res.string.plans_six_pack_abs.asUiText(),//TODO
-        image = Res.drawable.ic_plank1,
+        image = Res.drawable.ic_plank1.asUiImage(),
         color = holoGreen
     )
 
     BuiltInTrainingPlanId.ROCK_SOLID_ABS -> PlanUiConfig(
         name = Res.string.plans_rock_solid_abs.asUiText(),
         desc = Res.string.plans_rock_solid_abs.asUiText(),//TODO
-        image = Res.drawable.ic_plank1,
+        image = Res.drawable.ic_plank1.asUiImage(),
         color = LightBlue
     )
 }

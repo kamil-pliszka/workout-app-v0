@@ -1,7 +1,7 @@
 package com.pl.myworkoutapp.ui.exercises
 
 import com.pl.myworkoutapp.domain.model.exercise.*
-import org.jetbrains.compose.resources.DrawableResource
+import com.pl.myworkoutapp.ui.common.UiImage
 
 data class ExercisePickerListItem(
     val exerciseId: ExerciseId,
@@ -10,6 +10,5 @@ data class ExercisePickerListItem(
     val muscle: MuscleGroup,
     val equipment: Equipment,
     val exerciseType: ExerciseType,
-    val icon: DrawableResource?,
-    val imagePath: String?,
+    val image: UiImage,
 )

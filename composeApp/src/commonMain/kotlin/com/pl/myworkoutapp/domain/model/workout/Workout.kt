@@ -9,7 +9,6 @@ sealed interface Workout {
 
     //val estimatedDuration: Int //in seconds
     val items: List<WorkoutItem>
-    val estimatedDuration: Int?
-    val baseKcalPerKg: Double?
-    val estimatedKcal: Int?
+    val estimatedDuration: Int
+    val baseKcalPerKg: Double
 }

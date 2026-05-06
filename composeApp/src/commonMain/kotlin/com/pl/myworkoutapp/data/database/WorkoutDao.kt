@@ -119,6 +119,23 @@ interface WorkoutDao {
 
     @Query(
         """
+    SELECT id
+    FROM (
+        SELECT id,
+               ROW_NUMBER() OVER (
+                   PARTITION BY basedOn
+                   ORDER BY updatedAt DESC, id DESC
+               ) as rn
+        FROM CustomWorkoutEntity
+        WHERE basedOn IN (:baseIds) and planId is null
+    )
+    WHERE rn = 1
+    """
+    )
+    fun observeLatestBasedOnIds(baseIds: Set<String>): Flow<List<Long>>
+
+    @Query(
+        """
     SELECT *
     FROM CustomWorkoutEntity
     WHERE basedOn IS NULL 
@@ -127,6 +144,17 @@ interface WorkoutDao {
     """
     )
     fun observeMainCustomWorkouts(): Flow<List<CustomWorkoutEntity>>
+
+    @Query(
+        """
+    SELECT id
+    FROM CustomWorkoutEntity
+    WHERE basedOn IS NULL 
+        AND planId IS NULL
+    ORDER BY updatedAt DESC, id DESC
+    """
+    )
+    fun observeMainCustomWorkoutsIds(): Flow<List<Long>>
 
     @Query(
         """

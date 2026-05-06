@@ -10,6 +10,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.pl.myworkoutapp.domain.model.workout.BuiltInWorkoutId
 import com.pl.myworkoutapp.domain.model.workout.BuiltInWorkoutRegistry
+import com.pl.myworkoutapp.domain.model.workout.WorkoutMetrics
 import com.pl.myworkoutapp.ui.common.ConfirmationDialog
 import com.pl.myworkoutapp.ui.exercises.ExercisePickerScreen
 import com.pl.myworkoutapp.ui.workouts.components.WorkoutExerciseInfoScreen
@@ -190,7 +191,7 @@ private fun BoxScope.WorkoutDetailBottomButtons(
 @Composable
 private fun WorkoutDetailsScreenPreviewEN() {
     val workout = BuiltInWorkoutRegistry.get(BuiltInWorkoutId.MY_ABS_WORKOUT_WITH_SET)
-    val workoutUiModel = transform(workout)
+    val workoutUiModel = transform(workout, WorkoutMetrics(567))
     WorkoutDetailsScreen(
         state = WorkoutDetailsUiState(
             mode = WorkoutDetailsMode.View(
@@ -211,7 +212,7 @@ private fun WorkoutDetailsScreenPreviewEN() {
 @Composable
 private fun WorkoutDetailsScreenPreviewPL() {
     val workout = BuiltInWorkoutRegistry.get(BuiltInWorkoutId.MY_ABS_WORKOUT_NO_SET)
-    val workoutUiModel = transform(workout)
+    val workoutUiModel = transform(workout, WorkoutMetrics(567))
     WorkoutDetailsScreen(
         state = WorkoutDetailsUiState(
             mode = WorkoutDetailsMode.View(

@@ -2,14 +2,14 @@ package com.pl.myworkoutapp.ui.plans
 
 import androidx.compose.ui.graphics.Color
 import com.pl.myworkoutapp.domain.model.Difficulty
+import com.pl.myworkoutapp.ui.common.UiImage
 import com.pl.myworkoutapp.ui.common.UiText
-import org.jetbrains.compose.resources.DrawableResource
 
 data class PlanUiModel(
     val id: String,
     val name: UiText,
     val desc: UiText,
-    val imageUrl: DrawableResource,
+    val image: UiImage,
     val days: List<PlanDayUiModel>,
     val isInProgress: Boolean,
     val difficulty: Difficulty,
@@ -17,8 +17,8 @@ data class PlanUiModel(
 )
 
 sealed interface DayType {
-    object Workout : DayType
-    object Rest : DayType
+    object WorkoutDay : DayType
+    object RestDay : DayType
 }
 
 sealed interface DayProgress {

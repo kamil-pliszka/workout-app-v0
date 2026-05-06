@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.pl.myworkoutapp.domain.model.workout.*
+import com.pl.myworkoutapp.ui.common.asUiText
 import com.pl.myworkoutapp.ui.workouts.components.WorkoutHeaderCard
 import myworkoutapplication.composeapp.generated.resources.*
 import org.jetbrains.compose.resources.painterResource
@@ -161,7 +162,9 @@ private fun WorkoutsScreenPreview() {
                 BuiltInWorkoutRegistry.get(BuiltInWorkoutId.MY_ABS_WORKOUT_SUPERSET),
                 BuiltInWorkoutRegistry.get(BuiltInWorkoutId.TABATA_1),
             ).map {
-                it.toUi()
+                it.toUi(WorkoutMetrics(345)).copy(
+                    durationText = "10 i pół".asUiText()
+                )
             },
             currentPage = 0,
         ),

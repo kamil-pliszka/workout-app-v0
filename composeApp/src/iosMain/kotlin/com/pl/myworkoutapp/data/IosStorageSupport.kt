@@ -70,6 +70,7 @@ class IosStorageSupport : StorageSupport {
         }
     }
 
+    //flow już gwarantuje, że fromPath to realny lokalny tmp file
     override suspend fun copyTmpToFinal(fromPath: String, toFilename: String): String =
         withContext(Dispatchers.IO) {
 
@@ -91,13 +92,24 @@ class IosStorageSupport : StorageSupport {
 
     override suspend fun delete(path: String) = withContext(Dispatchers.IO) {
         val documentsDir = getDocumentsDir()
-        //val finalPath = "$documentsDir/$toFilename"
         val fm = NSFileManager.defaultManager
-        if (fm.isDeletableFileAtPath(path)) {
-            //TODO
-        } else {
+
+        if (!fm.fileExistsAtPath(path)) {
+            Log.d(TAG, "File does not exist, skipping delete: $path")
+            return@withContext
+        }
+
+        if (!fm.isDeletableFileAtPath(path)) {
             Log.e(TAG, "Cannot delete file: $path")
+            return@withContext
+        }
+
+        val success = fm.removeItemAtPath(path, null)
+
+        if (!success) {
+            Log.e(TAG, "Failed to delete file: $path")
+        } else {
+            Log.d(TAG, "Deleted file: $path")
         }
     }
-
 }

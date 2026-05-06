@@ -15,6 +15,7 @@
     <string name="btn_add">Dodaj</string>
     <string name="btn_choose">Wybierz</string>
     <string name="btn_back">Wstecz</string>
+    <string name="btn_edit">Edytuj</string>
 
     <string name="navigation_plans">Zestawy</string>
     <string name="navigation_workouts">Treningi</string>
@@ -78,6 +79,10 @@
     <string name="workout_empty_items">Brak ćwiczeń dodanych do treningu</string>
     <string name="workout_initial_name">Mój trening</string>
     <string name="workout_initial_desc">Opis treningu</string>
+    <string name="workout_details">Dane treningu</string>
+    <string name="workout_desc">Opis</string>
+    <string name="workout_name">Nazwa</string>
+
 
     <string name="workout_editor_delete_title">Usunięcie elementu</string>
     <string name="workout_editor_delete_question">Czy na pewno chcesz usunąć element?</string>
@@ -89,6 +94,9 @@
 
     <string name="workout_validation_err_empty_circuit">Pusty obwód</string>
     <string name="workout_validation_err_empty_workout">Pusty trening</string>
+    <string name="workout_validation_err_empty_desc">Pusty opis</string>
+    <string name="workout_validation_err_empty_name">Pusta nazwa</string>
+    <string name="workout_validation_err_empty_image">Pusty obrazek</string>
 
     <string name="circuit_label">Obwód</string>
     <string name="circuit_label_new">Obwód (nowy)</string>

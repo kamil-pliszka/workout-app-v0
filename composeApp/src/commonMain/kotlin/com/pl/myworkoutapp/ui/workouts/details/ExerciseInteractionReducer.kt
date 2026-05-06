@@ -193,7 +193,7 @@ class ExerciseInteractionReducer {
         val updatedDraft = active.draft.copy(
             exerciseId = newInfo.exerciseId,
             name = newInfo.name,
-            icon = newInfo.icon,
+            image = newInfo.image,
             descriptionMarkdown = newInfo.descriptionMarkdown,
             quantityType = newInfo.quantityType,
             quantityValue = mappedQuantity,
@@ -219,7 +219,7 @@ class ExerciseInteractionReducer {
                 quantityType = active.draft.quantityType,
                 quantityValue = active.draft.quantityValue,
                 name = active.draft.name,
-                icon = active.draft.icon ?: exercise.icon,
+                image = if (active.draft.image.isEmpty()) exercise.image else active.draft.image,
             )
         }
 

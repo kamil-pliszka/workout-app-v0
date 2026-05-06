@@ -13,6 +13,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.pl.myworkoutapp.domain.model.exercise.QuantityType
 import com.pl.myworkoutapp.domain.model.exercise.asExerciseId
+import com.pl.myworkoutapp.ui.common.asUiImage
 import com.pl.myworkoutapp.ui.common.asUiText
 import com.pl.myworkoutapp.ui.exercises.qtyValueAsUiText
 import com.pl.myworkoutapp.ui.theme.DesertWhite
@@ -54,7 +55,7 @@ fun WorkoutItemExercise(
             //Spacer(Modifier.height(8.dp))
             ExerciseCard(
                 qty = exercise.quantityValue.qtyValueAsUiText(exercise.quantityType).asString(),
-                icon = exercise.icon,
+                image = exercise.image,
                 isDone = exercise.isDone,
                 isCurrent = exercise.isCurrent,
                 themeColor = themeColor,
@@ -72,7 +73,7 @@ val EXERCISE_ITEM = ExerciseUiItem(
     quantityType = QuantityType.REPS,
     quantityValue = 13,
     name = "Lot na miotle".asUiText(),
-    icon = Res.drawable.ic_flying_witch,
+    image = Res.drawable.ic_flying_witch.asUiImage(),
 )
 
 @Preview

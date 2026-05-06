@@ -20,6 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.pl.myworkoutapp.domain.model.exercise.*
 import com.pl.myworkoutapp.ui.common.*
+import com.pl.myworkoutapp.ui.components.BaseOverlayScreen
 import com.pl.myworkoutapp.ui.theme.AppTheme
 import myworkoutapplication.composeapp.generated.resources.*
 import org.jetbrains.compose.resources.*
@@ -47,31 +48,9 @@ fun ExerciseEditorScreen(
         }
         return
     }
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.scrim.copy(alpha = 0.5f))
-            .clickable(
-                indication = null,
-                interactionSource = remember { MutableInteractionSource() }
-            ) {
-                onAction(ExerciseEditorAction.OnDismissRequest)
-            }
-    ) {
-        Column(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .fillMaxWidth()
-                .fillMaxHeight(0.99f)
-                .clip(RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp))
-                .background(MaterialTheme.colorScheme.onPrimary)
-                .clickable(
-                    indication = null,
-                    interactionSource = remember { MutableInteractionSource() }
-                ) { /* consume */ }
-        ) {
-            Spacer(Modifier.height(8.dp))
-            // HEADER
+
+    BaseOverlayScreen(
+        headerContent = {
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -93,12 +72,13 @@ fun ExerciseEditorScreen(
                     )
                 }
             }
-
+        },
+        mainContent = {
             Column(
                 modifier = Modifier
                     .imePadding()
                     .fillMaxWidth()
-                    .weight(1f)
+                    //.weight(1f)
                     //.height(IntrinsicSize.Min)
                     .verticalScroll(rememberScrollState())
             ) {
@@ -109,62 +89,52 @@ fun ExerciseEditorScreen(
                     onAction = onAction
                 )
             }
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-                    .height(48.dp),
-                horizontalArrangement = Arrangement.spacedBy(
-                    space = 32.dp,
-                    alignment = Alignment.CenterHorizontally
-                ),
+        },
+        bottomContent = {
+            /*Button(
+                onClick = { onAction(ExerciseEditorAction.OnDismissRequest)},
+                modifier = Modifier.fillMaxWidth()
             ) {
-                /*Button(
-                    onClick = { onAction(ExerciseEditorAction.OnDismissRequest)},
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(stringResource(Res.string.btn_close))
-                }*/
-                /*Button(onClick = { onAction(ExerciseEditorAction.OnDismissRequest) }) {
-                    Icon(
-                        painter = painterResource(Res.drawable.ic_close),
-                        //tint = MaterialTheme.colorScheme.primary,
-                        contentDescription = stringResource(Res.string.btn_cancel)
-                    )
-                    Text(stringResource(Res.string.btn_cancel))
-                }*/
-                if (false) {//kiedyś dodamy warunek
-                    Button(
-                        onClick = { onAction(ExerciseEditorAction.OnDeleteAction) },
-                        colors = buttonColors(containerColor = MaterialTheme.colorScheme.errorContainer),
-                    ) {
-                        Icon(
-                            painter = painterResource(Res.drawable.ic_delete_forever),
-                            tint = MaterialTheme.colorScheme.error,
-                            contentDescription = stringResource(Res.string.btn_delete)
-                        )
-                        Spacer(Modifier.width(12.dp))
-                        Text(stringResource(Res.string.btn_delete))
-                    }
-                }
+                Text(stringResource(Res.string.btn_close))
+            }*/
+            /*Button(onClick = { onAction(ExerciseEditorAction.OnDismissRequest) }) {
+                Icon(
+                    painter = painterResource(Res.drawable.ic_close),
+                    //tint = MaterialTheme.colorScheme.primary,
+                    contentDescription = stringResource(Res.string.btn_cancel)
+                )
+                Text(stringResource(Res.string.btn_cancel))
+            }*/
+            if (false) {//kiedyś dodamy warunek
                 Button(
-                    onClick = { onAction(ExerciseEditorAction.OnSaveAction) },
-                    //enabled = state.isValid
+                    onClick = { onAction(ExerciseEditorAction.OnDeleteAction) },
+                    colors = buttonColors(containerColor = MaterialTheme.colorScheme.errorContainer),
                 ) {
                     Icon(
-                        painter = painterResource(Res.drawable.ic_check),
-                        //tint = MaterialTheme.colorScheme.primary,
-                        contentDescription = stringResource(Res.string.btn_save)
+                        painter = painterResource(Res.drawable.ic_delete_forever),
+                        tint = MaterialTheme.colorScheme.error,
+                        contentDescription = stringResource(Res.string.btn_delete)
                     )
                     Spacer(Modifier.width(12.dp))
-                    Text(stringResource(Res.string.btn_save))
+                    Text(stringResource(Res.string.btn_delete))
                 }
             }
-        }
-    }
-
-
+            Button(
+                onClick = { onAction(ExerciseEditorAction.OnSaveAction) },
+                //enabled = state.isValid
+            ) {
+                Icon(
+                    painter = painterResource(Res.drawable.ic_check),
+                    //tint = MaterialTheme.colorScheme.primary,
+                    contentDescription = stringResource(Res.string.btn_save)
+                )
+                Spacer(Modifier.width(12.dp))
+                Text(stringResource(Res.string.btn_save))
+            }
+        },
+        maxHeight = 0.99f,
+        onCancel = { onAction(ExerciseEditorAction.OnDismissRequest) }
+    )
 }
 
 
@@ -351,47 +321,6 @@ fun ExerciseImage(
                         color = if (isError) MaterialTheme.colorScheme.error else Color.Unspecified
                     )
                 }
-            }
-        }
-    }
-}
-
-
-@Composable
-fun BasedOnSection(
-    state: ExerciseEditorUiState,
-    onAction1: (ExerciseEditorAction) -> Unit,
-) {
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-
-        Text(
-            text = "Ćwiczenie bazowe",
-            style = MaterialTheme.typography.titleMedium
-        )
-
-        OutlinedButton(
-            //TODO - raczej zbedne, nie bedzie możliwości edycji tego
-            onClick = { /*onAction(ExerciseEditorAction.SelectBasedOn)*/ },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(
-                text = state.exercise.basedOn?.let { "Wybrane: $it" }
-                    ?: "Wybierz ćwiczenie bazowe"
-            )
-        }
-
-        if (state.exercise.basedOn != null) {
-
-            Text(
-                text = "Dziedziczy tłumaczenia i zasoby z ćwiczenia bazowego",
-                style = MaterialTheme.typography.bodySmall
-            )
-
-            TextButton(
-                //TODO - raczej zbedne, nie bedzie możliwości edycji tego
-                onClick = { /*onAction(Action.ClearBasedOn)*/ }
-            ) {
-                Text("Usuń powiązanie")
             }
         }
     }

@@ -358,3 +358,19 @@ fun SettingsScreenPreviewLanguageChooser() {
     }
 }
 
+@Preview
+@Composable
+fun SettingsScreenPreviewCamera() {
+    AppTheme {
+        SettingsScreen(
+            SettingsUiState(
+                showCamera = true,
+                langLabel = "EN".asUiText(),
+                appVersionDate = "2026-03-27",
+                appVersionHash = "43433f"
+            ),
+            onAction = {}
+        )
+    }
+}
+
