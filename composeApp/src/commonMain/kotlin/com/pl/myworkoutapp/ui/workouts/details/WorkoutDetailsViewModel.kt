@@ -11,19 +11,16 @@ import com.pl.myworkoutapp.ui.app.AppStateHolder
 import com.pl.myworkoutapp.ui.common.asUiText
 import com.pl.myworkoutapp.ui.common.joinToString
 import com.pl.myworkoutapp.ui.workouts.*
-import com.pl.myworkoutapp.ui.workouts.asUiText
 import com.pl.myworkoutapp.ui.workouts.details.WorkoutEditAction.ExerciseReplaced
 import com.pl.myworkoutapp.ui.workouts.details.WorkoutEditAction.SelectedExerciseLoaded
 import com.pl.myworkoutapp.ui.workouts.details.WorkoutEditAction.ShowLoadedExerciseInfo
 import com.pl.myworkoutapp.ui.workouts.details.WorkoutEditorEvent.ScrollEditorTo
-import com.pl.myworkoutapp.ui.workouts.tree.*
+import com.pl.myworkoutapp.ui.workouts.tree.transform
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import myworkoutapplication.composeapp.generated.resources.*
-import kotlin.collections.first
-import kotlin.collections.map
 import kotlin.coroutines.cancellation.CancellationException
 
 //Docelowa odpowiedzialność ViewModel
@@ -255,6 +252,9 @@ class WorkoutDetailsViewModel(
             WorkoutEditEffect.Vibration -> {
                 //TODO - przesłać gdzieś dalej ten event i zrobić wibracje na telefonie
             }
+
+            WorkoutEditEffect.OpenMetadataEditor -> openMetadataEditor()
+            WorkoutEditEffect.AbortWorkoutCreation -> abortWorkoutCreation()
         }
     }
 
@@ -276,28 +276,33 @@ class WorkoutDetailsViewModel(
             }
             return
         }
-        when (workoutId) {
-            WorkoutId.Custom.NEW -> prepareNewWorkout()
-            else -> viewModelScope.launch {
-                loadWorkoutById(workoutId)
+        viewModelScope.launch {
+            when (workoutId) {
+                WorkoutId.Custom.NEW -> prepareNewWorkout()
+                else ->
+                    loadWorkoutById(workoutId)
             }
         }
     }
 
-    private fun prepareNewWorkout() {
+    private suspend fun prepareNewWorkout() {
         _state.update {
+            val workout = WorkoutWithExercisesUiModel(
+                workout = prepareInitialWorkout(),
+                items = emptyList(),
+                creationMode = true,
+            )
             it.copy(
-                mode = WorkoutDetailsMode.View(
-                    session = WorkoutViewSession(
-                        workout = WorkoutWithExercisesUiModel(
-                            workout = prepareInitialWorkout(),
-                            items = emptyList()
-                        ),
-                        hasUnsavedChanges = true,
+                mode = WorkoutDetailsMode.Edit(
+                    session = WorkoutEditSession(
+                        original = workout,
+                        workout = workout,
+                        editableMetadata = workout.toMetadataDraft(true)
                     ),
                 )
             )
         }
+        appStateHolder.setWorkoutEditorActive(true)
     }
 
     private suspend fun loadWorkoutById(workoutId: WorkoutId) {
@@ -352,11 +357,12 @@ class WorkoutDetailsViewModel(
             return
         }
 
-        when(savedWorkoutResult) {
+        when (savedWorkoutResult) {
             is SaveWorkoutResult.Success -> {
                 sendEvent(WorkoutDetailsEvent.ShowSuccess(Res.string.workout_saved_success.asUiText()))
                 loadWorkoutById(savedWorkoutResult.workoutId)
             }
+
             is SaveWorkoutResult.ValidationError -> {
                 sendEvent(
                     WorkoutDetailsEvent.ShowError(
@@ -391,6 +397,9 @@ class WorkoutDetailsViewModel(
 
     private suspend fun resetWorkout() {
         val view = _state.value.mode as? WorkoutDetailsMode.View ?: return
+        //w trybie tworzenia nie ma co resetować, guzik powinien być ukryty
+        //ale w VM dodamy zabezpieczenie, zeby nie wywaliło aplikacji gdy będzie reload nieistniejącego elementu
+        if (view.session.workout.creationMode) return
         loadWorkoutById(view.session.workout.workout.workoutId)
     }
 
@@ -464,6 +473,25 @@ class WorkoutDetailsViewModel(
                 )
             )
         }
+    }
+
+    private suspend fun openMetadataEditor() {
+        val edit = _state.value.mode as? WorkoutDetailsMode.Edit ?: return
+        _state.update {
+            it.copy(
+                mode = edit.copy(
+                    session = edit.session.copy(
+                        editableMetadata = edit.session.workout.toMetadataDraft(false)
+                    )
+                )
+            )
+        }
+    }
+
+    private suspend fun abortWorkoutCreation() {
+        if (_state.value.mode !is WorkoutDetailsMode.Edit) return
+        appStateHolder.setWorkoutEditorActive(false)//pokazanie bottom nav bar
+        closeScreen()
     }
 
     private fun resetEditor() {

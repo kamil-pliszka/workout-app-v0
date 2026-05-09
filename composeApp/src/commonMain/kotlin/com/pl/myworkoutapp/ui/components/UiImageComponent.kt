@@ -1,17 +1,15 @@
 package com.pl.myworkoutapp.ui.components
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
-import androidx.compose.material3.Icon
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.ContentScale.Companion
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.pl.myworkoutapp.ui.common.*
@@ -28,10 +26,12 @@ fun UiImageComponent(
     image: UiImage,
     tint: Color? = null,
     contentScale: ContentScale = ContentScale.Fit,
+    emptyImageContent: @Composable () -> Unit = {},
+    noLocalImageContent: @Composable () -> Unit = {},
 ) {
 
     when (image) {
-        UiImage.Empty -> Unit
+        UiImage.Empty -> emptyImageContent()
         is UiImage.ImageResource -> {
             /*Icon(
                 painter = painterResource(image.resource),
@@ -52,14 +52,16 @@ fun UiImageComponent(
             val bitmap = remember(image.path) {
                 loadImageBitmap(image.path)
             }
-            bitmap?.let {
+            if (bitmap != null) {
                 Image(
-                    bitmap = it,
+                    bitmap = bitmap,
                     contentDescription = contentDescription,
                     modifier = modifier,
                     colorFilter = if (tint == null) null else ColorFilter.tint(tint),
                     contentScale = contentScale
                 )
+            } else {
+                noLocalImageContent()
             }
         }
     }

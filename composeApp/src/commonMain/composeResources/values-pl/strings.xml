@@ -16,6 +16,7 @@
     <string name="btn_choose">Wybierz</string>
     <string name="btn_back">Wstecz</string>
     <string name="btn_edit">Edytuj</string>
+    <string name="btn_next">Dalej</string>
 
     <string name="navigation_plans">Zestawy</string>
     <string name="navigation_workouts">Treningi</string>
@@ -86,6 +87,7 @@
 
     <string name="workout_editor_delete_title">Usunięcie elementu</string>
     <string name="workout_editor_delete_question">Czy na pewno chcesz usunąć element?</string>
+    <string name="workout_editor_choose_image">Wybierz zdjęcie</string>
     <string name="workout_view_delete_title">Potwierdź usunięcie</string>
     <string name="workout_view_delete_question">Czy na pewno chcesz usunąć ten trening?</string>
     <string name="workout_view_reset_title">Czyszczenie zmian</string>

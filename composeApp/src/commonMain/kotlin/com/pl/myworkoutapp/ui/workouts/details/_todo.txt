@@ -1,0 +1,125 @@
+
+1.WorkoutEditReducer
+Reducer robi się za duży
+
+To już widać.
+
+WorkoutEditReducer:
+
+orkiestruje flow,
+waliduje metadata,
+obsługuje modal state,
+zarządza exercise flow,
+robi mutations,
+obsługuje circuits,
+wykonuje quantity transforms,
+emituje effecty.
+
+To już jest:
+feature god object.
+
+Jeszcze nie tragedia.
+Ale kierunek już widać.
+
+Co bym zrobił dalej
+Rozbił na feature reducers
+
+Np:
+
++MetadataEditorReducer
+
+
+ExercisePickerReducer
+WorkoutStructureReducer
+WorkoutExerciseReducer
+CircuitFlowReducer
+
+a WorkoutEditReducer:
+
+tylko deleguje.
+
+Czyli bardziej:
+
+when(action) {
+   is MetadataAction -> metadataReducer.reduce(...)
+}
+
+niż:
+1500 linii when.
+
+2. WorkoutEditAction zaczyna być przeciążony
+
+Masz już:
+
+metadata actions
+exercise actions
+modal actions
+drag actions
+circuit actions
+session actions
+
+To zaczyna być:
+„global action namespace”.
+
+Bardzo typowy problem Redux/MVI.
+
+Lepszy kierunek
+Nested actions
+
+Np:
+
+sealed interface WorkoutEditAction {
+    data class Metadata(val action: MetadataAction)
+    data class Exercise(val action: ExerciseAction)
+    data class Circuit(val action: CircuitAction)
+}
+
+
+
+
+WorkoutDetailsViewModel:
+1. Wydziel effect handlers
+
+Np:
+
+WorkoutEditEffectHandler
+WorkoutViewEffectHandler
+
+VM wtedy stanie się bardzo cienki.
+
+
+
+
+
+2.WorkoutMetadataDraft.
+validation jest jeszcze trochę „frontend 2018”
+
+Masz:
+
+Map<Field, String>
+
+To działa.
+Ale będzie ograniczać.
+
+Lepsze byłoby:
+
+sealed interface ValidationError
+
+Np:
+
+sealed interface MetadataValidationError {
+    object EmptyName
+    object ImageRequired
+    object DescriptionTooLong
+}
+
+Dlaczego?
+
+Bo wtedy:
+
+lokalizacja łatwiejsza,
+typowanie lepsze,
+UI nie zależy od stringów.
+
+
+

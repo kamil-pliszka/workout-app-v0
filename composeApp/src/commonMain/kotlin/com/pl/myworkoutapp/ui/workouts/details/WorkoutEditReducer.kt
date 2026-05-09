@@ -14,14 +14,17 @@ import com.pl.myworkoutapp.ui.workouts.details.ExerciseInteractionAction.Open
 import com.pl.myworkoutapp.ui.workouts.details.ExerciseInteractionAction.Prev
 import com.pl.myworkoutapp.ui.workouts.details.ExerciseInteractionAction.Reset
 import com.pl.myworkoutapp.ui.workouts.details.ExerciseInteractionAction.Save
-import com.pl.myworkoutapp.ui.workouts.details.ExercisePickerContext.*
+import com.pl.myworkoutapp.ui.workouts.details.ExercisePickerContext.AddExercise
+import com.pl.myworkoutapp.ui.workouts.details.ExercisePickerContext.ReplaceListItem
+import com.pl.myworkoutapp.ui.workouts.details.ExercisePickerContext.ReplacePreview
 import com.pl.myworkoutapp.ui.workouts.details.WorkoutEditEffect.CloseEditor
 import com.pl.myworkoutapp.ui.workouts.details.WorkoutEditEffect.LoadExerciseForList
 import com.pl.myworkoutapp.ui.workouts.details.WorkoutEditEffect.LoadExerciseForPreview
 import com.pl.myworkoutapp.ui.workouts.details.WorkoutEditEffect.LoadExerciseInfo
 import com.pl.myworkoutapp.ui.workouts.details.WorkoutEditEffect.ResetDraft
 import com.pl.myworkoutapp.ui.workouts.details.WorkoutEditEffect.SaveDraft
-import com.pl.myworkoutapp.ui.workouts.details.WorkoutEditModal.*
+import com.pl.myworkoutapp.ui.workouts.details.WorkoutEditModal.ConfirmDeleteItem
+import com.pl.myworkoutapp.ui.workouts.details.WorkoutEditModal.ExercisePicker
 import com.pl.myworkoutapp.ui.workouts.tree.WorkoutTreeMutation
 import com.pl.myworkoutapp.ui.workouts.tree.WorkoutTreeMutationHandler
 
@@ -52,8 +55,6 @@ import com.pl.myworkoutapp.ui.workouts.tree.WorkoutTreeMutationHandler
  */
 
 sealed interface WorkoutEditAction {
-    data class Rename(val value: String) : WorkoutEditAction
-    data class ChangeDescription(val value: String) : WorkoutEditAction
     data class Drop(val event: DragDropEvent) : WorkoutEditAction
 
     data object AddExercise : WorkoutEditAction
@@ -91,15 +92,9 @@ sealed interface WorkoutEditAction {
     data object CloseEditor : WorkoutEditAction
     data object ShowExercisePicker : WorkoutEditAction
     data class ExerciseReplaced(val info: ExerciseInfoUiModel) : WorkoutEditAction
-
-    data object OpenMetadataEditor : WorkoutEditAction
-    data object CancelMetadataEditor : WorkoutEditAction
-    data object SaveMetadataEditor : WorkoutEditAction
-
-    data class UpdateMetadataName(val value: String) : WorkoutEditAction
-    data class UpdateMetadataDescription(val value: String) : WorkoutEditAction
-    data class UpdateMetadataImage(val value: UiImage) : WorkoutEditAction
+    data class Metadata(val action: MetadataAction) : WorkoutEditAction
 }
+fun MetadataAction.toWorkoutEditAction() = WorkoutEditAction.Metadata(this)
 
 fun WorkoutExerciseInfoAction.toWorkoutEditAction(): WorkoutEditAction = when (this) {
     is WorkoutExerciseInfoAction.ChangeQuantity -> WorkoutEditAction.ChangeQuantity(increase)
@@ -128,6 +123,8 @@ sealed interface WorkoutEditEffect {
     data object SaveDraft : WorkoutEditEffect
     data object ResetDraft : WorkoutEditEffect
     data object CloseEditor : WorkoutEditEffect
+    data object AbortWorkoutCreation : WorkoutEditEffect
+    data object OpenMetadataEditor : WorkoutEditEffect
 }
 
 
@@ -144,7 +141,8 @@ fun WorkoutEditSession.getCircuit(key: Int): CircuitUiItem =
 class WorkoutEditReducer(
     private val exerciseReducer: ExerciseInteractionReducer,
     private val circuitReducer: CircuitEditorDelegate,
-    private val workoutTreeMutationHandler: WorkoutTreeMutationHandler
+    private val metadataEditorReducer: WorkoutMetadataEditorReducer,
+    private val workoutTreeMutationHandler: WorkoutTreeMutationHandler,
 ) {
     @Suppress("PrivatePropertyName")
     private val TAG = "WorkoutEditReducer"
@@ -195,15 +193,6 @@ class WorkoutEditReducer(
 
             WorkoutEditAction.ExerciseSave ->
                 delegate(session, Save)
-
-
-            is WorkoutEditAction.Rename -> WorkoutEditResult(
-                rename(session, action.value)
-            )
-
-            is WorkoutEditAction.ChangeDescription -> WorkoutEditResult(
-                changeDescription(session, action.value)
-            )
 
             is WorkoutEditAction.Drop ->
                 drop(session, action.event)
@@ -292,63 +281,7 @@ class WorkoutEditReducer(
                 changeQuantityOnList(session, action.key, action.increase)
             )
 
-            WorkoutEditAction.OpenMetadataEditor -> {
-                WorkoutEditResult(
-                    state = session.copy(
-                        editableMetadata = WorkoutMetadataDraft(
-                            image = session.workout.workout.image,
-                            name = session.workout.workout.name,
-                            description = session.workout.workout.desc,
-                        )
-                    )
-                )
-            }
-
-            WorkoutEditAction.CancelMetadataEditor -> {
-                WorkoutEditResult(
-                    state = session.copy(editableMetadata = null)
-                )
-            }
-
-            WorkoutEditAction.SaveMetadataEditor -> {
-                val draft = session.editableMetadata ?: return WorkoutEditResult(session)
-                WorkoutEditResult(
-                    state = session.copy(
-                        workout = session.workout.copy(
-                            workout = session.workout.workout.copy(
-                                image = draft.image,
-                                name = draft.name,
-                                desc = draft.description,
-                            )
-                        ),
-                        editableMetadata = null,
-                    )
-                )
-            }
-
-            is WorkoutEditAction.UpdateMetadataName -> {
-                WorkoutEditResult(
-                    state = session.copy(
-                        editableMetadata = session.editableMetadata?.copy(name = action.value.asUiText())
-                    )
-                )
-            }
-
-            is WorkoutEditAction.UpdateMetadataDescription -> {
-                WorkoutEditResult(
-                    state = session.copy(
-                        editableMetadata = session.editableMetadata?.copy(description = action.value.asUiText())
-                    )
-                )
-            }
-
-            is WorkoutEditAction.UpdateMetadataImage -> {
-                WorkoutEditResult(
-                    state = session.copy(
-                        editableMetadata = session.editableMetadata?.copy(image = action.value)
-                    )
-                )
-            }
+            is WorkoutEditAction.Metadata -> metadataEditorReducer.reduce(session, action.action)
         }
     }
 
@@ -369,32 +302,6 @@ class WorkoutEditReducer(
             is ExerciseInteractionEffect.LoadExerciseInfo ->
                 LoadExerciseInfo(key, exerciseId)
         }
-
-    private fun rename(
-        session: WorkoutEditSession,
-        value: String
-    ): WorkoutEditSession {
-        return session.copy(
-            workout = session.workout.copy(
-                workout = session.workout.workout.copy(
-                    name = value.asUiText()
-                )
-            )
-        )
-    }
-
-    private fun changeDescription(
-        session: WorkoutEditSession,
-        value: String
-    ): WorkoutEditSession {
-        return session.copy(
-            workout = session.workout.copy(
-                workout = session.workout.workout.copy(
-                    desc = value.asUiText()
-                )
-            )
-        )
-    }
 
     private fun drop(session: WorkoutEditSession, event: DragDropEvent): WorkoutEditResult {
         Log.d(TAG, "Drop event: $event")
@@ -653,4 +560,5 @@ class WorkoutEditReducer(
             ),
         )
     }
+
 }

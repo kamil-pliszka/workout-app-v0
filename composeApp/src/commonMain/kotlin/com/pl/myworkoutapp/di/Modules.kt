@@ -76,6 +76,7 @@ val sharedModule = module {
     singleOf(::WorkoutTreeMutator)
     singleOf(::WorkoutTreeNormalizer)
     singleOf(::WorkoutTreeMutationHandler)
+    singleOf(::WorkoutMetadataEditorReducer)
 
     //VM
     viewModelOf(::LanguageViewModel)

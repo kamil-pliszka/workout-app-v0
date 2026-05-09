@@ -7,7 +7,8 @@ import com.pl.myworkoutapp.domain.model.exercise.ExerciseId
 import com.pl.myworkoutapp.domain.model.exercise.QuantityType
 import com.pl.myworkoutapp.domain.model.workout.Phase
 import com.pl.myworkoutapp.domain.model.workout.WorkoutId
-import com.pl.myworkoutapp.ui.common.*
+import com.pl.myworkoutapp.ui.common.UiImage
+import com.pl.myworkoutapp.ui.common.UiText
 
 @Immutable
 data class WorkoutUiModel(
@@ -27,6 +28,7 @@ data class WorkoutUiModel(
 data class WorkoutWithExercisesUiModel(
     val workout: WorkoutUiModel,
     val items: List<WorkoutUiItem>,
+    val creationMode: Boolean = false,
 ) {
     fun isDirty(original: WorkoutWithExercisesUiModel): Boolean {
         return !(workout == original.workout && items == original.items)

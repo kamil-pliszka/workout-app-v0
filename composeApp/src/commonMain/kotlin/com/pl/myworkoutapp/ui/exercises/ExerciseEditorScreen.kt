@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import com.pl.myworkoutapp.domain.model.exercise.*
 import com.pl.myworkoutapp.ui.common.*
 import com.pl.myworkoutapp.ui.components.BaseOverlayScreen
+import com.pl.myworkoutapp.ui.components.UiImageComponent
 import com.pl.myworkoutapp.ui.theme.AppTheme
 import myworkoutapplication.composeapp.generated.resources.*
 import org.jetbrains.compose.resources.*
@@ -254,6 +255,8 @@ fun ExerciseImage(
     imagePath: String?,
     isError: Boolean,
 ) {
+    val image = remember { UiImage.of(imageRes, imagePath) }
+
     Box(
         modifier = modifier
             .aspectRatio(1f)     // wymusza kwadrat
@@ -261,54 +264,21 @@ fun ExerciseImage(
         ,
         contentAlignment = Alignment.Center
     ) {
-        when {
-            imagePath != null -> {
-                val photoBitmap = remember(imagePath) {
-                    loadImageBitmap(imagePath)
-                }
-                if (photoBitmap != null) {
-                    Image(
-                        bitmap = photoBitmap,
-                        contentDescription = "exe image",
-                        modifier = Modifier
-                            .fillMaxSize()
-                            //.aspectRatio(1f)
-                            .border(
-                                1.dp,
-                                MaterialTheme.colorScheme.secondary,
-                                RoundedCornerShape(8.dp)
-                            )
-                            .clip(RoundedCornerShape(8.dp)),
-                        contentScale = ContentScale.Crop
-                    )
-                } else {
-                    Text(
-                        text = stringResource(Res.string.exercise_editor_choose_image),
-                        color = MaterialTheme.colorScheme.error
-                    )
-                }
-            }
-
-            imageRes != null -> {
-                Image(
-                    painter = painterResource(imageRes),
-                    contentDescription = "exe image",
-                    modifier = Modifier
-                        .fillMaxSize()
-                        //.aspectRatio(1f)
-                        .border(
-                            1.dp,
-                            MaterialTheme.colorScheme.secondary,
-                            RoundedCornerShape(8.dp)
-                        )
-                        .clip(RoundedCornerShape(8.dp)),
-                    contentScale = ContentScale.Crop
+        UiImageComponent(
+            modifier = Modifier
+                .fillMaxSize()
+                //.aspectRatio(1f)
+                .border(
+                    1.dp,
+                    MaterialTheme.colorScheme.secondary,
+                    RoundedCornerShape(8.dp)
                 )
-            }
-
-            else -> {
+                .clip(RoundedCornerShape(8.dp)),
+            contentDescription = "exe image",
+            image = image,
+            contentScale = ContentScale.Crop,
+            emptyImageContent = {
                 Column(
-                    //modifier = Modifier.ali
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Icon(
@@ -321,8 +291,14 @@ fun ExerciseImage(
                         color = if (isError) MaterialTheme.colorScheme.error else Color.Unspecified
                     )
                 }
+            },
+            noLocalImageContent = {
+                Text(
+                    text = stringResource(Res.string.exercise_editor_choose_image),
+                    color = MaterialTheme.colorScheme.error
+                )
             }
-        }
+        )
     }
 }
 

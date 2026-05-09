@@ -22,10 +22,11 @@ class ValidateWorkoutUseCase {
             //opis wymagany tylko dla w pełni customowego workoutu
             errors += WorkoutValidationError.EmptyDescription
         }
-        if (workout.imageUri.isNullOrEmpty() && workout.basedOn == null) {
-            //obrazek wymagany tylko dla w pełni customowego workoutu
-            errors += WorkoutValidationError.EmptyImage
-        }
+        //obrazek jednak nie jest wymagany, bo i po co
+//        if (workout.imageUri.isNullOrEmpty() && workout.basedOn == null) {
+//            //obrazek wymagany tylko dla w pełni customowego workoutu
+//            errors += WorkoutValidationError.EmptyImage
+//        }
 
         if (workout.items.isEmpty()) {
             errors += WorkoutValidationError.EmptyWorkout

@@ -50,7 +50,7 @@ fun WorkoutEditorScreen(
         headerContent = {
             WorkoutEditorHeader(
                 title = state.workout.workout.name.asString(),
-                onEditMetadata = { onEditAction(WorkoutEditAction.OpenMetadataEditor) },
+                onEditMetadata = { onEditAction(MetadataAction.OpenMetadataEditor.toWorkoutEditAction()) },
                 onClose = { onEditAction(WorkoutEditAction.CloseEditor) }
             )
         },
@@ -91,7 +91,7 @@ fun WorkoutEditorScreen(
     if (state.editableMetadata != null) {
         WorkoutMetadataEditorScreen(
             state = state.editableMetadata,
-            onAction = onEditAction,
+            onAction = { action -> onEditAction(action.toWorkoutEditAction()) },
         )
     }
 

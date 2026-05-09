@@ -18,7 +18,7 @@ class WorkoutSessionCoordinator {
     fun closeEditor(edit: WorkoutEditSession): WorkoutViewSession {
         return WorkoutViewSession(
             workout = edit.original,
-            hasUnsavedChanges = false
+            hasUnsavedChanges = edit.workout.creationMode
         )
     }
 

@@ -27,14 +27,18 @@ fun BaseOverlayScreen(
     // Backdrop / Scrim
     // brzydko, ale jednolicie z pozostałymi ekranami
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.scrim.copy(alpha = 0.5f))
-            .clickable(
-                indication = null,
-                interactionSource = remember { MutableInteractionSource() }
-            ) { onCancel() }
+        modifier = Modifier.fillMaxSize()
     ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.scrim.copy(alpha = 0.5f))
+                .clickable(
+                    indication = null,
+                    interactionSource = remember { MutableInteractionSource() }
+                ) { onCancel() }
+        )
+
         Column(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
@@ -42,7 +46,7 @@ fun BaseOverlayScreen(
                 .fillMaxHeight(maxHeight) // Slightly less than 1.0 to show it's an overlay
                 .clip(RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp))
                 .background(MaterialTheme.colorScheme.surface)
-                .imePadding() // Ensures UI moves up when keyboard appears
+                //.imePadding() // Ensures UI moves up when keyboard appears
                 .clickable(
                     indication = null,
                     interactionSource = remember { MutableInteractionSource() }
@@ -70,7 +74,9 @@ fun BaseOverlayScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(16.dp)
-                        .navigationBarsPadding(),
+                        .navigationBarsPadding()
+                        .imePadding()
+                    ,
                     horizontalArrangement = Arrangement.spacedBy(
                         space = 16.dp,
                         alignment = Alignment.CenterHorizontally

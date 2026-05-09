@@ -17,6 +17,7 @@
     <string name="btn_choose">Choose</string>
     <string name="btn_back">Back</string>
     <string name="btn_edit">Edit</string>
+    <string name="btn_next">Next</string>
 
     <string name="navigation_plans">Plans</string>
     <string name="navigation_workouts">Workouts</string>
@@ -112,6 +113,7 @@
 
     <string name="workout_editor_delete_title">Delete element</string>
     <string name="workout_editor_delete_question">Are you sure you want to delete element?</string>
+    <string name="workout_editor_choose_image">Choose image</string>
     <string name="workout_view_delete_title">Confirm delete workout</string>
     <string name="workout_view_delete_question">Are you sure to delete that workout?</string>
     <string name="workout_view_reset_title">Reset changes</string>

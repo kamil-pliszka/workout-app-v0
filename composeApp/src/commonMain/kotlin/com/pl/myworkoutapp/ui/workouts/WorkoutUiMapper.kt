@@ -8,6 +8,7 @@ import com.pl.myworkoutapp.domain.usecase.WorkoutValidationError
 import com.pl.myworkoutapp.ui.common.*
 import com.pl.myworkoutapp.ui.exercises.toUi
 import com.pl.myworkoutapp.ui.theme.*
+import com.pl.myworkoutapp.ui.workouts.details.WorkoutMetadataDraft
 import com.pl.myworkoutapp.ui.workouts.tree.toDomain
 import com.pl.myworkoutapp.ui.workouts.tree.toTree
 import myworkoutapplication.composeapp.generated.resources.*
@@ -306,4 +307,15 @@ fun DurationLabel.asUiText(): UiText = when (this) {
 fun Int?.toWorkoutKcalText(): UiText = when (this) {
     null -> Res.string.workout_kcal_unknown.asUiText()
     else -> Res.string.workout_kcal_pattern.asUiText(this)
+}
+
+suspend fun WorkoutWithExercisesUiModel.toMetadataDraft(
+    creationMode: Boolean = false,
+): WorkoutMetadataDraft {
+    return WorkoutMetadataDraft(
+        image = workout.image,
+        name = workout.name.loadString(),
+        description = workout.desc.loadString(),
+        creationMode = creationMode,
+    )
 }

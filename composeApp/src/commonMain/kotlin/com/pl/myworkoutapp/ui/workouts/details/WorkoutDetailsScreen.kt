@@ -4,10 +4,12 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.material3.ButtonDefaults.buttonColors
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.pl.myworkoutapp.core.Log
 import com.pl.myworkoutapp.domain.model.workout.BuiltInWorkoutId
 import com.pl.myworkoutapp.domain.model.workout.BuiltInWorkoutRegistry
 import com.pl.myworkoutapp.domain.model.workout.WorkoutMetrics
@@ -35,6 +37,10 @@ fun WorkoutDetailsScreen(
     onEditAction: (WorkoutEditAction) -> Unit,
     onCircuitEditorAction: (CircuitEditorAction) -> Unit,
 ) {
+    SideEffect {
+        Log.d("RECOMP", "WorkoutDetailsScreen")
+    }
+
     if (state.mode is WorkoutDetailsMode.Loading) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             CircularProgressIndicator()
@@ -149,18 +155,20 @@ private fun BoxScope.WorkoutDetailBottomButtons(
             Row(
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                OutlinedButton(
-                    // Use Outlined for secondary action
-                    modifier = Modifier.weight(1f),
-                    onClick = { onViewAction(WorkoutViewAction.ResetWorkout) },
-                    colors = buttonColors(containerColor = MaterialTheme.colorScheme.outline),
-                ) {
-                    Icon(
-                        painter = painterResource(Res.drawable.ic_reset_settings),
-                        contentDescription = null
-                    )
-                    Spacer(Modifier.width(8.dp))
-                    Text(stringResource(Res.string.workout_reset))
+                if (!state.workout.creationMode) {
+                    OutlinedButton(
+                        // Use Outlined for secondary action
+                        modifier = Modifier.weight(1f),
+                        onClick = { onViewAction(WorkoutViewAction.ResetWorkout) },
+                        colors = buttonColors(containerColor = MaterialTheme.colorScheme.outline),
+                    ) {
+                        Icon(
+                            painter = painterResource(Res.drawable.ic_reset_settings),
+                            contentDescription = null
+                        )
+                        Spacer(Modifier.width(8.dp))
+                        Text(stringResource(Res.string.workout_reset))
+                    }
                 }
                 Button( // Filled for primary action
                     modifier = Modifier.weight(1f),

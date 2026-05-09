@@ -27,15 +27,23 @@ sealed interface UiText {
             is Empty -> ""
         }
     }
-    suspend fun loadString() : String {
+
+    suspend fun loadString(): String {
         return when (this) {
             is DynamicString -> value
             is StringResourceId -> {
                 val resolvedArgs = args.map { if (it is UiText) it.loadString() else it }
                 getString(resource = id, formatArgs = resolvedArgs.toTypedArray())
             }
+
             is Empty -> ""
         }
+    }
+
+    fun isEmpty() = when (this) {
+        is DynamicString -> this.value.isEmpty()
+        Empty -> true
+        is StringResourceId -> false
     }
 }
 
