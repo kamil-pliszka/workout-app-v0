@@ -12,6 +12,7 @@ import com.pl.myworkoutapp.domain.model.exercise.asString
 import com.pl.myworkoutapp.domain.model.workout.asString
 import com.pl.myworkoutapp.ui.common.MessageCoordinator
 import com.pl.myworkoutapp.ui.common.ObserveAsEvents
+import com.pl.myworkoutapp.ui.effects.PlatformEffects
 import com.pl.myworkoutapp.ui.execution.WorkoutExecutionScreen
 import com.pl.myworkoutapp.ui.execution.WorkoutExecutionViewModel
 import com.pl.myworkoutapp.ui.exercises.*
@@ -32,7 +33,8 @@ fun Navigation(
     navController: NavHostController,
     appNavigator: AppNavigator = koinInject(),
     messageCoordinator: MessageCoordinator = koinInject(),
-    exerciseCoordinator: ExerciseEditorCoordinator = koinInject()
+    exerciseCoordinator: ExerciseEditorCoordinator = koinInject(),
+    platformEffects: PlatformEffects = koinInject(),
 ) {
     ObserveAsEvents(appNavigator.navEvents) { event ->
         when (event) {
@@ -110,6 +112,7 @@ fun Navigation(
                         is WorkoutDetailsEvent.NavToWorkoutExecution -> navController.navigate(
                             ScreenRoutes.WorkoutExecution.create(event.workoutId.asString())
                         )
+                        WorkoutDetailsEvent.Vibrate -> platformEffects.vibrate(666)
                     }
                 }
                 //UiEventConsumer(snackbarHostState, viewModel.events)

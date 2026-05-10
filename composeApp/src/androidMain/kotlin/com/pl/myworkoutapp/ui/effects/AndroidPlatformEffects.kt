@@ -5,31 +5,49 @@ import android.app.Activity
 import android.content.Context
 import android.os.*
 import android.speech.tts.TextToSpeech
-import android.view.WindowManager
 import androidx.annotation.RequiresPermission
 
-class AndroidPlatformEffects(private val activityProvider: () -> Activity?) : PlatformEffects {
+class AndroidPlatformEffects(private val context: Context, private val activityProvider: () -> Activity?) : PlatformEffects {
 
     override fun keepScreenOn(enabled: Boolean) {
+        /*
         val activity = activityProvider() ?: return
         if (enabled) {
             activity.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         } else {
             activity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        }
+        }*/
+        TODO()
+        //TODO - zmienić wersję na Composable:
+        /*
+val view = LocalView.current
+
+DisposableEffect(enabled) {
+    val window = (view.context as Activity).window
+
+    if (enabled) {
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+    }
+
+    onDispose {
+        window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+    }
+}
+
+         */
     }
 
     @RequiresPermission(Manifest.permission.VIBRATE)
     override fun vibrate(durationMs: Long) {
-        val activity = activityProvider() ?: return
+        println("vibrate: $durationMs")
         //val vibrator = activity.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         val vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             val vibratorManager =
-                activity.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
+                context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
             vibratorManager.defaultVibrator
         } else {
             @Suppress("DEPRECATION")
-            activity.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+            context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         }
         vibrator.vibrate(
             VibrationEffect.createOneShot(
@@ -40,13 +58,12 @@ class AndroidPlatformEffects(private val activityProvider: () -> Activity?) : Pl
     }
 
     override fun playSound(type: SoundType) {
-        val activity = activityProvider() ?: return
+        //val activity = activityProvider() ?: return
         //MediaPlayer.create(activity, R.raw.some_sound).start()
     }
 
     override fun speak(text: String) {
-        val activity = activityProvider() ?: return
-        val tts = TextToSpeech(activity) {}
+        val tts = TextToSpeech(context) {}
         tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, null)
     }
 }

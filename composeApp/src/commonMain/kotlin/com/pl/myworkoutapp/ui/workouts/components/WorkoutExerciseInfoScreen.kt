@@ -21,7 +21,6 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
 sealed interface WorkoutExerciseInfoAction {
-    object ShowExercisePicker : WorkoutExerciseInfoAction
     data class ChangeQuantity(val increase: Boolean) : WorkoutExerciseInfoAction
     object ExercisePrev : WorkoutExerciseInfoAction
     object ExerciseNext : WorkoutExerciseInfoAction
@@ -36,6 +35,7 @@ fun WorkoutExerciseInfoScreen(
     exerciseInfo: ExerciseInfoUiModel,
     showExchangeButton: Boolean = true,
     onAction: (WorkoutExerciseInfoAction) -> Unit,
+    onExchangeExerciseRequest: () -> Unit,
 ) {
 //    val sheetState = rememberModalBottomSheetState(
 //        skipPartiallyExpanded = true // od razu full
@@ -55,6 +55,7 @@ fun WorkoutExerciseInfoScreen(
         exerciseInfo = exerciseInfo,
         showExchangeButton = showExchangeButton,
         onAction = onAction,
+        onExchangeExerciseRequest = onExchangeExerciseRequest
     )
 }
 
@@ -64,6 +65,7 @@ private fun WorkoutExerciseInfoContent(
     exerciseInfo: ExerciseInfoUiModel,
     showExchangeButton: Boolean,
     onAction: (WorkoutExerciseInfoAction) -> Unit,
+    onExchangeExerciseRequest: () -> Unit,
 ) {
     BaseOverlayScreen(
         headerContent = {
@@ -73,7 +75,7 @@ private fun WorkoutExerciseInfoContent(
                 modifier = Modifier.weight(1f)
             )
             if (showExchangeButton) {
-                TextButton(onClick = { onAction(WorkoutExerciseInfoAction.ShowExercisePicker) }) {
+                TextButton(onClick = onExchangeExerciseRequest) {
                     Text(stringResource(Res.string.workout_change))
                 }
             }
@@ -214,6 +216,7 @@ private fun ExerciseBottomSheet() {
             ),
             showExchangeButton = true,
             onAction = {},
+            onExchangeExerciseRequest = { },
         )
     }
 }
@@ -231,7 +234,8 @@ private fun ExerciseBottomSheetDirty() {
                 isDirty = true,
             ),
             showExchangeButton = false,
-            onAction = {},
+            onAction = { },
+            onExchangeExerciseRequest = { },
         )
     }
 }

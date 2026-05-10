@@ -40,7 +40,7 @@ sealed interface CircuitStructure {
     data class AMRAP(//As Many Reps/Rounds As Possible
         // The goal is to do as many reps of one specific exercise — or as many rounds of a circuit
         // — in a designated amount of time
-        val durationSec: Int
+        val minutes: Int
     ) : CircuitStructure //ITEMS - dowlne ćwiczenie/ćwiczenia
 
     data class Tabata(

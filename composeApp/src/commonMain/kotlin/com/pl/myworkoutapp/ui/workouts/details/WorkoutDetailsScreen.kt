@@ -4,15 +4,11 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.material3.ButtonDefaults.buttonColors
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.pl.myworkoutapp.core.Log
-import com.pl.myworkoutapp.domain.model.workout.BuiltInWorkoutId
-import com.pl.myworkoutapp.domain.model.workout.BuiltInWorkoutRegistry
-import com.pl.myworkoutapp.domain.model.workout.WorkoutMetrics
+import com.pl.myworkoutapp.domain.model.workout.*
 import com.pl.myworkoutapp.ui.common.ConfirmationDialog
 import com.pl.myworkoutapp.ui.exercises.ExercisePickerScreen
 import com.pl.myworkoutapp.ui.workouts.components.WorkoutExerciseInfoScreen
@@ -37,10 +33,6 @@ fun WorkoutDetailsScreen(
     onEditAction: (WorkoutEditAction) -> Unit,
     onCircuitEditorAction: (CircuitEditorAction) -> Unit,
 ) {
-    SideEffect {
-        Log.d("RECOMP", "WorkoutDetailsScreen")
-    }
-
     if (state.mode is WorkoutDetailsMode.Loading) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             CircularProgressIndicator()
@@ -58,7 +50,8 @@ fun WorkoutDetailsScreen(
         state.mode.session.activeExercise?.let { exeSession ->
             WorkoutExerciseInfoScreen(
                 exerciseInfo = exeSession.draft,
-                onAction = { onEditAction(it.toWorkoutEditAction()) }
+                onAction = { onEditAction(it.toWorkoutEditAction()) },
+                onExchangeExerciseRequest = { onEditAction(WorkoutEditAction.StartExerciseInfoExchange) }
             )
         }
         if (state.mode.session.modal is WorkoutEditModal.ExercisePicker) {
@@ -79,6 +72,11 @@ fun WorkoutDetailsScreen(
                 WorkoutWithExercisesComponent(
                     workoutUiModel = state.mode.session.workout,
                     onAction = { onViewAction(it.toWorkoutViewAction()) },
+                    onShowExerciseInfo = { key, exerciseId ->
+                        onViewAction(
+                            ExerciseInteractionAction.Start(key, exerciseId).toWorkoutViewAction()
+                        )
+                    }
                 )
             }
             WorkoutDetailBottomButtons(
@@ -89,7 +87,8 @@ fun WorkoutDetailsScreen(
         state.mode.session.activeExercise?.let { exeSession ->
             WorkoutExerciseInfoScreen(
                 exerciseInfo = exeSession.draft,
-                onAction = { onViewAction(it.toWorkoutViewAction()) }
+                onAction = { onViewAction(it.toWorkoutViewAction()) },
+                onExchangeExerciseRequest = { onViewAction(WorkoutViewAction.StartExerciseInfoExchange) }
             )
         }
 

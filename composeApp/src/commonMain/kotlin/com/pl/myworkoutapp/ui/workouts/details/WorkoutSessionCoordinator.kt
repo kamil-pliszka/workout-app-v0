@@ -18,6 +18,8 @@ class WorkoutSessionCoordinator {
     fun closeEditor(edit: WorkoutEditSession): WorkoutViewSession {
         return WorkoutViewSession(
             workout = edit.original,
+            //w trybie tworzenia nowego workoutu uznajemy że zawsze istnieją niezapisane zmiany
+            // -> czyli w efekcie bedzie widoczny guzik save, a nie będzie dostępnego guzika start(workout)
             hasUnsavedChanges = edit.workout.creationMode
         )
     }

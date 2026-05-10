@@ -7,7 +7,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -18,7 +17,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.pl.myworkoutapp.core.Log
 import com.pl.myworkoutapp.ui.common.*
 import com.pl.myworkoutapp.ui.components.BaseOverlayScreen
 import com.pl.myworkoutapp.ui.components.UiImageComponent
@@ -81,9 +79,6 @@ fun WorkoutMetadataEditorMainContent(
     state: WorkoutMetadataDraft,
     onAction: (MetadataAction) -> Unit,
 ) {
-    SideEffect {
-        Log.d("RECOMP", "WorkoutMetadataEditorMainContent")
-    }
     val scrollState = rememberScrollState()
     Column(
         modifier = Modifier
@@ -213,18 +208,23 @@ fun WorkoutImage(
                 ) {
                     Icon(
                         modifier = Modifier.size(48.dp),
-                        painter = painterResource(Res.drawable.ic_flying_witch),//TODO
+                        painter = painterResource(Res.drawable.ic_empty_image),
                         contentDescription = "exe image",
                     )
                     Text(
-                        text = stringResource(Res.string.exercise_editor_choose_image),
+                        text = stringResource(Res.string.workout_editor_choose_image),
                         color = if (isError) MaterialTheme.colorScheme.error else Color.Unspecified
                     )
                 }
             },
             noLocalImageContent = {
+                Icon(
+                    modifier = Modifier.size(48.dp),
+                    painter = painterResource(Res.drawable.ic_broken_image),
+                    contentDescription = "exe image",
+                )
                 Text(
-                    text = stringResource(Res.string.exercise_editor_choose_image),
+                    text = stringResource(Res.string.workout_editor_choose_image),
                     color = MaterialTheme.colorScheme.error
                 )
             }
@@ -286,7 +286,7 @@ private fun WorkoutMetadataEditorScreenPreviewEmptyImage() {
                 description = "meta desc",
                 creationMode = true,
                 errors = mapOf(
-                    WorkoutMetadataField.IMAGE to "???",
+                    WorkoutMetadataField.IMAGE to MetadataValidationError.ImageRequired,
                 ),
                 //touchedFields = WorkoutMetadataField.entries.toSet()
             ),

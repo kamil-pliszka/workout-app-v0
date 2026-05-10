@@ -60,10 +60,13 @@ fun WorkoutEditorScreen(
                 events = events,
                 onEditorAction = onEditAction,
                 onExchangeAction = { key, exerciseId ->
-                    onEditAction(WorkoutEditAction.ExerciseExchangeStart(key, exerciseId))
+                    onEditAction(WorkoutEditAction.ExerciseExchangeOnListStart(key, exerciseId))
                 },
                 onExerciseClick = { key, exerciseId ->
-                    onEditAction(WorkoutEditAction.ShowExerciseInfo(key, exerciseId))
+                    onEditAction(
+                        ExerciseInteractionAction.Start(key, exerciseId).toWorkoutEditAction()
+                        //WorkoutEditAction.ShowExerciseInfo(key, exerciseId)
+                    )
                 }
             )
         },
@@ -110,13 +113,14 @@ fun WorkoutEditorScreen(
         )
     }
 
-    if (state.modal is WorkoutEditModal.ExercisePicker && state.activeExercise != null) {
+    /*if (state.activeExercise != null) {
         WorkoutExerciseInfoScreen(
             exerciseInfo = state.activeExercise.draft,
             showExchangeButton = false,
-            onAction = { onEditAction(it.toWorkoutEditAction()) }
+            onAction = { onEditAction(it.toWorkoutEditAction()) },
+            onExchangeExerciseRequest = { onEditAction(WorkoutEditAction.StartExerciseInfoExchange) }
         )
-    }
+    }*/
 
 }
 

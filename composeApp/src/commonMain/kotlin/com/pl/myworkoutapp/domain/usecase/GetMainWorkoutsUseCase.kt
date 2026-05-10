@@ -1,6 +1,5 @@
 package com.pl.myworkoutapp.domain.usecase
 
-import com.pl.myworkoutapp.domain.AppSettingRepository
 import com.pl.myworkoutapp.domain.WorkoutHydrator
 import com.pl.myworkoutapp.domain.WorkoutRepository
 import com.pl.myworkoutapp.domain.model.workout.*
@@ -21,9 +20,10 @@ import kotlin.math.roundToInt
 class GetMainWorkoutsUseCase(
     private val repository: WorkoutRepository,
     private val hydrator: WorkoutHydrator,
-    private val appSettingRepository: AppSettingRepository,
 ) {
-    fun execute(): Flow<List<WorkoutWithMetrics>> {
+    fun execute(
+        weightKg: Double
+    ): Flow<List<WorkoutWithMetrics>> {
         val builtInWorkouts = listOf(
             //tutaj wybieramy konkretne zestawy i określamy ich kolejność
             BuiltInWorkoutRegistry.get(BuiltInWorkoutId.MY_ABS_WORKOUT_NO_SET),
@@ -36,8 +36,7 @@ class GetMainWorkoutsUseCase(
         return combine(
             repository.observeLatestBasedOn(builtInIds),
             repository.observeMainCustomWorkouts(),
-            appSettingRepository.weightFlow
-        ) { latestCustoms, standaloneCustoms, weightKg ->
+        ) { latestCustoms, standaloneCustoms ->
 
             val customMap = latestCustoms.associateBy { it.basedOn }
 

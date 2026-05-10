@@ -25,11 +25,9 @@ class WorkoutMetadataEditorReducer {
             MetadataAction.OpenMetadataEditor -> {
                 WorkoutEditResult(
                     state = session,
+                    //obsługiwane jako effect, ponieważ toMetadataDraft jest suspend
                     effect = WorkoutEditEffect.OpenMetadataEditor
                 )
-                /*WorkoutEditResult(
-                    state = session.copy(editableMetadata = session.workout.toMetadataDraft(false))
-                )*/
             }
 
             MetadataAction.CancelMetadataEditor -> {

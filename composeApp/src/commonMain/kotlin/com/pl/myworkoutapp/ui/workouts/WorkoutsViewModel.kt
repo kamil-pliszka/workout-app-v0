@@ -2,6 +2,7 @@ package com.pl.myworkoutapp.ui.workouts
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.pl.myworkoutapp.domain.AppSettingRepository
 import com.pl.myworkoutapp.domain.model.exercise.ExerciseId
 import com.pl.myworkoutapp.domain.model.workout.WorkoutId
 import com.pl.myworkoutapp.domain.usecase.GetMainWorkoutsUseCase
@@ -11,6 +12,7 @@ import kotlinx.coroutines.launch
 
 class WorkoutsViewModel(
     private val getMainWorkoutsUseCase: GetMainWorkoutsUseCase,
+    private val appSettingRepository: AppSettingRepository,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(WorkoutsUiState(isLoading = true))
@@ -26,7 +28,8 @@ class WorkoutsViewModel(
 
     private fun observeWorkouts() {
         viewModelScope.launch {
-            getMainWorkoutsUseCase.execute().collect { workoutsWithMetrics ->
+            val weightKg = appSettingRepository.weightFlow.first()
+            getMainWorkoutsUseCase.execute(weightKg).collect { workoutsWithMetrics ->
                 _state.value = WorkoutsUiState(
                     isLoading = false,
                     workouts = workoutsWithMetrics.map { it.workout.toUi(it.metrics) }

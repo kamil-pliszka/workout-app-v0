@@ -151,9 +151,7 @@ fun structureTabata(rounds: Int, workSec: Int, restSec: Int) = CircuitUiStructur
 fun CircuitStructure.toUi(): CircuitUiStructure = when (this) {
     is CircuitStructure.Standard -> structureStandard(rounds)
 
-    is CircuitStructure.AMRAP -> structureAMRAP(
-        durationSec / 60, //TODO - tu mały problem, wyrównać jednostki
-    )
+    is CircuitStructure.AMRAP -> structureAMRAP(minutes)
 
     is CircuitStructure.EMOM -> structureEMOM(minutes)
 
@@ -192,7 +190,7 @@ fun CircuitUiStructure.getStructureDesc(): UiText = when (this.type) {
 fun CircuitUiStructure.toDomain(): CircuitStructure = when (type) {
     CircuitStructureType.Standard -> CircuitStructure.Standard(rounds)
     CircuitStructureType.EMOM -> CircuitStructure.EMOM(emomMinutes)
-    CircuitStructureType.AMRAP -> CircuitStructure.AMRAP(amrapMinutes * 60) //TODO - ujednolicić jednostki
+    CircuitStructureType.AMRAP -> CircuitStructure.AMRAP(amrapMinutes)
     CircuitStructureType.Tabata -> CircuitStructure.Tabata(rounds, tabataWorkSec, tabataRestSec)
 }
 
@@ -319,3 +317,7 @@ suspend fun WorkoutWithExercisesUiModel.toMetadataDraft(
         creationMode = creationMode,
     )
 }
+fun WorkoutUiModel.withMetrics(estimatedDuration: Int, estimatedKcal: Int) = copy(
+    durationText = estimatedDuration.toWorkoutDurationLabel().asUiText(),
+    kcalText = estimatedKcal.toWorkoutKcalText(),
+)

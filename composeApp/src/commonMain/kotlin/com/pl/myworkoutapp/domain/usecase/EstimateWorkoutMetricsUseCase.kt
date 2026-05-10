@@ -87,7 +87,7 @@ class EstimateWorkoutMetricsUseCase {
         }.sum()
         return when (circuit.structure) {
             is CircuitStructure.AMRAP -> {
-                val duration = circuit.structure.durationSec
+                val duration = circuit.structure.minutes * 60
                 val kcal = if (itemsSum.durationSeconds == 0.0) 0.0
                 else (itemsSum.baseKcalPerKg * (duration / itemsSum.durationSeconds))
                 ItemMetrics(duration.toDouble(), kcal)

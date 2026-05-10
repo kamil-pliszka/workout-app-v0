@@ -33,14 +33,13 @@ sealed interface WorkoutWithExercisesAction {
     object OnDeleteRequest : WorkoutWithExercisesAction
     object OnResetRequest : WorkoutWithExercisesAction
     object OnTuneRequest : WorkoutWithExercisesAction
-    data class ShowExerciseInfo(val key: Int, val exerciseId: ExerciseId) :
-        WorkoutWithExercisesAction
 }
 
 @Composable
 fun WorkoutWithExercisesComponent(
     workoutUiModel: WorkoutWithExercisesUiModel,
     onAction: (WorkoutWithExercisesAction) -> Unit,
+    onShowExerciseInfo: (key: Int, exerciseId: ExerciseId) -> Unit,
 ) {
     val workout = workoutUiModel.workout
     Column(
@@ -68,9 +67,8 @@ fun WorkoutWithExercisesComponent(
         }
         Spacer(Modifier.height(16.dp))
 
-        Column(
-            //verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
+        //verticalArrangement = Arrangement.spacedBy(12.dp)
+        Column {
             if (workoutUiModel.items.isEmpty()) {
                 Row(
                     modifier = Modifier.fillMaxWidth().padding(top = 48.dp),
@@ -86,7 +84,7 @@ fun WorkoutWithExercisesComponent(
                 WorkoutItemRow(
                     item = item,
                     themeColor = workout.themeColor,
-                    onAction = onAction
+                    onShowExerciseInfo = onShowExerciseInfo
                 )
             }
         }
@@ -98,7 +96,7 @@ fun WorkoutWithExercisesComponent(
 fun WorkoutItemRow(
     item: WorkoutUiItem,
     themeColor: Color,
-    onAction: (WorkoutWithExercisesAction) -> Unit,
+    onShowExerciseInfo: (key: Int, exerciseId: ExerciseId) -> Unit,
 ) {
     val desc = when (item) {
         is CircuitUiItem -> "${item.title}"
@@ -119,11 +117,11 @@ fun WorkoutItemRow(
                 item,
                 themeColor,
                 onClick = {
-                    onAction(
-                        WorkoutWithExercisesAction.ShowExerciseInfo(
+                    onShowExerciseInfo(
+                        //WorkoutWithExercisesAction.ShowExerciseInfo(
                             item.key,
                             item.exerciseId
-                        )
+                        //)
                     )
                 }
             )
@@ -279,6 +277,7 @@ fun WorkoutWithExercisesComponentPreviewBasic() {
             items = listOf()
         ),
         onAction = { },
+        onShowExerciseInfo = { _, _ -> },
     )
 }
 
@@ -291,6 +290,7 @@ fun WorkoutWithExercisesComponentPreviewFlat() {
             items = listOf(EXE1),
         ),
         onAction = { },
+        onShowExerciseInfo = { _, _ -> },
     )
 }
 
@@ -308,6 +308,7 @@ fun WorkoutWithExercisesComponentPreviewFlatTL() {
             ).prepareKeys()
         ),
         onAction = { },
+        onShowExerciseInfo = { _, _ -> },
     )
 }
 
@@ -337,6 +338,7 @@ fun WorkoutWithExercisesComponentPreviewCircuit() {
             ).prepareKeys()
         ),
         onAction = { },
+        onShowExerciseInfo = { _, _ -> },
     )
 }
 
@@ -397,6 +399,7 @@ fun WorkoutWithExercisesComponentPreviewNested() {//zagnieżdżone wersje
     WorkoutWithExercisesComponent(
         workoutUiModel = workoutUiModel,
         onAction = { },
+        onShowExerciseInfo = { _, _ -> },
     )
 }
 
@@ -408,6 +411,7 @@ fun WorkoutWithExercisesComponentPreviewAbsWithSet() {//rozgrzewka, trening, wyc
     WorkoutWithExercisesComponent(
         workoutUiModel = workoutUiModel,
         onAction = { },
+        onShowExerciseInfo = { _, _ -> },
     )
 }
 
@@ -419,6 +423,7 @@ fun WorkoutWithExercisesComponentPreviewAbsNoSet() {//pojedyńczy poziom, ok 30 
     WorkoutWithExercisesComponent(
         workoutUiModel = workoutUiModel,
         onAction = { },
+        onShowExerciseInfo = { _, _ -> },
     )
 }
 

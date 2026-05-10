@@ -3,6 +3,7 @@ package com.pl.myworkoutapp.ui.workouts.details
 import androidx.lifecycle.*
 import com.pl.myworkoutapp.core.Log
 import com.pl.myworkoutapp.core.exceptionToString
+import com.pl.myworkoutapp.domain.AppSettingRepository
 import com.pl.myworkoutapp.domain.model.exercise.ExerciseId
 import com.pl.myworkoutapp.domain.model.workout.WorkoutId
 import com.pl.myworkoutapp.domain.model.workout.toWorkoutIdOrNull
@@ -11,10 +12,11 @@ import com.pl.myworkoutapp.ui.app.AppStateHolder
 import com.pl.myworkoutapp.ui.common.asUiText
 import com.pl.myworkoutapp.ui.common.joinToString
 import com.pl.myworkoutapp.ui.workouts.*
-import com.pl.myworkoutapp.ui.workouts.details.WorkoutEditAction.ExerciseReplaced
+import com.pl.myworkoutapp.ui.workouts.details.ExerciseInteractionAction.Exchange
+import com.pl.myworkoutapp.ui.workouts.details.ExerciseInteractionAction.Open
 import com.pl.myworkoutapp.ui.workouts.details.WorkoutEditAction.SelectedExerciseLoaded
-import com.pl.myworkoutapp.ui.workouts.details.WorkoutEditAction.ShowLoadedExerciseInfo
 import com.pl.myworkoutapp.ui.workouts.details.WorkoutEditorEvent.ScrollEditorTo
+import com.pl.myworkoutapp.ui.workouts.details.WorkoutViewAction.ExerciseInteraction
 import com.pl.myworkoutapp.ui.workouts.tree.transform
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
@@ -43,7 +45,7 @@ class WorkoutDetailsViewModel(
     savedStateHandle: SavedStateHandle,
     private val appStateHolder: AppStateHolder,
     private val saveWorkoutUseCase: SaveWorkoutUseCase,
-    private val validateWorkoutUseCase: ValidateWorkoutUseCase,
+    private val validateAndEstimateWorkoutUseCase: ValidateAndEstimateWorkoutUseCase,
     private val getWorkoutWithExercisesUseCase: GetWorkoutWithExercisesUseCase,
     private val getExerciseInfoUseCase: GetExerciseInfoUseCase,
     private val getExerciseWithDefaultQuantityUseCase: GetExerciseWithDefaultQuantityUseCase,
@@ -51,6 +53,7 @@ class WorkoutDetailsViewModel(
     private val workoutViewReducer: WorkoutViewReducer,
     private val workoutEditReducer: WorkoutEditReducer,
     private val sessionCoordinator: WorkoutSessionCoordinator,
+    private val appSettingRepository: AppSettingRepository,
 ) : ViewModel() {
     @Suppress("PrivatePropertyName")
     private val TAG = "WorkoutDetailsVM"
@@ -101,10 +104,6 @@ class WorkoutDetailsViewModel(
 
 
     private fun handleViewAction(action: WorkoutViewAction) {
-        if (action is WorkoutViewAction.OnBack) {
-            launchCloseScreen()
-            return
-        }
         dispatchView(action)
     }
 
@@ -153,14 +152,24 @@ class WorkoutDetailsViewModel(
             is WorkoutViewEffect.LoadExerciseInfo -> {
                 val info = getExerciseInfoUseCase.execute(effect.exerciseId).toUi()
                 dispatchView(
-                    WorkoutViewAction.ShowLoadedExerciseInfo(effect.key, info)
+                    //WorkoutViewAction.ShowLoadedExerciseInfo(effect.key, info)
+                    ExerciseInteraction(
+                        Open(effect.key, info)
+                    )
                 )
             }
 
             is WorkoutViewEffect.ExchangeExercise -> {
                 val info = getExerciseInfoUseCase.execute(effect.exerciseId).toUi()
-                dispatchView(WorkoutViewAction.ExerciseReplaced(info))
+                dispatchView(
+                    //WorkoutViewAction.ExerciseReplaced(info)
+                    ExerciseInteraction(
+                        Exchange(info)
+                    )
+                )
             }
+
+            WorkoutViewEffect.CloseScreen -> closeScreen()
 
             WorkoutViewEffect.SaveWorkout -> saveWorkout()
             WorkoutViewEffect.ResetWorkout -> resetWorkout()
@@ -224,7 +233,8 @@ class WorkoutDetailsViewModel(
             is WorkoutEditEffect.LoadExerciseInfo -> {
                 val info = getExerciseInfoUseCase.execute(effect.exerciseId).toUi()
                 dispatchEdit(
-                    ShowLoadedExerciseInfo(effect.key, info)
+                    //ShowLoadedExerciseInfo(effect.key, info)
+                    Open(effect.key, info).toWorkoutEditAction()
                 )
             }
 
@@ -239,19 +249,20 @@ class WorkoutDetailsViewModel(
 
             is WorkoutEditEffect.LoadExerciseForPreview -> {
                 val info = getExerciseInfoUseCase.execute(effect.exerciseId).toUi()
-                dispatchEdit(ExerciseReplaced(info))
+                dispatchEdit(
+                    //ExerciseReplaced(info)
+                    Exchange(info).toWorkoutEditAction()
+                )
             }
 
-            WorkoutEditEffect.SaveDraft -> saveEditor()
+            WorkoutEditEffect.SaveDraft -> commitEditorChanges()
             WorkoutEditEffect.ResetDraft -> resetEditor()
             WorkoutEditEffect.CloseEditor -> closeEditor()
             is WorkoutEditEffect.ScrollTo -> {
                 _editorEvents.send(ScrollEditorTo(effect.index))
             }
 
-            WorkoutEditEffect.Vibration -> {
-                //TODO - przesłać gdzieś dalej ten event i zrobić wibracje na telefonie
-            }
+            WorkoutEditEffect.Vibration -> sendEvent(WorkoutDetailsEvent.Vibrate)
 
             WorkoutEditEffect.OpenMetadataEditor -> openMetadataEditor()
             WorkoutEditEffect.AbortWorkoutCreation -> abortWorkoutCreation()
@@ -309,7 +320,8 @@ class WorkoutDetailsViewModel(
         _state.update { it.copy(mode = WorkoutDetailsMode.Loading) }
 
         try {
-            val result = getWorkoutWithExercisesUseCase.execute(workoutId)
+            val weightKg = appSettingRepository.weightFlow.first()
+            val result = getWorkoutWithExercisesUseCase.execute(workoutId, weightKg)
             val uiWorkout = transform(result.workout, result.metrics, result.exercises)
 
             _state.update {
@@ -370,6 +382,7 @@ class WorkoutDetailsViewModel(
                         //savedWorkoutResult.errors.first().asUiText()
                     )
                 )
+                sendEvent(WorkoutDetailsEvent.Vibrate)
             }
         }
     }
@@ -432,32 +445,39 @@ class WorkoutDetailsViewModel(
         }
     }
 
-    private suspend fun saveEditor() {
+    private suspend fun commitEditorChanges() {
         val edit = _state.value.mode as? WorkoutDetailsMode.Edit ?: return
 
         val savingWorkout = edit.session.workout.toCustomWorkoutForSaving().copy(
             name = edit.session.workout.workout.name.loadString(),
             description = edit.session.workout.workout.desc.loadString(),
         )
-        val errors = validateWorkoutUseCase.execute(savingWorkout)
-        if (errors.isNotEmpty()) {
-            sendEvent(
-                WorkoutDetailsEvent.ShowError(
-                    errors.map { it.asUiText() }.joinToString().asUiText()
-                )
-            )
-            return
-        }
-        //TODO - dorobić metryki
+        val weightKg = appSettingRepository.weightFlow.first()
 
-        appStateHolder.setWorkoutEditorActive(false)//pokazanie bottom nav bar
-
-        _state.update {
-            it.copy(
-                mode = WorkoutDetailsMode.View(
-                    session = sessionCoordinator.saveEditor(edit.session)
+        when (val result = validateAndEstimateWorkoutUseCase.execute(savingWorkout, weightKg)) {
+            is SaveWorkoutEditorResult.Error -> {
+                sendEvent(
+                    WorkoutDetailsEvent.ShowError(
+                        result.errors.map { it.asUiText() }.joinToString().asUiText()
+                    )
                 )
-            )
+                sendEvent(WorkoutDetailsEvent.Vibrate)
+            }
+
+            is SaveWorkoutEditorResult.Success -> {
+                appStateHolder.setWorkoutEditorActive(false)//pokazanie bottom nav bar
+                val session = edit.session.withMetrics(
+                    result.estimatedDuration,
+                    result.estimatedKcal
+                )
+                _state.update {
+                    it.copy(
+                        mode = WorkoutDetailsMode.View(
+                            session = sessionCoordinator.saveEditor(session)
+                        )
+                    )
+                }
+            }
         }
     }
 
@@ -506,9 +526,9 @@ class WorkoutDetailsViewModel(
         }
     }
 
-    private fun launchCloseScreen() {
-        viewModelScope.launch { closeScreen() }
-    }
+//    private fun launchCloseScreen() {
+//        viewModelScope.launch { closeScreen() }
+//    }
 
     private suspend fun closeScreen() {
         sendEvent(WorkoutDetailsEvent.Close)

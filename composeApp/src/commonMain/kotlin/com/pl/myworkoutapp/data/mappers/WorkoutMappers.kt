@@ -86,7 +86,7 @@ fun serializeStructure(structure: CircuitStructure): Pair<String, String?> =
     when (structure) {
         is CircuitStructure.Standard -> "STANDARD" to structure.rounds.toString()
         is CircuitStructure.EMOM -> "EMOM" to structure.minutes.toString()
-        is CircuitStructure.AMRAP -> "AMRAP" to structure.durationSec.toString()
+        is CircuitStructure.AMRAP -> "AMRAP" to structure.minutes.toString()
         is CircuitStructure.Tabata -> "TABATA" to "${structure.rounds},${structure.workSec},${structure.restSec}"
     }
 

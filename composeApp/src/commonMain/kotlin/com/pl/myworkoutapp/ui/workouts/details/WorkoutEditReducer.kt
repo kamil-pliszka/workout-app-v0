@@ -2,18 +2,13 @@ package com.pl.myworkoutapp.ui.workouts.details
 
 import com.pl.myworkoutapp.core.Log
 import com.pl.myworkoutapp.domain.model.exercise.ExerciseId
-import com.pl.myworkoutapp.ui.common.*
-import com.pl.myworkoutapp.ui.exercises.*
+import com.pl.myworkoutapp.ui.common.DragDropEvent
+import com.pl.myworkoutapp.ui.common.DropPosition
+import com.pl.myworkoutapp.ui.exercises.mapQuantityValue
+import com.pl.myworkoutapp.ui.exercises.quantityChange
 import com.pl.myworkoutapp.ui.workouts.*
 import com.pl.myworkoutapp.ui.workouts.components.WorkoutExerciseInfoAction
 import com.pl.myworkoutapp.ui.workouts.details.ExerciseInteractionAction.ChangeQuantity
-import com.pl.myworkoutapp.ui.workouts.details.ExerciseInteractionAction.Close
-import com.pl.myworkoutapp.ui.workouts.details.ExerciseInteractionAction.Exchange
-import com.pl.myworkoutapp.ui.workouts.details.ExerciseInteractionAction.Next
-import com.pl.myworkoutapp.ui.workouts.details.ExerciseInteractionAction.Open
-import com.pl.myworkoutapp.ui.workouts.details.ExerciseInteractionAction.Prev
-import com.pl.myworkoutapp.ui.workouts.details.ExerciseInteractionAction.Reset
-import com.pl.myworkoutapp.ui.workouts.details.ExerciseInteractionAction.Save
 import com.pl.myworkoutapp.ui.workouts.details.ExercisePickerContext.AddExercise
 import com.pl.myworkoutapp.ui.workouts.details.ExercisePickerContext.ReplaceListItem
 import com.pl.myworkoutapp.ui.workouts.details.ExercisePickerContext.ReplacePreview
@@ -63,23 +58,13 @@ sealed interface WorkoutEditAction {
     data class DeleteItem(val key: Int) : WorkoutEditAction
     data class ChangeQuantityOnList(val key: Int, val increase: Boolean) : WorkoutEditAction
 
-    data class ShowExerciseInfo(val key: Int, val exerciseId: ExerciseId) : WorkoutEditAction
-    data class ShowLoadedExerciseInfo(val key: Int, val info: ExerciseInfoUiModel) :
-        WorkoutEditAction
-
-    data object CloseExerciseInfo : WorkoutEditAction
-    data object ExerciseNext : WorkoutEditAction
-    data object ExercisePrev : WorkoutEditAction
-    data class ChangeQuantity(val increase: Boolean) : WorkoutEditAction
-    data object ExerciseReset : WorkoutEditAction
-    data object ExerciseSave : WorkoutEditAction
     data class ExercisePicked(val exerciseId: ExerciseId?) : WorkoutEditAction
     data class SelectedExerciseLoaded(
         val context: ExercisePickerContext,
         val exercise: ExerciseUiItem
     ) : WorkoutEditAction
 
-    data class ExerciseExchangeStart(val key: Int, val currentExerciseId: ExerciseId) :
+    data class ExerciseExchangeOnListStart(val key: Int, val currentExerciseId: ExerciseId) :
         WorkoutEditAction
 
     data object SaveCircuitEditor : WorkoutEditAction
@@ -90,21 +75,41 @@ sealed interface WorkoutEditAction {
     data object SaveDraft : WorkoutEditAction // commit draft → view session
     data object ResetDraft : WorkoutEditAction
     data object CloseEditor : WorkoutEditAction
-    data object ShowExercisePicker : WorkoutEditAction
-    data class ExerciseReplaced(val info: ExerciseInfoUiModel) : WorkoutEditAction
+    data object StartExerciseInfoExchange : WorkoutEditAction
+
     data class Metadata(val action: MetadataAction) : WorkoutEditAction
+    data class ExerciseInteraction(val action: ExerciseInteractionAction) : WorkoutEditAction
 }
+
 fun MetadataAction.toWorkoutEditAction() = WorkoutEditAction.Metadata(this)
 
 fun WorkoutExerciseInfoAction.toWorkoutEditAction(): WorkoutEditAction = when (this) {
-    is WorkoutExerciseInfoAction.ChangeQuantity -> WorkoutEditAction.ChangeQuantity(increase)
-    WorkoutExerciseInfoAction.CloseExerciseInfo -> WorkoutEditAction.CloseExerciseInfo
-    WorkoutExerciseInfoAction.ExerciseNext -> WorkoutEditAction.ExerciseNext
-    WorkoutExerciseInfoAction.ExercisePrev -> WorkoutEditAction.ExercisePrev
-    WorkoutExerciseInfoAction.ExerciseReset -> WorkoutEditAction.ExerciseReset
-    WorkoutExerciseInfoAction.ExerciseSave -> WorkoutEditAction.ExerciseSave
-    WorkoutExerciseInfoAction.ShowExercisePicker -> WorkoutEditAction.ShowExercisePicker
+    is WorkoutExerciseInfoAction.ChangeQuantity -> WorkoutEditAction.ExerciseInteraction(
+        ChangeQuantity(increase)
+    )
+
+    WorkoutExerciseInfoAction.CloseExerciseInfo -> WorkoutEditAction.ExerciseInteraction(
+        ExerciseInteractionAction.Close
+    )
+
+    WorkoutExerciseInfoAction.ExerciseNext -> WorkoutEditAction.ExerciseInteraction(
+        ExerciseInteractionAction.Next
+    )
+
+    WorkoutExerciseInfoAction.ExercisePrev -> WorkoutEditAction.ExerciseInteraction(
+        ExerciseInteractionAction.Prev
+    )
+
+    WorkoutExerciseInfoAction.ExerciseReset -> WorkoutEditAction.ExerciseInteraction(
+        ExerciseInteractionAction.Reset
+    )
+
+    WorkoutExerciseInfoAction.ExerciseSave -> WorkoutEditAction.ExerciseInteraction(
+        ExerciseInteractionAction.CommitChanges
+    )
 }
+
+fun ExerciseInteractionAction.toWorkoutEditAction() = WorkoutEditAction.ExerciseInteraction(this)
 
 data class WorkoutEditResult(
     val state: WorkoutEditSession,
@@ -165,34 +170,7 @@ class WorkoutEditReducer(
         action: WorkoutEditAction
     ): WorkoutEditResult {
         return when (action) {
-            is WorkoutEditAction.ShowExerciseInfo -> WorkoutEditResult(
-                state = session,
-                effect = LoadExerciseInfo(action.key, action.exerciseId)
-            )
-
-            is WorkoutEditAction.ShowLoadedExerciseInfo ->
-                delegate(session, Open(action.key, action.info))
-
-            WorkoutEditAction.CloseExerciseInfo ->
-                delegate(session, Close)
-
-            WorkoutEditAction.ExerciseNext ->
-                delegate(session, Next)
-
-            WorkoutEditAction.ExercisePrev ->
-                delegate(session, Prev)
-
-            is WorkoutEditAction.ChangeQuantity ->
-                delegate(session, ChangeQuantity(action.increase))
-
-            is WorkoutEditAction.ExerciseReplaced ->
-                delegate(session, Exchange(action.info))
-
-            WorkoutEditAction.ExerciseReset ->
-                delegate(session, Reset)
-
-            WorkoutEditAction.ExerciseSave ->
-                delegate(session, Save)
+            is WorkoutEditAction.ExerciseInteraction -> delegate(session, action.action)
 
             is WorkoutEditAction.Drop ->
                 drop(session, action.event)
@@ -254,7 +232,7 @@ class WorkoutEditReducer(
             WorkoutEditAction.CloseEditor ->
                 WorkoutEditResult(session, CloseEditor)
 
-            is WorkoutEditAction.ExerciseExchangeStart -> WorkoutEditResult(
+            is WorkoutEditAction.ExerciseExchangeOnListStart -> WorkoutEditResult(
                 //tryb zmiany ćwiczenia po kliknięciu ikony exchange na ćwiczeniu w liście
                 state = session.copy(
                     modal = ExercisePicker(
@@ -264,14 +242,15 @@ class WorkoutEditReducer(
                 )
             )
 
-            WorkoutEditAction.ShowExercisePicker -> {
+            WorkoutEditAction.StartExerciseInfoExchange -> {
+                val active = session.activeExercise?: return WorkoutEditResult(session)
                 //tryb zmiany ćwiczenia po kliknięciu ikony exchange w podglądzie ćwiczenia
                 //val key = session.activeExercise?.key ?: return WorkoutEditResult(session)
                 WorkoutEditResult(
                     state = session.copy(
                         modal = ExercisePicker(
                             ReplacePreview,
-                            session.activeExercise?.draft?.exerciseId
+                            active.draft.exerciseId
                         )
                     )
                 )

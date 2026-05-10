@@ -19,7 +19,7 @@ actual val platformModule: Module
 //        single<HttpClientEngine> { OkHttp.create() }
         single { DatabaseFactory(androidApplication()) }
         single<PlatformEffects> {
-            AndroidPlatformEffects {
+            AndroidPlatformEffects(androidContext()) {
                 // dostajemy aktualne Activity z Composable lub Activity
                 (androidContext() as? Activity)
             }

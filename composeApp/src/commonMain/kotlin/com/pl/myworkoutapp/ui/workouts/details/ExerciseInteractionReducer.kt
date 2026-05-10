@@ -33,6 +33,7 @@ import com.pl.myworkoutapp.ui.workouts.WorkoutWithExercisesUiModel
  */
 
 sealed interface ExerciseInteractionAction {
+    data class Start(val key: Int, val exerciseId: ExerciseId) : ExerciseInteractionAction
     data class Open(val key: Int, val info: ExerciseInfoUiModel) : ExerciseInteractionAction
     data object Close : ExerciseInteractionAction
     data object Next : ExerciseInteractionAction
@@ -40,7 +41,7 @@ sealed interface ExerciseInteractionAction {
     data class ChangeQuantity(val increase: Boolean) : ExerciseInteractionAction
     data object Reset : ExerciseInteractionAction
     data class Exchange(val newInfo: ExerciseInfoUiModel) : ExerciseInteractionAction
-    data object Save : ExerciseInteractionAction
+    data object CommitChanges : ExerciseInteractionAction
 }
 
 interface ExerciseInteractionHost<T : ExerciseInteractionHost<T>> {
@@ -68,6 +69,12 @@ class ExerciseInteractionReducer {
         action: ExerciseInteractionAction
     ): ExerciseInteractionResult<T> {
         return when (action) {
+            is ExerciseInteractionAction.Start ->
+                ExerciseInteractionResult(
+                    state = state,
+                    effect = ExerciseInteractionEffect.LoadExerciseInfo(action.key, action.exerciseId)
+                )
+
             is ExerciseInteractionAction.Open ->
                 open(state, action.key, action.info)
 
@@ -89,7 +96,7 @@ class ExerciseInteractionReducer {
             is ExerciseInteractionAction.Exchange ->
                 ExerciseInteractionResult(exchange(state, action.newInfo))
 
-            ExerciseInteractionAction.Save ->
+            ExerciseInteractionAction.CommitChanges ->
                 ExerciseInteractionResult(save(state))
         }
     }

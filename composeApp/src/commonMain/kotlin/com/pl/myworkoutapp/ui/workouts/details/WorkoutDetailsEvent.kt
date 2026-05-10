@@ -8,4 +8,5 @@ sealed interface WorkoutDetailsEvent {
     data class ShowSuccess(val text: UiText) : WorkoutDetailsEvent
     data class ShowError(val text: UiText) : WorkoutDetailsEvent
     data class NavToWorkoutExecution(val workoutId: WorkoutId) : WorkoutDetailsEvent
+    data object Vibrate: WorkoutDetailsEvent
 }

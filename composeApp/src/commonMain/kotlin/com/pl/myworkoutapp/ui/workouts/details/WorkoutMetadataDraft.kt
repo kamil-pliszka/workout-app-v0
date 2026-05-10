@@ -8,7 +8,7 @@ data class WorkoutMetadataDraft(
     val description: String,
     val imageChanged: Boolean = false,
     val isValid: Boolean = false,
-    val errors: Map<WorkoutMetadataField, String> = emptyMap(),
+    val errors: Map<WorkoutMetadataField, MetadataValidationError> = emptyMap(),
     val touchedFields: Set<WorkoutMetadataField> = emptySet(),
     val creationMode: Boolean = false,
     ) {
@@ -22,19 +22,25 @@ enum class WorkoutMetadataField {
     IMAGE,
 }
 
-fun WorkoutMetadataDraft.validate(): Map<WorkoutMetadataField, String> {
-    val errors = mutableMapOf<WorkoutMetadataField, String>()
+sealed interface MetadataValidationError {
+    object EmptyName : MetadataValidationError
+    object ImageRequired : MetadataValidationError
+    object DescriptionTooLong : MetadataValidationError
+}
+
+fun WorkoutMetadataDraft.validate(): Map<WorkoutMetadataField, MetadataValidationError> {
+    val errors = mutableMapOf<WorkoutMetadataField, MetadataValidationError>()
     if (name.isEmpty()) {
-        errors[WorkoutMetadataField.NAME] = "Name cannot be empty"
+        errors[WorkoutMetadataField.NAME] = MetadataValidationError.EmptyName
     }
 
     if (description.length > 10_000) {
-        errors[WorkoutMetadataField.DESCRIPTION] = "Description too long"
+        errors[WorkoutMetadataField.DESCRIPTION] = MetadataValidationError.DescriptionTooLong
     }
 
-    //obraz nie jest wymagany
+    //na razie wersja gdzie obraz nie jest wymagany
 //    if (image.isEmpty()) {
-//        errors[WorkoutMetadataField.IMAGE] = "Required"
+//        errors[WorkoutMetadataField.IMAGE] = MetadataValidationError.ImageRequired
 //    }
     return errors
 }

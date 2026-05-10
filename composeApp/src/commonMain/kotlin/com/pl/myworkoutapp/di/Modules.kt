@@ -63,6 +63,7 @@ val sharedModule = module {
     singleOf(::ValidateWorkoutUseCase)
     singleOf(::EstimateWorkoutMetricsUseCase)
     singleOf(::ResolveWorkoutExercisesUseCase)
+    singleOf(::ValidateAndEstimateWorkoutUseCase)
 
     //jeśli delegate ma stan per ekran wtedy factoryOf, jeśli nie będzie miał stanu wtedy singleOf
     singleOf(::CircuitEditorDelegate)

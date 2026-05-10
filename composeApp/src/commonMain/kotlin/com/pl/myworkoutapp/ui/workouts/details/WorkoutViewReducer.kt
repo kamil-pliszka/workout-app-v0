@@ -1,17 +1,14 @@
 package com.pl.myworkoutapp.ui.workouts.details
 
 import com.pl.myworkoutapp.domain.model.exercise.ExerciseId
-import com.pl.myworkoutapp.ui.exercises.ExerciseInfoUiModel
 import com.pl.myworkoutapp.ui.workouts.components.WorkoutExerciseInfoAction
 import com.pl.myworkoutapp.ui.workouts.components.WorkoutWithExercisesAction
 import com.pl.myworkoutapp.ui.workouts.details.ExerciseInteractionAction.ChangeQuantity
 import com.pl.myworkoutapp.ui.workouts.details.ExerciseInteractionAction.Close
-import com.pl.myworkoutapp.ui.workouts.details.ExerciseInteractionAction.Exchange
+import com.pl.myworkoutapp.ui.workouts.details.ExerciseInteractionAction.CommitChanges
 import com.pl.myworkoutapp.ui.workouts.details.ExerciseInteractionAction.Next
-import com.pl.myworkoutapp.ui.workouts.details.ExerciseInteractionAction.Open
 import com.pl.myworkoutapp.ui.workouts.details.ExerciseInteractionAction.Prev
 import com.pl.myworkoutapp.ui.workouts.details.ExerciseInteractionAction.Reset
-import com.pl.myworkoutapp.ui.workouts.details.ExerciseInteractionAction.Save
 import com.pl.myworkoutapp.ui.workouts.details.WorkoutViewEffect.ExchangeExercise
 import com.pl.myworkoutapp.ui.workouts.details.WorkoutViewEffect.LoadExerciseInfo
 import com.pl.myworkoutapp.ui.workouts.details.WorkoutViewEffect.OpenEditor
@@ -39,19 +36,7 @@ import com.pl.myworkoutapp.ui.workouts.details.WorkoutViewEffect.StartWorkout
  */
 
 sealed interface WorkoutViewAction {
-    data class ShowExerciseInfo(val key: Int, val exerciseId: ExerciseId) : WorkoutViewAction
-    data class ShowLoadedExerciseInfo(val key: Int, val info: ExerciseInfoUiModel) :
-        WorkoutViewAction
-
-    data class ExerciseReplaced(val info: ExerciseInfoUiModel) : WorkoutViewAction
-    data object CloseExerciseInfo : WorkoutViewAction
-
-    data object ExerciseNext : WorkoutViewAction
-    data object ExercisePrev : WorkoutViewAction
-    data class ChangeQuantity(val increase: Boolean) : WorkoutViewAction
-    data object ExerciseReset : WorkoutViewAction
-    data object ExerciseSave : WorkoutViewAction
-    data object ShowExercisePicker : WorkoutViewAction
+    data object StartExerciseInfoExchange : WorkoutViewAction
     data class ExercisePicked(val exerciseId: ExerciseId?) : WorkoutViewAction
 
     data object SaveWorkout : WorkoutViewAction // persist current workout
@@ -64,16 +49,20 @@ sealed interface WorkoutViewAction {
     data object TuneRequest : WorkoutViewAction
     data object DeleteConfirm : WorkoutViewAction
     data object DeleteCancel : WorkoutViewAction
+
+    data class ExerciseInteraction(val action: ExerciseInteractionAction) : WorkoutViewAction
 }
 
 fun WorkoutExerciseInfoAction.toWorkoutViewAction(): WorkoutViewAction = when (this) {
-    is WorkoutExerciseInfoAction.ChangeQuantity -> WorkoutViewAction.ChangeQuantity(increase)
-    WorkoutExerciseInfoAction.CloseExerciseInfo -> WorkoutViewAction.CloseExerciseInfo
-    WorkoutExerciseInfoAction.ExerciseNext -> WorkoutViewAction.ExerciseNext
-    WorkoutExerciseInfoAction.ExercisePrev -> WorkoutViewAction.ExercisePrev
-    WorkoutExerciseInfoAction.ExerciseReset -> WorkoutViewAction.ExerciseReset
-    WorkoutExerciseInfoAction.ExerciseSave -> WorkoutViewAction.ExerciseSave
-    WorkoutExerciseInfoAction.ShowExercisePicker -> WorkoutViewAction.ShowExercisePicker
+    is WorkoutExerciseInfoAction.ChangeQuantity -> WorkoutViewAction.ExerciseInteraction(
+        ChangeQuantity(increase)
+    )
+
+    WorkoutExerciseInfoAction.CloseExerciseInfo -> WorkoutViewAction.ExerciseInteraction(Close)
+    WorkoutExerciseInfoAction.ExerciseNext -> WorkoutViewAction.ExerciseInteraction(Next)
+    WorkoutExerciseInfoAction.ExercisePrev -> WorkoutViewAction.ExerciseInteraction(Prev)
+    WorkoutExerciseInfoAction.ExerciseReset -> WorkoutViewAction.ExerciseInteraction(Reset)
+    WorkoutExerciseInfoAction.ExerciseSave -> WorkoutViewAction.ExerciseInteraction(CommitChanges)
 }
 
 fun WorkoutWithExercisesAction.toWorkoutViewAction(): WorkoutViewAction = when (this) {
@@ -82,11 +71,9 @@ fun WorkoutWithExercisesAction.toWorkoutViewAction(): WorkoutViewAction = when (
     WorkoutWithExercisesAction.OnResetRequest -> WorkoutViewAction.ResetRequest
     WorkoutWithExercisesAction.OnOpenEditor -> WorkoutViewAction.OpenEditor
     WorkoutWithExercisesAction.OnTuneRequest -> WorkoutViewAction.TuneRequest
-    is WorkoutWithExercisesAction.ShowExerciseInfo -> WorkoutViewAction.ShowExerciseInfo(
-        key,
-        exerciseId
-    )
 }
+
+fun ExerciseInteractionAction.toWorkoutViewAction() = WorkoutViewAction.ExerciseInteraction(this)
 
 
 data class WorkoutViewResult(
@@ -102,6 +89,7 @@ sealed interface WorkoutViewEffect {
     data object StartWorkout : WorkoutViewEffect
     data object OpenEditor : WorkoutViewEffect
     data object DeleteWorkout : WorkoutViewEffect
+    data object CloseScreen : WorkoutViewEffect
 }
 
 
@@ -114,47 +102,19 @@ class WorkoutViewReducer(
         action: WorkoutViewAction
     ): WorkoutViewResult {
         return when (action) {
-            is WorkoutViewAction.ShowExerciseInfo ->
-                WorkoutViewResult(
-                    state = session,
-                    effect = LoadExerciseInfo(
-                        key = action.key,
-                        exerciseId = action.exerciseId
-                    )
-                )
+            is WorkoutViewAction.ExerciseInteraction -> {
+                delegate(session, action.action)
+                    .markUnsavedIfNeeded(action.action)
+            }
 
-            is WorkoutViewAction.ShowLoadedExerciseInfo ->
-                delegate(session, Open(action.key, action.info))
-
-            WorkoutViewAction.CloseExerciseInfo ->
-                delegate(session, Close)
-
-            WorkoutViewAction.ExerciseNext ->
-                delegate(session, Next)
-
-            WorkoutViewAction.ExercisePrev ->
-                delegate(session, Prev)
-
-            is WorkoutViewAction.ChangeQuantity ->
-                delegate(session, ChangeQuantity(action.increase))
-
-            is WorkoutViewAction.ExerciseReplaced ->
-                delegate(session, Exchange(action.info))
-
-            WorkoutViewAction.ExerciseReset ->
-                delegate(session, Reset)
-
-            WorkoutViewAction.ExerciseSave ->
-                delegate(session.copy(hasUnsavedChanges = true), Save)
-            //Exercise info end
-
-
-            WorkoutViewAction.ShowExercisePicker ->
+            WorkoutViewAction.StartExerciseInfoExchange -> {
+                if (session.activeExercise == null) return WorkoutViewResult(session)
                 WorkoutViewResult(
                     state = session.copy(
                         modal = WorkoutViewModal.ExercisePicker
                     )
                 )
+            }
 
             is WorkoutViewAction.ExercisePicked ->
                 onExercisePicked(session, action.exerciseId)
@@ -172,7 +132,9 @@ class WorkoutViewReducer(
                 WorkoutViewResult(session, OpenEditor)
 
 
-            WorkoutViewAction.OnBack -> WorkoutViewResult(session)
+            WorkoutViewAction.OnBack ->
+                WorkoutViewResult(session, WorkoutViewEffect.CloseScreen)
+
             WorkoutViewAction.DeleteRequest -> WorkoutViewResult(
                 state = session.copy(
                     modal = WorkoutViewModal.ConfirmDelete
@@ -192,7 +154,7 @@ class WorkoutViewReducer(
             WorkoutViewAction.DeleteConfirm ->
                 WorkoutViewResult(session, WorkoutViewEffect.DeleteWorkout)
 
-            WorkoutViewAction.TuneRequest -> TODO() //celowy wyjątek
+            WorkoutViewAction.TuneRequest -> TODO("Tune flow not implemented") //celowy wyjątek
         }
     }
 
@@ -231,6 +193,20 @@ class WorkoutViewReducer(
                     key = key,
                     exerciseId = exerciseId
                 )
+        }
+    }
+
+    private fun WorkoutViewResult.markUnsavedIfNeeded(
+        action: ExerciseInteractionAction
+    ): WorkoutViewResult {
+        return when (action) {
+            is CommitChanges -> copy(
+                state = state.copy(
+                    hasUnsavedChanges = true
+                )
+            )
+
+            else -> this
         }
     }
 }

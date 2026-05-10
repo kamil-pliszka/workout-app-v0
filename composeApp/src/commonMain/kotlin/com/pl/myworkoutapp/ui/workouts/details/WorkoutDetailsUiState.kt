@@ -3,6 +3,7 @@ package com.pl.myworkoutapp.ui.workouts.details
 import com.pl.myworkoutapp.domain.model.exercise.ExerciseId
 import com.pl.myworkoutapp.ui.exercises.ExerciseInfoUiModel
 import com.pl.myworkoutapp.ui.workouts.WorkoutWithExercisesUiModel
+import com.pl.myworkoutapp.ui.workouts.withMetrics
 
 
 data class WorkoutDetailsUiState(
@@ -82,4 +83,16 @@ data class WorkoutEditSession(
         activeExercise: ActiveExerciseSession?
     ): WorkoutEditSession = copy(activeExercise = activeExercise)
 
+}
+
+
+fun WorkoutEditSession.withMetrics(
+    duration: Int,
+    kcal: Int
+): WorkoutEditSession {
+    return copy(
+        workout = workout.copy(
+            workout = workout.workout.withMetrics(duration, kcal)
+        )
+    )
 }
