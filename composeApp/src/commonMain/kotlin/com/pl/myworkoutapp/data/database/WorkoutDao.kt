@@ -167,4 +167,41 @@ interface WorkoutDao {
     """
     )
     suspend fun findLatestBasedOn(baseId: String): CustomWorkoutEntity?
+
+
+    @Query(
+        """
+    SELECT *
+    FROM WorkoutSessionEntity
+    WHERE workoutId = :workoutId
+      AND planId IS NULL
+    ORDER BY updatedAt DESC, id DESC
+    LIMIT 1
+    """
+    )
+    suspend fun findLatestWorkoutSession(workoutId: String): WorkoutSessionEntity?
+
+    @Query(
+        """
+    SELECT *
+    FROM WorkoutSessionEntity
+    WHERE workoutId = :workoutId
+      AND planId = :planId
+    ORDER BY updatedAt DESC, id DESC
+    LIMIT 1
+    """
+    )
+    suspend fun findLatestWorkoutSession(workoutId: String, planId: String): WorkoutSessionEntity?
+
+
+    @Upsert
+    suspend fun upsert(session: WorkoutSessionEntity): Long
+
+    suspend fun upsertSession(
+        sessionEntity: WorkoutSessionEntity,
+    ): Long {
+        return upsert(sessionEntity.copy(updatedAt = currentTimeMilliseconds()))
+    }
+
+
 }

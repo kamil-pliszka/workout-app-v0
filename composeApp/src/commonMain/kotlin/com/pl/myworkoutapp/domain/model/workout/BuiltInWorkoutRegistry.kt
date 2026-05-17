@@ -8,6 +8,7 @@ object BuiltInWorkoutRegistry {
         AbsWorkouts.ALL(),
         TabataWorkouts.ALL(),
         LegsWorkouts.ALL(),
+        TestWorkouts.ALL(),
     ).flatten().associateByUnique { it.id.toBuiltInWorkoutId() }
 
     fun get(id: BuiltInWorkoutId) = BUILT_INS[id] ?: error("Missing built-in workout: $id")

@@ -1,36 +1,92 @@
 package com.pl.myworkoutapp.ui.execution
 
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.*
+import com.pl.myworkoutapp.core.Log
+import com.pl.myworkoutapp.core.exceptionToString
+import com.pl.myworkoutapp.domain.AppSettingRepository
+import com.pl.myworkoutapp.domain.model.plan.PlanId
+import com.pl.myworkoutapp.domain.model.plan.toPlanIdOrNull
+import com.pl.myworkoutapp.domain.model.workout.WorkoutId
+import com.pl.myworkoutapp.domain.model.workout.toWorkoutIdOrNull
+import com.pl.myworkoutapp.domain.usecase.PrepareWorkoutExecutionUseCase
 import com.pl.myworkoutapp.ui.app.AppStateHolder
-import com.pl.myworkoutapp.ui.effects.PlatformEffects
+import com.pl.myworkoutapp.ui.common.asUiText
+import com.pl.myworkoutapp.ui.execution.engine.*
 import com.pl.myworkoutapp.ui.navigation.AppNavigator
 import com.pl.myworkoutapp.ui.theme.PearlOpalGreen
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
+import myworkoutapplication.composeapp.generated.resources.Res
+import myworkoutapplication.composeapp.generated.resources.error_during_processing
+import kotlin.coroutines.cancellation.CancellationException
 
+/**
+ * Warstwa orchestration/UI integration.
+ *
+ * Odpowiada za:
+ *
+ * ładowanie workoutu (PrepareWorkoutExecutionUseCase)
+ * start engine
+ * mapowanie engine.state -> WorkoutExecutionUiState
+ * obsługę lifecycle screena (OnScreenEntered, OnScreenExited)
+ * wysyłanie eventów UI (Close, ShowError, Vibrate)
+ * integrację z platformą (AppNavigator, PlatformEffects, AppStateHolder)
+ *
+ * Nie powinien:
+ *
+ * implementować logiki wykonywania treningu
+ * znać przejść stepów
+ * odliczać czasu
+ * mieć when(state) z logiką workoutu
+ */
 class WorkoutExecutionViewModel(
-    private val effects: PlatformEffects,
     savedStateHandle: SavedStateHandle,
     private val appNavigator: AppNavigator,
     private val appStateHolder: AppStateHolder,
+    private val appSettingRepository: AppSettingRepository,
+    private val prepareWorkoutExecutionUC: PrepareWorkoutExecutionUseCase,
+    private val engine: WorkoutExecutionEngine,
+    private val planBuilder: ExecutionPlanBuilder,
+    private val executionEffectHandler : ExecutionEffectHandler,
 ) : ViewModel() {
-    private val workoutId: String = savedStateHandle["workoutId"] ?: error("workoutId is required")
+
+    @Suppress("PrivatePropertyName")
+    private val TAG = "WorkoutExecutionVM"
+    private val workoutIdParam: String =
+        savedStateHandle["workoutId"] ?: error("workoutId is required")
+    private val planIdParam: String? = savedStateHandle["planId"] //planId jest opcjonalny
+
+    val state: StateFlow<WorkoutExecutionUiState> =
+        engine.state
+            .filterNotNull()
+            .map { it.toUiState() }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5000),
+                initialValue = WorkoutExecutionUiState.Loading
+            )
+
+    private val _events = Channel<WorkoutExecutionEvent>(Channel.BUFFERED)
+    val events = _events.receiveAsFlow()
 
     init {
-        println("WorkoutExecutionViewModel got workoutId: $workoutId")
+        Log.d(TAG, "PARAMS: workoutId: $workoutIdParam, planId: $planIdParam")
+        observeEngineEffects()
+        loadWorkoutFromParam()
     }
 
-    //private val _effects = MutableSharedFlow<WorkoutEffect>()
-    //val effects = _effects.asSharedFlow()
 
-    private val _state = MutableStateFlow<WorkoutExecutionState>(
-        WorkoutExecutionState.Paused(workoutId)
-    )
-    val state: StateFlow<WorkoutExecutionState> = _state
+    private fun observeEngineEffects() {
+        viewModelScope.launch {
+            engine.effects.collect { effect ->
+                executionEffectHandler.handle(effect)
+            }
+        }
+    }
 
     private var isActive = false
-    fun onScreenEntered() {
+    private fun onScreenEntered() {
         if (!isActive) {
             isActive = true
             //appStateHolder.setHideNavigation(true)
@@ -39,55 +95,124 @@ class WorkoutExecutionViewModel(
         }
     }
 
-    fun onScreenExited() {
+    private fun onScreenExited() {
         if (isActive) {
             isActive = false
+            engine.stop()
             //appStateHolder.setHideNavigation(false)
             appStateHolder.setThemeColor(null)
             appStateHolder.setWorkoutActive(false)
         }
     }
 
+    // =========================================================
+    // Public API
+    // =========================================================
     fun onAction(action: WorkoutExecutionAction) {
-        println("Got action: $action")
         when (action) {
-            WorkoutExecutionAction.OnScreenEntered -> onScreenEntered()
-            WorkoutExecutionAction.OnScreenExited -> onScreenExited()
+            WorkoutExecutionAction.OnScreenEntered ->
+                onScreenEntered()
+
+            WorkoutExecutionAction.OnScreenExited ->
+                onScreenExited()
+
             WorkoutExecutionAction.OnExit -> {
                 appNavigator.closeDialog()
+            }
+
+            WorkoutExecutionAction.PauseClicked -> {
+                dispatch(ExecutionAction.Pause)
+            }
+
+            WorkoutExecutionAction.ResumeClicked -> {
+                dispatch(ExecutionAction.Resume)
+            }
+
+            WorkoutExecutionAction.SkipClicked -> {
+                dispatch(ExecutionAction.Skip)
+            }
+
+            WorkoutExecutionAction.FinishExerciseClicked -> {
+                dispatch(ExecutionAction.FinishExercise)
             }
         }
     }
 
+    // =========================================================
+    // Public API - END
+    // =========================================================
 
-    // start pierwszego ćwiczenia
-    fun startWorkout() {
-        //_effects.emit(WorkoutEffect.KeepScreenOn)
-        //_effects.emit(WorkoutEffect.PlaySound(SoundType.START))
-        effects.keepScreenOn(true)
+    private fun loadWorkoutFromParam() {
+        viewModelScope.launch {
+            val workoutId = workoutIdParam.toWorkoutIdOrNull()
+            if (workoutId == null) {
+                sendEvent(WorkoutExecutionEvent.ShowError("Cannot parse workoutId: $workoutIdParam".asUiText()))
+                sendEvent(WorkoutExecutionEvent.Close)
+                return@launch
+            }
+            val planId = planIdParam?.toPlanIdOrNull()
+            if (!planIdParam.isNullOrEmpty() && planId == null) {
+                sendEvent(WorkoutExecutionEvent.ShowError("Cannot parse planId: $planIdParam".asUiText()))
+                sendEvent(WorkoutExecutionEvent.Close)
+                return@launch
+            }
+            loadWorkoutById(planId, workoutId)
+        }
     }
 
-    // przejście do kolejnego
-    fun nextExercise() {
-        //_effects.emit(WorkoutEffect.Vibrate(200))
-        //_effects.emit(WorkoutEffect.PlaySound(SoundType.NEXT))
+    private suspend fun loadWorkoutById(planId: PlanId?, workoutId: WorkoutId) {
+        try {
+            val weightKg = appSettingRepository.weightFlow.first()
+            val result = prepareWorkoutExecutionUC.execute(
+                planId, workoutId, weightKg
+            )
+
+            val steps = planBuilder.build(
+                result.workout,
+                result.exercises
+            )
+
+            val runtime = WorkoutExecutionRuntime(
+                workout = result.workout,
+                session = result.session,
+                steps = steps,
+                currentStepIndex = 0,//TODO - kontynuacja workout
+                phase = ExecutionPhase.Intro,
+                pausedPhase = null,
+                remainingSeconds = 10,//TODO - ustawienia usera/konfiguracja
+            )
+
+            engine.start(
+                initial = runtime,
+                scope = viewModelScope
+            )
+
+        } catch (e: Throwable) {
+            if (e is CancellationException) throw e
+            Log.e(TAG, "Failed to prepare workout session", e)
+            showExceptionAsMessage(e)
+            sendEvent(WorkoutExecutionEvent.Close)
+        }
     }
 
-    fun rest() {
-        //_effects.emit(WorkoutEffect.Speak("Rest"))
+    // =========================================================
+    // Helpers
+    // =========================================================
+
+    private suspend fun sendEvent(event: WorkoutExecutionEvent) {
+        _events.send(event)
     }
 
-    fun resume() {
-        // powrót do poprzedniego stanu
+    private suspend fun showExceptionAsMessage(e: Throwable) {
+        sendEvent(
+            WorkoutExecutionEvent.ShowError(
+                Res.string.error_during_processing.asUiText(exceptionToString(e))
+            )
+        )
     }
 
-    fun pause() {
-        _state.value = WorkoutExecutionState.Paused("after pause")
+    private fun dispatch(action: ExecutionAction) {
+        engine.dispatch(action)
     }
 
-    fun finish() {
-        //_effects.emit(WorkoutEffect.AllowScreenOff)
-        //_effects.emit(WorkoutEffect.PlaySound(SoundType.FINISH))
-        effects.keepScreenOn(false)
-    }
 }

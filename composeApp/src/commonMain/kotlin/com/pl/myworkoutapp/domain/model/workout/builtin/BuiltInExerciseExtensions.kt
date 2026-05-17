@@ -26,6 +26,13 @@ fun BuiltInExerciseId.withDuration(sec: Int) = this.with(
     )
 )
 
+fun BuiltInExerciseId.withDistance(meters: Int) = this.with(
+    Quantity(
+        QuantityType.DISTANCE,
+        meters
+    )
+)
+
 fun BuiltInExerciseId.withReps(reps: Int) = this.with(
     Quantity(
         QuantityType.REPS,

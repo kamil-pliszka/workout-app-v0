@@ -6,8 +6,6 @@ import com.pl.myworkoutapp.domain.model.Difficulty
 sealed interface Workout {
     val id: WorkoutId
     val difficulty: Difficulty
-
-    //val estimatedDuration: Int //in seconds
     val items: List<WorkoutItem>
     val estimatedDuration: Int
     val baseKcalPerKg: Double

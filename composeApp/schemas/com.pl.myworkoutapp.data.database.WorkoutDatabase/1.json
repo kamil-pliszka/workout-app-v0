@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "1985834d9a70b0fd42fe7b2c72a63176",
+    "identityHash": "1a1eec42b84b3df615161ff2dead9ebc",
     "entities": [
       {
         "tableName": "CustomExerciseEntity",
@@ -153,7 +153,7 @@
       },
       {
         "tableName": "WorkoutSessionEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `planId` INTEGER NOT NULL, `workoutId` TEXT NOT NULL, `startTime` INTEGER, `endTime` INTEGER, `calories` REAL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `planId` TEXT, `workoutId` TEXT NOT NULL, `startTime` INTEGER NOT NULL, `endTime` INTEGER, `progress` REAL NOT NULL, `completed` INTEGER NOT NULL, `estimatedDuration` INTEGER NOT NULL, `estimatedCalories` INTEGER NOT NULL, `executionTime` REAL NOT NULL, `calories` REAL NOT NULL, `updatedAt` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -164,8 +164,7 @@
           {
             "fieldPath": "planId",
             "columnName": "planId",
-            "affinity": "INTEGER",
-            "notNull": true
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "workoutId",
@@ -176,7 +175,8 @@
           {
             "fieldPath": "startTime",
             "columnName": "startTime",
-            "affinity": "INTEGER"
+            "affinity": "INTEGER",
+            "notNull": true
           },
           {
             "fieldPath": "endTime",
@@ -184,17 +184,74 @@
             "affinity": "INTEGER"
           },
           {
+            "fieldPath": "progress",
+            "columnName": "progress",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "completed",
+            "columnName": "completed",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "estimatedDuration",
+            "columnName": "estimatedDuration",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "estimatedCalories",
+            "columnName": "estimatedCalories",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "executionTime",
+            "columnName": "executionTime",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
             "fieldPath": "calories",
             "columnName": "calories",
-            "affinity": "REAL"
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "updatedAt",
+            "columnName": "updatedAt",
+            "affinity": "INTEGER",
+            "notNull": true
           }
         ],
         "primaryKey": {
-          "autoGenerate": false,
+          "autoGenerate": true,
           "columnNames": [
             "id"
           ]
-        }
+        },
+        "indices": [
+          {
+            "name": "index_WorkoutSessionEntity_planId",
+            "unique": false,
+            "columnNames": [
+              "planId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_WorkoutSessionEntity_planId` ON `${TABLE_NAME}` (`planId`)"
+          },
+          {
+            "name": "index_WorkoutSessionEntity_workoutId",
+            "unique": false,
+            "columnNames": [
+              "workoutId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_WorkoutSessionEntity_workoutId` ON `${TABLE_NAME}` (`workoutId`)"
+          }
+        ]
       },
       {
         "tableName": "CustomWorkoutEntity",
@@ -431,7 +488,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '1985834d9a70b0fd42fe7b2c72a63176')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '1a1eec42b84b3df615161ff2dead9ebc')"
     ]
   }
 }

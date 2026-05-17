@@ -1,17 +1,17 @@
 package com.pl.myworkoutapp.ui.execution
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Text
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import com.pl.myworkoutapp.ui.execution.components.*
 
 //NAV SCREEN
+//WorkoutExecutionScreen
+//powinien być:
+//root orchestration composable
+//phase router
 @Composable
 fun WorkoutExecutionScreen(
-    state: WorkoutExecutionState,
+    state: WorkoutExecutionUiState,
     onAction: (WorkoutExecutionAction) -> Unit,
 ) {
     LaunchedEffect(Unit) {
@@ -22,32 +22,39 @@ fun WorkoutExecutionScreen(
             onAction(WorkoutExecutionAction.OnScreenExited)
         }
     }
-
-    //WorkoutEffectsHandler(viewModel.effects)
-    when (state) {
-        is WorkoutExecutionState.Running -> {
-            RunningWorkoutView(/*state, viewModel*/)
+    when(state) {
+        WorkoutExecutionUiState.Loading -> {
+            CircularProgressIndicator()
         }
-
-        is WorkoutExecutionState.Rest -> {
-            RestView(/*state, viewModel*/)
+        is WorkoutExecutionUiState.Intro -> {
+            IntroView(
+                state = state,
+                onAction = onAction,
+            )
         }
-
-        is WorkoutExecutionState.Paused -> {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center,
-            ) {
-                Text(
-                    text = "PAUSED: ${state.workoutId}"
-                )
-            }
-            PausedView(/*state, viewModel*/)
+        is WorkoutExecutionUiState.Rest -> {
+            RestView(
+                state = state,
+                onAction = onAction,
+            )
         }
-
-        is WorkoutExecutionState.Finished -> {
-            //TODO - niepotrzebne przejscie stanu przez Composable
-            onAction(WorkoutExecutionAction.OnExit)
+        is WorkoutExecutionUiState.Exercise -> {
+            ExerciseView(
+                state = state,
+                onAction = onAction,
+            )
+        }
+        is WorkoutExecutionUiState.Paused -> {
+            PausedView(
+                state = state,
+                onAction = onAction,
+            )
+        }
+        is WorkoutExecutionUiState.Finished -> {
+            FinishedView(
+                state = state,
+                onAction = onAction,
+            )
         }
     }
 }

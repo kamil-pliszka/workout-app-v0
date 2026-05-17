@@ -9,14 +9,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.pl.myworkoutapp.domain.model.exercise.BuiltInExerciseId
-import com.pl.myworkoutapp.domain.model.exercise.asExerciseId
-import com.pl.myworkoutapp.ui.execution.*
+import com.pl.myworkoutapp.ui.execution.WorkoutExecutionAction
+import com.pl.myworkoutapp.ui.execution.WorkoutExecutionUiState
 import com.pl.myworkoutapp.ui.theme.AppTheme
 
 @Composable
-fun PausedView(
-    state: WorkoutExecutionUiState.Paused,
+fun FinishedView(
+    state: WorkoutExecutionUiState.Finished,
     onAction: (WorkoutExecutionAction) -> Unit,
 ) {
     Box(
@@ -24,27 +23,24 @@ fun PausedView(
             .fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-
         Column {
             LinearProgressIndicator(
-                progress = { state.progress },
+                progress = { 1f },
                 modifier = Modifier.fillMaxWidth().height(4.dp)
             )
-            Text("PausedView")
-            Text(state.title ?: "PAUSED")
+            Text("FinishedView")
+            Text("Workout finished")
 
-            state.currentExercise?.let {
-                Text("${it.exerciseId}")
-            }
+            Text(state.title ?: "")
 
             Button(
                 onClick = {
                     onAction(
-                        WorkoutExecutionAction.ResumeClicked
+                        WorkoutExecutionAction.OnExit
                     )
                 }
             ) {
-                Text("Resume")
+                Text("Close")
             }
         }
     }
@@ -52,15 +48,11 @@ fun PausedView(
 
 @Preview
 @Composable
-private fun PausedViewPreview() {
+private fun FinishedViewPreview() {
     AppTheme {
-        PausedView(
-            state = WorkoutExecutionUiState.Paused(
-                title = "PausedView",
-                currentExercise = UiExercise(
-                    exerciseId = BuiltInExerciseId.V_HOLD.asExerciseId()
-                ),
-                progress = 0.31f,
+        FinishedView(
+            state = WorkoutExecutionUiState.Finished(
+                title = "FinishedView",
             ),
             onAction = { }
         )

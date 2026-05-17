@@ -6,7 +6,9 @@ import com.pl.myworkoutapp.data.mappers.*
 import com.pl.myworkoutapp.domain.WorkoutRepository
 import com.pl.myworkoutapp.domain.model.exercise.*
 import com.pl.myworkoutapp.domain.model.plan.BuiltInTrainingPlansRegistry
+import com.pl.myworkoutapp.domain.model.plan.PlanId
 import com.pl.myworkoutapp.domain.model.plan.TrainingPlan
+import com.pl.myworkoutapp.domain.model.plan.asString
 import com.pl.myworkoutapp.domain.model.workout.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
@@ -49,8 +51,12 @@ class WorkoutRepositoryImpl(
         TODO("Not yet implemented")
     }
 
-    override suspend fun saveSession(session: WorkoutSession) {
-        TODO("Not yet implemented")
+    override suspend fun saveSession(session: WorkoutSession) : WorkoutSession {
+        val generatedId = workoutDao.upsertSession(session.toEntity())
+        println("saveSession sourceId: ${session.id}, generatedId: $generatedId")
+        return session.copy(
+            id = generatedId.takeIf { it > 0 } ?: session.id
+        )
     }
 
     override suspend fun getHistory(): List<WorkoutSession> {
@@ -155,6 +161,15 @@ class WorkoutRepositoryImpl(
 
     override suspend fun deleteWorkout(id: WorkoutId.Custom) {
         workoutDao.deleteById(id.toLong())
+    }
+
+    override suspend fun findLatestWorkoutSession(planId: PlanId?, workoutId: WorkoutId): WorkoutSession? {
+        val session = if (planId == null) {
+            workoutDao.findLatestWorkoutSession(workoutId.asString())
+        } else {
+            workoutDao.findLatestWorkoutSession(workoutId.asString(), planId.asString())
+        }
+        return session?.toDomain()
     }
 }
 

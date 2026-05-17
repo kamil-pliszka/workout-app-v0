@@ -1,6 +1,7 @@
 package com.pl.myworkoutapp.domain
 
 import com.pl.myworkoutapp.domain.model.exercise.*
+import com.pl.myworkoutapp.domain.model.plan.PlanId
 import com.pl.myworkoutapp.domain.model.plan.TrainingPlan
 import com.pl.myworkoutapp.domain.model.workout.*
 import kotlinx.coroutines.flow.Flow
@@ -17,7 +18,7 @@ interface WorkoutRepository {
 
     suspend fun savePlan(plan: TrainingPlan)
 
-    suspend fun saveSession(session: WorkoutSession)
+    suspend fun saveSession(session: WorkoutSession) : WorkoutSession
 
     suspend fun getHistory(): List<WorkoutSession>
     suspend fun getWorkouts(): List<Workout>
@@ -35,4 +36,5 @@ interface WorkoutRepository {
     fun observeMainCustomWorkoutsIds(): Flow<List<WorkoutId.Custom>>
     suspend fun findLatestBasedOn(builtInId: WorkoutId.BuiltIn): CustomWorkout?
     suspend fun deleteWorkout(id: WorkoutId.Custom)
+    suspend fun findLatestWorkoutSession(planId: PlanId?, workoutId: WorkoutId): WorkoutSession?
 }

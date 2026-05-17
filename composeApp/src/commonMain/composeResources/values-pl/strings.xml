@@ -187,5 +187,6 @@
     <string name="exercise_push_up">POMPKI</string>
     <string name="exercise_plank">DESKA</string>
 
-
+    <string name="speech_text_half_time">Połowa czasu</string>
+    <string name="speech_text_rest_finished">Koniec przerwy</string>
 </resources>

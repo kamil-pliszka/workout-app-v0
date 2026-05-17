@@ -5,6 +5,7 @@ import com.pl.myworkoutapp.data.AndroidStorageSupport
 import com.pl.myworkoutapp.data.database.DatabaseFactory
 import com.pl.myworkoutapp.data.prefs.DataStoreProvider
 import com.pl.myworkoutapp.domain.StorageSupport
+import com.pl.myworkoutapp.ui.common.KeepScreenController
 import com.pl.myworkoutapp.ui.effects.AndroidPlatformEffects
 import com.pl.myworkoutapp.ui.effects.PlatformEffects
 import org.koin.android.ext.koin.androidApplication
@@ -18,8 +19,8 @@ actual val platformModule: Module
     get() = module {
 //        single<HttpClientEngine> { OkHttp.create() }
         single { DatabaseFactory(androidApplication()) }
-        single<PlatformEffects> {
-            AndroidPlatformEffects(androidContext()) {
+        single<PlatformEffects>(createdAtStart = true) {
+            AndroidPlatformEffects(androidContext(), get<KeepScreenController>()) {
                 // dostajemy aktualne Activity z Composable lub Activity
                 (androidContext() as? Activity)
             }

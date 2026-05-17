@@ -6,35 +6,19 @@ import android.content.Context
 import android.os.*
 import android.speech.tts.TextToSpeech
 import androidx.annotation.RequiresPermission
+import com.pl.myworkoutapp.ui.common.KeepScreenController
+import java.io.Closeable
 
-class AndroidPlatformEffects(private val context: Context, private val activityProvider: () -> Activity?) : PlatformEffects {
+class AndroidPlatformEffects(
+    private val context: Context,
+    private val keepScreenController: KeepScreenController,
+    private val activityProvider: () -> Activity?
+) : PlatformEffects, Closeable {
+    private var ttsReady = false
+    private val pendingTexts = mutableListOf<String>()
 
     override fun keepScreenOn(enabled: Boolean) {
-        /*
-        val activity = activityProvider() ?: return
-        if (enabled) {
-            activity.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        } else {
-            activity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        }*/
-        TODO()
-        //TODO - zmienić wersję na Composable:
-        /*
-val view = LocalView.current
-
-DisposableEffect(enabled) {
-    val window = (view.context as Activity).window
-
-    if (enabled) {
-        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-    }
-
-    onDispose {
-        window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-    }
-}
-
-         */
+        keepScreenController.enabled.value = enabled
     }
 
     @RequiresPermission(Manifest.permission.VIBRATE)
@@ -62,8 +46,35 @@ DisposableEffect(enabled) {
         //MediaPlayer.create(activity, R.raw.some_sound).start()
     }
 
+
+    private val tts = TextToSpeech(context) { status ->
+        ttsReady = status == TextToSpeech.SUCCESS
+        if (ttsReady) {
+            pendingTexts.forEach(::speakInternal)
+            pendingTexts.clear()
+        }
+    }
+
     override fun speak(text: String) {
-        val tts = TextToSpeech(context) {}
-        tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, null)
+        if (!ttsReady) {
+            pendingTexts += text
+            return
+        }
+
+        speakInternal(text)
+    }
+
+    private fun speakInternal(text: String) {
+        tts.speak(
+            text,
+            TextToSpeech.QUEUE_FLUSH,
+            null,
+            null
+        )
+    }
+
+    override fun close() {
+        tts.stop()
+        tts.shutdown()
     }
 }

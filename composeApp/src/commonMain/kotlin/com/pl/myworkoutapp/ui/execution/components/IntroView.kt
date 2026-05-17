@@ -1,9 +1,7 @@
 package com.pl.myworkoutapp.ui.execution.components
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Button
-import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -14,9 +12,10 @@ import com.pl.myworkoutapp.domain.model.exercise.asExerciseId
 import com.pl.myworkoutapp.ui.execution.*
 import com.pl.myworkoutapp.ui.theme.AppTheme
 
+
 @Composable
-fun PausedView(
-    state: WorkoutExecutionUiState.Paused,
+fun IntroView(
+    state: WorkoutExecutionUiState.Intro,
     onAction: (WorkoutExecutionAction) -> Unit,
 ) {
     Box(
@@ -30,37 +29,49 @@ fun PausedView(
                 progress = { state.progress },
                 modifier = Modifier.fillMaxWidth().height(4.dp)
             )
-            Text("PausedView")
-            Text(state.title ?: "PAUSED")
+            Text("IntroView")
+            Text(state.title ?: "")
 
-            state.currentExercise?.let {
-                Text("${it.exerciseId}")
+            Text("Start za: ${state.remainingSeconds}")
+
+            state.nextExercise?.let {
+                Text("Next: ${it.exerciseId}")
             }
 
             Button(
                 onClick = {
-                    onAction(
-                        WorkoutExecutionAction.ResumeClicked
-                    )
+                    onAction(WorkoutExecutionAction.SkipClicked)
                 }
             ) {
-                Text("Resume")
+                Text("Start now")
+            }
+
+            Button(
+                onClick = {
+                    onAction(WorkoutExecutionAction.PauseClicked)
+                }
+            ) {
+                Text("Pause")
             }
         }
     }
 }
 
+
 @Preview
 @Composable
-private fun PausedViewPreview() {
+private fun IntroViewPreview() {
     AppTheme {
-        PausedView(
-            state = WorkoutExecutionUiState.Paused(
-                title = "PausedView",
-                currentExercise = UiExercise(
+        IntroView(
+            state = WorkoutExecutionUiState.Intro(
+                title = "IntroView",
+                nextExercise = UiExercise(
                     exerciseId = BuiltInExerciseId.V_HOLD.asExerciseId()
                 ),
                 progress = 0.31f,
+                remainingSeconds = 7,
+                canPause = true,
+                canSkip = true
             ),
             onAction = { }
         )

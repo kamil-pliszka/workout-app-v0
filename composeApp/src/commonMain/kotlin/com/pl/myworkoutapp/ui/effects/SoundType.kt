@@ -4,6 +4,6 @@ enum class SoundType {
     START,
     NEXT,
     REST,
-    FINISH
-
+    FINISH,
+    COUNTDOWN
 }

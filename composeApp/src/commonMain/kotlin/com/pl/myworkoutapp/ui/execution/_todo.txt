@@ -1,0 +1,17 @@
+
+
+Przy następnym kroku naturalne będą:
++start engine z ViewModel
++dispatch akcji z UI
++renderowanie UiPhase
++obsługa pause/resume
+side-effect pipeline (vibrate, sound, keepScreenOn)
+
+I dopiero później:
+
+circuits
+persistence/resume session
+advanced timing rules
+analytics/history
+
+To dobra kolejność.

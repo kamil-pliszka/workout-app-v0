@@ -251,4 +251,6 @@
     <string name="exercise_walk">WALKING</string>
     <string name="exercise_dumbell_biceps_curls">DUMBELL BICEPS CURLS</string>
 
+    <string name="speech_text_half_time">Half time</string>
+    <string name="speech_text_rest_finished">Rest finished</string>
 </resources>

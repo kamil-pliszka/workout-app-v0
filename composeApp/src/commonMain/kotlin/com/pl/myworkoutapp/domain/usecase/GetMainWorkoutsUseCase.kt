@@ -26,6 +26,10 @@ class GetMainWorkoutsUseCase(
     ): Flow<List<WorkoutWithMetrics>> {
         val builtInWorkouts = listOf(
             //tutaj wybieramy konkretne zestawy i określamy ich kolejność
+            BuiltInWorkoutRegistry.get(BuiltInWorkoutId.W_2_EXE),
+            BuiltInWorkoutRegistry.get(BuiltInWorkoutId.W_1_EXE_DURATION),
+            BuiltInWorkoutRegistry.get(BuiltInWorkoutId.W_1_EXE_REPS),
+            BuiltInWorkoutRegistry.get(BuiltInWorkoutId.W_1_EXE_DISTANCE),
             BuiltInWorkoutRegistry.get(BuiltInWorkoutId.MY_ABS_WORKOUT_NO_SET),
             BuiltInWorkoutRegistry.get(BuiltInWorkoutId.MY_ABS_WORKOUT_WITH_SET),
             BuiltInWorkoutRegistry.get(BuiltInWorkoutId.MY_ABS_WORKOUT_SUPERSET),

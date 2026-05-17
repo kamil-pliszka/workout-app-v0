@@ -7,12 +7,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.*
+import androidx.navigation.navArgument
 import com.pl.myworkoutapp.domain.model.exercise.asString
 import com.pl.myworkoutapp.domain.model.workout.asString
 import com.pl.myworkoutapp.ui.common.MessageCoordinator
 import com.pl.myworkoutapp.ui.common.ObserveAsEvents
 import com.pl.myworkoutapp.ui.effects.PlatformEffects
+import com.pl.myworkoutapp.ui.execution.WorkoutExecutionEvent
 import com.pl.myworkoutapp.ui.execution.WorkoutExecutionScreen
 import com.pl.myworkoutapp.ui.execution.WorkoutExecutionViewModel
 import com.pl.myworkoutapp.ui.exercises.*
@@ -175,11 +178,30 @@ fun Navigation(
 
         // EXECUTION GRAPH
         composable(
-            ScreenRoutes.WorkoutExecution.route
+            ScreenRoutes.WorkoutExecution.route,
+            arguments = listOf(
+                navArgument("workoutId") {
+                    type = NavType.StringType
+                },
+                navArgument("planId") {
+                    type = NavType.StringType
+                    nullable = true
+                    defaultValue = null
+                }
+            )
         ) { backStackEntry ->
             val viewModel: WorkoutExecutionViewModel = koinViewModel(
                 viewModelStoreOwner = backStackEntry
             )
+            ObserveAsEvents(viewModel.events) { event ->
+                println("BACK EVENT: $event")
+                when (event) {
+                    WorkoutExecutionEvent.Close -> navController.popBackStack()
+                    is WorkoutExecutionEvent.ShowError -> messageCoordinator.error(event.text)
+                    is WorkoutExecutionEvent.ShowSuccess -> messageCoordinator.success(event.text)
+                    WorkoutExecutionEvent.Vibrate -> platformEffects.vibrate(666)
+                }
+            }
             val state by viewModel.state.collectAsStateWithLifecycle()
             WorkoutExecutionScreen(
                 state = state,

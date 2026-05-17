@@ -15,8 +15,13 @@ sealed class ScreenRoutes(val route: String) {
     //data object Camera : ScreenRoutes("camera")
 
     // execution
-    data object WorkoutExecution : ScreenRoutes("$WORKOUT_EXECUTION_ROUTE_PREFIX/{workoutId}") {
-        fun create(workoutId: String) = "$WORKOUT_EXECUTION_ROUTE_PREFIX/$workoutId"
+    data object WorkoutExecution : ScreenRoutes("$WORKOUT_EXECUTION_ROUTE_PREFIX/{workoutId}?planId={planId}") {
+        fun create(workoutId: String, planId: String? = null) =  buildString {
+            append("$WORKOUT_EXECUTION_ROUTE_PREFIX/$workoutId")
+            if (planId != null) {
+                append("?planId=$planId")
+            }
+        }
     }
 
     data object WorkoutDetails : ScreenRoutes("$WORKOUT_DETAILS_ROUTE_PREFIX/{workoutId}") {

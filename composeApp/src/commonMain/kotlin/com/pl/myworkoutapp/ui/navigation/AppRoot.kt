@@ -10,6 +10,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
 import com.pl.myworkoutapp.getPlatform
 import com.pl.myworkoutapp.ui.app.AppStateHolder
+import com.pl.myworkoutapp.ui.common.KeepScreenController
+import com.pl.myworkoutapp.ui.common.KeepScreenOnEffect
 import com.pl.myworkoutapp.ui.common.MessageConsumer
 import com.pl.myworkoutapp.ui.common.MessageCoordinator
 import org.koin.compose.koinInject
@@ -38,6 +40,7 @@ fun AppRoot() {
     val appState = appStateHolder.state.collectAsStateWithLifecycle()
     val showBottomBar = appState.value.showNavigationBar && !useRailNavigation
     val messageCoordinator = koinInject<MessageCoordinator>()
+    KeepScreenOnEffect(controller = koinInject<KeepScreenController>())
 
     Scaffold(
         bottomBar = {

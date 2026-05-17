@@ -62,4 +62,31 @@ fun BuiltInWorkoutId.toUiConfig(): WorkoutUiConfig = when (this) {
         image = Res.drawable.ic_jumping_jacks,
         color = PureGreen
     )
+
+    //TEST
+    BuiltInWorkoutId.W_1_EXE_DURATION -> WorkoutUiConfig(
+        name = "W-1EXE-duration".asUiText(),
+        desc = EmptyUiText,
+        image = Res.drawable.ic_flying_witch1,
+        color = PastelTurquoise
+    )
+    BuiltInWorkoutId.W_1_EXE_REPS -> WorkoutUiConfig(
+        name = "W-1EXE-reps".asUiText(),
+        desc = EmptyUiText,
+        image = Res.drawable.ic_flying_witch1,
+        color = BrillantBlue
+    )
+    BuiltInWorkoutId.W_1_EXE_DISTANCE -> WorkoutUiConfig(
+        name = "W-1EXE-distance".asUiText(),
+        desc = EmptyUiText,
+        image = Res.drawable.ic_flying_witch1,
+        color = PearlOpalGreen
+    )
+
+    BuiltInWorkoutId.W_2_EXE -> WorkoutUiConfig(
+        name = "W-2EXE".asUiText(),
+        desc = EmptyUiText,
+        image = Res.drawable.ic_flying_witch,
+        color = FernGreen
+    )
 }

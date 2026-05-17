@@ -11,8 +11,15 @@ import com.pl.myworkoutapp.data.repository.WorkoutRepositoryImpl
 import com.pl.myworkoutapp.domain.*
 import com.pl.myworkoutapp.domain.usecase.*
 import com.pl.myworkoutapp.ui.app.AppStateHolder
+import com.pl.myworkoutapp.ui.common.KeepScreenController
 import com.pl.myworkoutapp.ui.common.MessageCoordinator
 import com.pl.myworkoutapp.ui.execution.WorkoutExecutionViewModel
+import com.pl.myworkoutapp.ui.execution.engine.ExecutionEffectHandler
+import com.pl.myworkoutapp.ui.execution.engine.ExecutionEffectResolver
+import com.pl.myworkoutapp.ui.execution.engine.ExecutionPlanBuilder
+import com.pl.myworkoutapp.ui.execution.engine.ExecutionReducer
+import com.pl.myworkoutapp.ui.execution.engine.ExecutionTimer
+import com.pl.myworkoutapp.ui.execution.engine.WorkoutExecutionEngine
 import com.pl.myworkoutapp.ui.exercises.*
 import com.pl.myworkoutapp.ui.language.LanguageViewModel
 import com.pl.myworkoutapp.ui.navigation.AppNavigator
@@ -52,6 +59,7 @@ val sharedModule = module {
     singleOf(::AppNavigator)
     singleOf(::MessageCoordinator)
     singleOf(::WorkoutHydrator)
+    singleOf(::KeepScreenController)
 
     //UC
     singleOf(::GetWorkoutWithExercisesUseCase)
@@ -64,6 +72,7 @@ val sharedModule = module {
     singleOf(::EstimateWorkoutMetricsUseCase)
     singleOf(::ResolveWorkoutExercisesUseCase)
     singleOf(::ValidateAndEstimateWorkoutUseCase)
+    singleOf(::PrepareWorkoutExecutionUseCase)
 
     //jeśli delegate ma stan per ekran wtedy factoryOf, jeśli nie będzie miał stanu wtedy singleOf
     singleOf(::CircuitEditorDelegate)
@@ -78,6 +87,13 @@ val sharedModule = module {
     singleOf(::WorkoutTreeNormalizer)
     singleOf(::WorkoutTreeMutationHandler)
     singleOf(::WorkoutMetadataEditorReducer)
+    //exec
+    singleOf(::ExecutionTimer)
+    singleOf(::ExecutionReducer)
+    singleOf(::WorkoutExecutionEngine)
+    singleOf(::ExecutionPlanBuilder)
+    singleOf(::ExecutionEffectResolver)
+    singleOf(::ExecutionEffectHandler)
 
     //VM
     viewModelOf(::LanguageViewModel)
