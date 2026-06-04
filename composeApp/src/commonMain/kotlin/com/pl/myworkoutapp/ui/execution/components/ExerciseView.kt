@@ -10,9 +10,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.pl.myworkoutapp.domain.model.exercise.BuiltInExerciseId
 import com.pl.myworkoutapp.domain.model.exercise.asExerciseId
+import com.pl.myworkoutapp.ui.common.asUiImage
+import com.pl.myworkoutapp.ui.common.asUiText
 import com.pl.myworkoutapp.ui.execution.*
 import com.pl.myworkoutapp.ui.theme.AppTheme
 import com.pl.myworkoutapp.ui.theme.EurostileExt
+import myworkoutapplication.composeapp.generated.resources.Res
+import myworkoutapplication.composeapp.generated.resources.ic_push_up
+import myworkoutapplication.composeapp.generated.resources.ic_squat
 
 @Composable
 fun ExerciseView(
@@ -30,16 +35,23 @@ fun ExerciseView(
                 modifier = Modifier.fillMaxWidth().height(4.dp)
             )
             Text("ExerciseView")
-            Text(state.title ?: "EXE")
-            state.remainingSeconds?.let {
-                Text(
-                    text = "CZAS: ${state.remainingSeconds}",
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontFamily = EurostileExt,
-                    fontSize = 32.sp,
-                )
+            Text(state.title.asString())
+            when(state.target) {
+                is UiExerciseTarget.Distance -> {
+                    Text("Dystans: " + state.target.meters)
+                }
+                is UiExerciseTarget.Duration -> {
+                    Text(
+                        text = "CZAS: ${state.target.remainingSeconds}",
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontFamily = EurostileExt,
+                        fontSize = 32.sp,
+                    )
+                }
+                is UiExerciseTarget.Reps -> {
+                    Text("Powtórzenia: " + state.target.reps)
+                }
             }
-
             Text("${state.currentExercise.exerciseId}")
 
             state.nextExercise?.let {
@@ -85,19 +97,25 @@ fun ExerciseView(
 
 @Preview
 @Composable
-private fun ExerciseViewPreview() {
+private fun ExerciseViewPreviewReps() {
     AppTheme {
         ExerciseView(
             state = WorkoutExecutionUiState.Exercise(
-                title = "ExerciseView",
+                title = "ExerciseView".asUiText(),
                 nextExercise = UiExercise(
-                    exerciseId = BuiltInExerciseId.DEAD_BUG.asExerciseId()
+                    exerciseId = BuiltInExerciseId.DEAD_BUG.asExerciseId(),
+                    title = "Super ćwiczenie".asUiText(),
+                    image = Res.drawable.ic_squat.asUiImage(),
+                    quantityLabel = "123".asUiText(),
                 ),
                 progress = 0.31f,
                 currentExercise = UiExercise(
-                    exerciseId = BuiltInExerciseId.PUSH_UP_HOLD.asExerciseId()
+                    exerciseId = BuiltInExerciseId.PUSH_UP_HOLD.asExerciseId(),
+                    title = "Pompujesz".asUiText(),
+                    image = Res.drawable.ic_push_up.asUiImage(),
+                    quantityLabel = "37 albo i lepiej".asUiText(),
                 ),
-                remainingSeconds = 17,
+                target = UiExerciseTarget.Reps(31),
                 canPause = true,
                 canSkip = true,
             ),

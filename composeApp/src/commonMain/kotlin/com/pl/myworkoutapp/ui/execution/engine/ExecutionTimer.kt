@@ -3,6 +3,7 @@ package com.pl.myworkoutapp.ui.execution.engine
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlin.time.Duration.Companion.milliseconds
 
 /**
  * ExecutionTimer
@@ -17,7 +18,7 @@ import kotlinx.coroutines.flow.flow
 class ExecutionTimer {
     fun ticker(): Flow<Unit> = flow {
         while (true) {
-            delay(1000)
+            delay(1000.milliseconds)
             emit(Unit)
         }
     }

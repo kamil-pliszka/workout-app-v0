@@ -5,6 +5,7 @@ import com.pl.myworkoutapp.domain.model.plan.PlanId
 import com.pl.myworkoutapp.domain.model.plan.TrainingPlan
 import com.pl.myworkoutapp.domain.model.workout.*
 import kotlinx.coroutines.flow.Flow
+import kotlin.time.Instant
 
 
 interface WorkoutRepository {
@@ -18,7 +19,8 @@ interface WorkoutRepository {
 
     suspend fun savePlan(plan: TrainingPlan)
 
-    suspend fun saveSession(session: WorkoutSession) : WorkoutSession
+    suspend fun insertSession(session: WorkoutSession) : WorkoutSession
+    suspend fun updateSession(session: WorkoutSession)
 
     suspend fun getHistory(): List<WorkoutSession>
     suspend fun getWorkouts(): List<Workout>
@@ -37,4 +39,14 @@ interface WorkoutRepository {
     suspend fun findLatestBasedOn(builtInId: WorkoutId.BuiltIn): CustomWorkout?
     suspend fun deleteWorkout(id: WorkoutId.Custom)
     suspend fun findLatestWorkoutSession(planId: PlanId?, workoutId: WorkoutId): WorkoutSession?
+    suspend fun updateSessionCurrentStep(sessionId: Long, currentStepIndex: Int)
+    suspend fun finishWorkoutSession(sessionId: Long, endTime: Instant)
+    suspend fun insertPerformedExercise(performedExercise: PerformedExercise)
+    suspend fun getPerformedExercises(sessionId: Long): List<PerformedExercise>
+    suspend fun getWorkoutSession(sessionId: Long): WorkoutSession
+
+    suspend fun completeExercise(
+        performedExercise: PerformedExercise,
+        sessionUpdate: WorkoutSession
+    )
 }

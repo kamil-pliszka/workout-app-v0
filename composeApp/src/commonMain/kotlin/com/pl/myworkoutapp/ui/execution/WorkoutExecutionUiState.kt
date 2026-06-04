@@ -1,5 +1,7 @@
 package com.pl.myworkoutapp.ui.execution
 
+import com.pl.myworkoutapp.ui.common.UiText
+
 /**
  * Stabilny, płaski model dla Compose.
  * Odpowiada za:
@@ -13,7 +15,7 @@ sealed interface WorkoutExecutionUiState {
     data object Loading : WorkoutExecutionUiState
 
     data class Intro(
-        val title: String?,
+        val title: UiText,
         val nextExercise: UiExercise?,
         val progress: Float,
         val remainingSeconds: Int,
@@ -22,17 +24,18 @@ sealed interface WorkoutExecutionUiState {
     ) : WorkoutExecutionUiState
 
     data class Exercise(
-        val title: String?,
+        val title: UiText,
         val currentExercise: UiExercise,
         val nextExercise: UiExercise?,
-        val remainingSeconds: Int?,
+        //val remainingSeconds: Int?,
+        val target: UiExerciseTarget,
         val progress: Float,
         val canPause: Boolean,
         val canSkip: Boolean,
     ) : WorkoutExecutionUiState
 
     data class Rest(
-        val title: String?,
+        val title: UiText,
         val nextExercise: UiExercise?,
         val progress: Float,
         val remainingSeconds: Int,
@@ -41,12 +44,24 @@ sealed interface WorkoutExecutionUiState {
     ) : WorkoutExecutionUiState
 
     data class Paused(
-        val title: String?,
+        val title: UiText,
         val currentExercise: UiExercise?,
         val progress: Float,
     ) : WorkoutExecutionUiState
 
     data class Finished(
-        val title: String?,
+        val title: UiText,
     ) : WorkoutExecutionUiState
+}
+
+sealed interface UiExerciseTarget {
+    data class Duration(
+        val remainingSeconds: Int
+    ) : UiExerciseTarget
+    data class Reps(
+        val reps: Int
+    ) : UiExerciseTarget
+    data class Distance(
+        val meters: Int
+    ) : UiExerciseTarget
 }

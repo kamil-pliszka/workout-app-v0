@@ -1,5 +1,3 @@
-
-
 Przy następnym kroku naturalne będą:
 +start engine z ViewModel
 +dispatch akcji z UI
@@ -15,3 +13,10 @@ advanced timing rules
 analytics/history
 
 To dobra kolejność.
+
+
+1. Persistence workoutu (continue/restart)
+2. Countdown voice cues + więcej efektów audio
+3. Circuity
+4. Przebudowa progresu
+5. Statystyki/kcal

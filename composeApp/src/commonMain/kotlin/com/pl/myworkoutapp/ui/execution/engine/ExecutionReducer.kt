@@ -1,6 +1,7 @@
 package com.pl.myworkoutapp.ui.execution.engine
 
-import com.pl.myworkoutapp.ui.execution.countdownDurationSeconds
+import com.pl.myworkoutapp.domain.model.exercise.QuantityType
+import kotlin.time.Clock
 
 /**
  * Czysta logika state transition.
@@ -18,180 +19,262 @@ import com.pl.myworkoutapp.ui.execution.countdownDurationSeconds
 class ExecutionReducer {
 
     fun reduce(
-        state: WorkoutExecutionRuntime,
+        runtime: WorkoutExecutionRuntime,
         action: ExecutionAction
     ): WorkoutExecutionRuntime {
         return when (action) {
-            ExecutionAction.Tick -> onTick(state)
+            ExecutionAction.Tick -> onTick(runtime)
 
-            ExecutionAction.Skip -> onSkip(state)
+            ExecutionAction.Skip -> onSkip(runtime)
 
-            ExecutionAction.FinishExercise -> moveNext(state)
+            ExecutionAction.FinishExercise -> onFinishExercise(runtime)
 
-            ExecutionAction.Pause -> onPause(state)
+            ExecutionAction.Pause -> onPause(runtime)
 
-            ExecutionAction.Resume -> restorePhase(state)
+            ExecutionAction.Resume -> onResume(runtime)
         }
     }
 
-    /*private fun start(
-        state: WorkoutExecutionRuntime
-    ): WorkoutExecutionRuntime {
-
-        if (state.steps.isEmpty()) {
-            return state.copy(
-                phase = ExecutionPhase.Finished
-            )
-        }
-
-        val first = state.steps.first()
-
-        return when (first) {
-
-            is ExecutionStep.Exercise -> {
-                state.copy(
-                    currentStepIndex = 0,
-                    phase = ExecutionPhase.Exercise,
-                    remainingSeconds = null,
-                )
-            }
-
-            is ExecutionStep.Rest -> {
-                state.copy(
-                    currentStepIndex = 0,
-                    phase = ExecutionPhase.Rest,
-                    remainingSeconds = first.durationSeconds,
-                )
-            }
-        }
-    }*/
+    // =========================================================
+    // Tick
+    // =========================================================
 
     private fun onTick(
-        state: WorkoutExecutionRuntime
-    ): WorkoutExecutionRuntime {
-        if (state.phase == ExecutionPhase.Paused) {
-            return state
-        }
-
-        val remaining = state.remainingSeconds ?: return state
-
-        if (remaining <= 1) {
-            return when (state.phase) {
-                ExecutionPhase.Intro ->
-                    startFirstStep(state)
-
-                else ->
-                    moveNext(state)
-            }
-        }
-
-        return state.copy(
-            remainingSeconds = remaining - 1
-        )
-    }
-
-    private fun startFirstStep(
-        state: WorkoutExecutionRuntime
-    ): WorkoutExecutionRuntime {
-        val first = state.steps.firstOrNull()
-            ?: return state.copy(
-                phase = ExecutionPhase.Finished
-            )
-        return when (first) {
-            is ExecutionStep.ExerciseStep -> {
-                state.copy(
-                    currentStepIndex = 0,
-                    phase = ExecutionPhase.Exercise,
-                    remainingSeconds = first.countdownDurationSeconds(),
-                )
-            }
-
-            is ExecutionStep.RestStep -> {
-                state.copy(
-                    currentStepIndex = 0,
-                    phase = ExecutionPhase.Rest,
-                    remainingSeconds = first.durationSeconds,
-                )
-            }
-        }
-    }
-
-    private fun moveNext(
-        state: WorkoutExecutionRuntime
+        runtime: WorkoutExecutionRuntime
     ): WorkoutExecutionRuntime {
 
-        val nextIndex = state.currentStepIndex + 1
+        return when (val state = runtime.state) {
 
-        if (nextIndex >= state.steps.size) {
-            return state.copy(
-                phase = ExecutionPhase.Finished,
-                remainingSeconds = null,
-            )
-        }
+            // =====================================================
+            // INTRO
+            // =====================================================
 
-        val nextStep = state.steps[nextIndex]
+            is IntroState -> {
 
-        return when (nextStep) {
-
-            is ExecutionStep.ExerciseStep -> {
-                state.copy(
-                    currentStepIndex = nextIndex,
-                    phase = ExecutionPhase.Exercise,
-                    remainingSeconds = nextStep.countdownDurationSeconds()
-                )
+                if (state.remainingSeconds <= 1) {
+                    startFirstStep(runtime)
+                } else {
+                    runtime.copy(
+                        state = state.copy(
+                            remainingSeconds = state.remainingSeconds - 1
+                        )
+                    )
+                }
             }
 
-            is ExecutionStep.RestStep -> {
-                state.copy(
-                    currentStepIndex = nextIndex,
-                    phase = ExecutionPhase.Rest,
-                    remainingSeconds = nextStep.durationSeconds,
-                )
+            // =====================================================
+            // EXERCISE
+            // =====================================================
+
+            is ExerciseState -> {
+                when (val target = state.targetState) {
+                    is ExerciseTargetState.Countdown -> {
+                        if (target.remainingSeconds <= 1) {
+                            moveNext(runtime)
+                        } else {
+                            runtime.copy(
+                                state = state.copy(
+                                    targetState = target.copy(
+                                        remainingSeconds =
+                                            target.remainingSeconds - 1
+                                    )
+                                )
+                            )
+                        }
+                    }
+                    is ExerciseTargetState.Stopwatch -> {
+                        runtime.copy(
+                            state = state.copy(
+                                targetState = target.copy(
+                                    elapsedSeconds =
+                                        target.elapsedSeconds + 1
+                                )
+                            )
+                        )
+                    }
+                    is ExerciseTargetState.Manual ->  {
+                        // Tick nic nie robi
+                        runtime
+                    }
+                }
+            }
+            is RestState -> {
+                if (state.remainingSeconds <= 1) {
+                    moveNext(runtime)
+                } else {
+                    runtime.copy(
+                        state = state.copy(
+                            remainingSeconds =
+                                state.remainingSeconds - 1
+                        )
+                    )
+                }
+            }
+            is PausedState -> {// Tick ignorowany
+                runtime
+            }
+            FinishedState -> {
+                runtime
             }
         }
     }
 
-    private fun restorePhase(
-        state: WorkoutExecutionRuntime
+    // =========================================================
+    // Actions
+    // =========================================================
+
+    private fun onFinishExercise(
+        runtime: WorkoutExecutionRuntime
     ): WorkoutExecutionRuntime {
-
-        val current = state.steps[state.currentStepIndex]
-
-        return when (current) {
-
-            is ExecutionStep.ExerciseStep -> {
-                state.copy(
-                    phase = state.pausedPhase ?: ExecutionPhase.Exercise,
-                    pausedPhase = null
-                )
+        return when (runtime.state) {
+            is ExerciseState -> {
+                moveNext(runtime)
             }
-
-            is ExecutionStep.RestStep -> {
-                state.copy(
-                    phase = ExecutionPhase.Rest
-                )
+            else -> {
+                runtime
             }
         }
     }
 
     private fun onSkip(
-        state: WorkoutExecutionRuntime
+        runtime: WorkoutExecutionRuntime
     ): WorkoutExecutionRuntime {
-        return when (state.phase) {
-            ExecutionPhase.Intro ->
-                startFirstStep(state)
-            else ->
-                moveNext(state)
+        return when (runtime.state) {
+            is IntroState -> {
+                startFirstStep(runtime)
+            }
+            is ExerciseState -> {
+                moveNext(runtime)
+            }
+            is RestState -> {
+                moveNext(runtime)
+            }
+            is PausedState -> {//ignore
+                runtime
+            }
+            FinishedState -> {//ignore
+                runtime
+            }
         }
     }
 
-
     private fun onPause(
-        state: WorkoutExecutionRuntime
+        runtime: WorkoutExecutionRuntime
     ): WorkoutExecutionRuntime {
-        return state.copy(
-            pausedPhase = state.phase,
-            phase = ExecutionPhase.Paused
+        val active = runtime.state as? RunningState ?: return runtime
+        return runtime.copy(
+            state = PausedState(active)
         )
+    }
+
+    private fun onResume(
+        runtime: WorkoutExecutionRuntime
+    ): WorkoutExecutionRuntime {
+        val paused = runtime.state as? PausedState ?: return runtime
+        return runtime.copy(
+            state = paused.previous
+        )
+    }
+
+    // =========================================================
+    // Navigation
+    // =========================================================
+
+    private fun startFirstStep(
+        runtime: WorkoutExecutionRuntime
+    ): WorkoutExecutionRuntime {
+        val firstStep = runtime.plan.steps.firstOrNull()
+        return if (firstStep == null) {
+            runtime.copy(
+                state = FinishedState
+            )
+        } else {
+            runtime.copy(
+                state = createStateForStep(
+                    stepIndex = 0,
+                    step = firstStep
+                )
+            )
+        }
+    }
+
+    private fun moveNext(
+        runtime: WorkoutExecutionRuntime
+    ): WorkoutExecutionRuntime {
+
+        val currentState = runtime.state
+
+        val currentIndex = when (currentState) {
+            is ExerciseState -> currentState.stepIndex
+            is RestState -> currentState.stepIndex
+            is PausedState -> {
+                when (val previous = currentState.previous) {
+                    is ExerciseState -> previous.stepIndex
+                    is RestState -> previous.stepIndex
+                    is IntroState -> -1
+                }
+            }
+            is IntroState -> -1
+            FinishedState -> {
+                return runtime
+            }
+        }
+
+        val nextIndex = currentIndex + 1
+
+        if (nextIndex >= runtime.plan.steps.size) {
+
+            return runtime.copy(
+                state = FinishedState
+            )
+        }
+
+        val nextStep = runtime.plan.steps[nextIndex]
+
+        return runtime.copy(
+            state = createStateForStep(
+                stepIndex = nextIndex,
+                step = nextStep
+            )
+        )
+    }
+
+    private fun createStateForStep(
+        stepIndex: Int,
+        step: ExecutionStep
+    ): RunningState {
+        return when (step) {
+            is ExecutionStep.ExerciseStep -> {
+                ExerciseState(
+                    stepIndex = stepIndex,
+                    targetState = createExerciseTargetState(step),
+                    startTime = Clock.System.now(),
+                )
+            }
+            is ExecutionStep.RestStep -> {
+
+                RestState(
+                    stepIndex = stepIndex,
+                    remainingSeconds = step.durationSeconds
+                )
+            }
+        }
+    }
+
+    private fun createExerciseTargetState(
+        step: ExecutionStep.ExerciseStep
+    ): ExerciseTargetState {
+        return when (step.quantity.type) {
+            QuantityType.DURATION -> {
+                ExerciseTargetState.Countdown(
+                    remainingSeconds = step.quantity.value
+                )
+            }
+            QuantityType.REPS,
+            QuantityType.REPS_PER_SIDE,
+            QuantityType.DISTANCE -> {
+                ExerciseTargetState.Manual
+            }
+        }
     }
 }

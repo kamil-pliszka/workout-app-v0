@@ -46,9 +46,10 @@ class WorkoutExecutionViewModel(
     private val appStateHolder: AppStateHolder,
     private val appSettingRepository: AppSettingRepository,
     private val prepareWorkoutExecutionUC: PrepareWorkoutExecutionUseCase,
-    private val engine: WorkoutExecutionEngine,
+    private val engine: WorkoutExecutionEngine,//engine jest stanowy, nie jest singletonem
     private val planBuilder: ExecutionPlanBuilder,
-    private val executionEffectHandler : ExecutionEffectHandler,
+    private val executionEffectHandler: ExecutionEffectHandler,
+    private val persistenceHandler: ExecutionEventHandler,
 ) : ViewModel() {
 
     @Suppress("PrivatePropertyName")
@@ -59,23 +60,34 @@ class WorkoutExecutionViewModel(
 
     val state: StateFlow<WorkoutExecutionUiState> =
         engine.state
-            .filterNotNull()
-            .map { it.toUiState() }
+            .map {
+                it?.toUiState() ?: WorkoutExecutionUiState.Loading
+            }
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5000),
                 initialValue = WorkoutExecutionUiState.Loading
             )
-
     private val _events = Channel<WorkoutExecutionEvent>(Channel.BUFFERED)
     val events = _events.receiveAsFlow()
 
     init {
         Log.d(TAG, "PARAMS: workoutId: $workoutIdParam, planId: $planIdParam")
+        appStateHolder.setThemeColor(PearlOpalGreen)
+        appStateHolder.setWorkoutActive(true)
         observeEngineEffects()
+        observeEngineEvents()
         loadWorkoutFromParam()
     }
 
+    override fun onCleared() {
+        try {
+            engine.stop()
+        } finally {
+            appStateHolder.setThemeColor(null)
+            appStateHolder.setWorkoutActive(false)
+        }
+    }
 
     private fun observeEngineEffects() {
         viewModelScope.launch {
@@ -85,23 +97,18 @@ class WorkoutExecutionViewModel(
         }
     }
 
-    private var isActive = false
-    private fun onScreenEntered() {
-        if (!isActive) {
-            isActive = true
-            //appStateHolder.setHideNavigation(true)
-            appStateHolder.setWorkoutActive(true)
-            appStateHolder.setThemeColor(PearlOpalGreen)
-        }
-    }
-
-    private fun onScreenExited() {
-        if (isActive) {
-            isActive = false
-            engine.stop()
-            //appStateHolder.setHideNavigation(false)
-            appStateHolder.setThemeColor(null)
-            appStateHolder.setWorkoutActive(false)
+    private fun observeEngineEvents() {
+        viewModelScope.launch {
+            engine.events.collect { event ->
+                try {
+                    persistenceHandler.handle(event)
+                } catch (e: Exception) {
+                    if (e is CancellationException) throw e
+                    Log.e(TAG, "Persistence failed", e)
+                    showExceptionAsMessage(e)
+                    sendEvent(WorkoutExecutionEvent.Close)
+                }
+            }
         }
     }
 
@@ -110,13 +117,8 @@ class WorkoutExecutionViewModel(
     // =========================================================
     fun onAction(action: WorkoutExecutionAction) {
         when (action) {
-            WorkoutExecutionAction.OnScreenEntered ->
-                onScreenEntered()
-
-            WorkoutExecutionAction.OnScreenExited ->
-                onScreenExited()
-
             WorkoutExecutionAction.OnExit -> {
+                engine.stop()
                 appNavigator.closeDialog()
             }
 
@@ -167,7 +169,7 @@ class WorkoutExecutionViewModel(
                 planId, workoutId, weightKg
             )
 
-            val steps = planBuilder.build(
+            val executionPlan = planBuilder.build(
                 result.workout,
                 result.exercises
             )
@@ -175,11 +177,12 @@ class WorkoutExecutionViewModel(
             val runtime = WorkoutExecutionRuntime(
                 workout = result.workout,
                 session = result.session,
-                steps = steps,
-                currentStepIndex = 0,//TODO - kontynuacja workout
-                phase = ExecutionPhase.Intro,
-                pausedPhase = null,
-                remainingSeconds = 10,//TODO - ustawienia usera/konfiguracja
+                //currentStepIndex = 0,//TODO - kontynuacja workout
+                plan = executionPlan,
+                state = IntroState(
+                    remainingSeconds = 10 //TODO - ustawienia usera/konfiguracja
+                ),
+                weightKg = weightKg
             )
 
             engine.start(

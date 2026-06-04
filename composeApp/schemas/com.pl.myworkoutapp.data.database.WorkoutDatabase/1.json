@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "1a1eec42b84b3df615161ff2dead9ebc",
+    "identityHash": "2ca34cc10dd8ea17b9fd52c1c19b7d57",
     "entities": [
       {
         "tableName": "CustomExerciseEntity",
@@ -153,7 +153,7 @@
       },
       {
         "tableName": "WorkoutSessionEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `planId` TEXT, `workoutId` TEXT NOT NULL, `startTime` INTEGER NOT NULL, `endTime` INTEGER, `progress` REAL NOT NULL, `completed` INTEGER NOT NULL, `estimatedDuration` INTEGER NOT NULL, `estimatedCalories` INTEGER NOT NULL, `executionTime` REAL NOT NULL, `calories` REAL NOT NULL, `updatedAt` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `planId` TEXT, `workoutId` TEXT NOT NULL, `startTime` INTEGER NOT NULL, `endTime` INTEGER, `progress` REAL NOT NULL, `completed` INTEGER NOT NULL, `estimatedDuration` INTEGER NOT NULL, `estimatedCalories` INTEGER NOT NULL, `executionTime` REAL NOT NULL, `calories` REAL NOT NULL, `currentStepIndex` INTEGER, `updatedAt` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -218,6 +218,11 @@
             "columnName": "calories",
             "affinity": "REAL",
             "notNull": true
+          },
+          {
+            "fieldPath": "currentStepIndex",
+            "columnName": "currentStepIndex",
+            "affinity": "INTEGER"
           },
           {
             "fieldPath": "updatedAt",
@@ -484,11 +489,103 @@
             ]
           }
         ]
+      },
+      {
+        "tableName": "PerformedExerciseEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `sessionId` INTEGER NOT NULL, `builtInExerciseId` TEXT, `customExerciseId` INTEGER, `quantityType` TEXT NOT NULL, `plannedQuantityValue` INTEGER NOT NULL, `actualQuantityValue` INTEGER, `startTime` INTEGER NOT NULL, `endTime` INTEGER, `calories` REAL NOT NULL, FOREIGN KEY(`sessionId`) REFERENCES `WorkoutSessionEntity`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sessionId",
+            "columnName": "sessionId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "builtInExerciseId",
+            "columnName": "builtInExerciseId",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "customExerciseId",
+            "columnName": "customExerciseId",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "quantityType",
+            "columnName": "quantityType",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "plannedQuantityValue",
+            "columnName": "plannedQuantityValue",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "actualQuantityValue",
+            "columnName": "actualQuantityValue",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "startTime",
+            "columnName": "startTime",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "endTime",
+            "columnName": "endTime",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "calories",
+            "columnName": "calories",
+            "affinity": "REAL",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_PerformedExerciseEntity_sessionId",
+            "unique": false,
+            "columnNames": [
+              "sessionId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_PerformedExerciseEntity_sessionId` ON `${TABLE_NAME}` (`sessionId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "WorkoutSessionEntity",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "sessionId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
       }
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '1a1eec42b84b3df615161ff2dead9ebc')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '2ca34cc10dd8ea17b9fd52c1c19b7d57')"
     ]
   }
 }

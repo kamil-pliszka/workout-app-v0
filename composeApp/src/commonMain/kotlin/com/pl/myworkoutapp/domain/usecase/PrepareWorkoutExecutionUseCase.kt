@@ -30,7 +30,7 @@ class PrepareWorkoutExecutionUseCase(
 
         val latestSession = repository.findLatestWorkoutSession(planId, workoutId)
         val session = if (latestSession == null || latestSession.completed) {
-            repository.saveSession(
+            repository.insertSession(
                 prepareInitialSession(
                     planId, hydrated, estimatedKcal
                 )
@@ -59,6 +59,7 @@ class PrepareWorkoutExecutionUseCase(
             estimatedCalories = estimatedKcal,
             executionTime = 0.0,
             calories = 0.0,
+            currentStepIndex = null,
             performedExercises = emptyList(),
         )
 

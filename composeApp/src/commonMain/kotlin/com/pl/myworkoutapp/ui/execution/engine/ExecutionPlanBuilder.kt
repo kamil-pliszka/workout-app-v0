@@ -2,7 +2,10 @@ package com.pl.myworkoutapp.ui.execution.engine
 
 import com.pl.myworkoutapp.domain.model.exercise.Exercise
 import com.pl.myworkoutapp.domain.model.exercise.ExerciseId
-import com.pl.myworkoutapp.domain.model.workout.*
+import com.pl.myworkoutapp.domain.model.workout.Circuit
+import com.pl.myworkoutapp.domain.model.workout.Workout
+import com.pl.myworkoutapp.domain.model.workout.WorkoutExercise
+import com.pl.myworkoutapp.domain.model.workout.WorkoutItem
 
 /**
  * Transformer:
@@ -26,7 +29,7 @@ class ExecutionPlanBuilder {
     fun build(
         workout: Workout,
         exercises: Set<Exercise>, //resolved exercises
-    ): List<ExecutionStep> {
+    ): ExecutionPlan {
         val result = mutableListOf<ExecutionStep>()
         val exercisesMap = exercises.associateBy { it.id }
         appendItems(
@@ -34,7 +37,7 @@ class ExecutionPlanBuilder {
             exercisesMap = exercisesMap,
             result = result
         )
-        return result
+        return ExecutionPlan(result)
     }
 
     private fun appendItems(
@@ -45,10 +48,11 @@ class ExecutionPlanBuilder {
         items.forEachIndexed { index, item ->
             when (item) {
                 is WorkoutExercise -> {
-                    val exe = exercisesMap.getValue(item.exerciseId)
+                    val exercise = exercisesMap.getValue(item.exerciseId)
+
                     result += ExecutionStep.ExerciseStep(
-                        exercise = exe,
-                        quantity = item.quantity
+                        exercise = exercise,
+                        quantity = item.quantity,
                     )
                     val isLast = index == items.lastIndex
                     if (!isLast) {

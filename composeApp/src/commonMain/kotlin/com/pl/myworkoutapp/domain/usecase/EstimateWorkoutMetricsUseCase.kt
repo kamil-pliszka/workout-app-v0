@@ -111,7 +111,7 @@ class EstimateWorkoutMetricsUseCase {
                 val totalTime = (circuit.structure.workSec + circuit.structure.restSec) *
                         circuit.structure.rounds
 
-                val kcal = estimateKcalPerKg(totalTime.toDouble(), 10.0) // tabata zwykle intensywna
+                val kcal = estimateKcalPerKg(totalTime.toDouble(), 10.0) // tabata zwykle intensywna //TODO - zahardkodowana wartość
                 ItemMetrics(totalTime.toDouble(), kcal)
             }
         }

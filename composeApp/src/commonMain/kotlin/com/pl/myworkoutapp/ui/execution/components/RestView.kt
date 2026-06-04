@@ -13,9 +13,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.pl.myworkoutapp.domain.model.exercise.BuiltInExerciseId
 import com.pl.myworkoutapp.domain.model.exercise.asExerciseId
+import com.pl.myworkoutapp.ui.common.asUiImage
+import com.pl.myworkoutapp.ui.common.asUiText
 import com.pl.myworkoutapp.ui.execution.*
 import com.pl.myworkoutapp.ui.theme.AppTheme
 import com.pl.myworkoutapp.ui.theme.EurostileExt
+import myworkoutapplication.composeapp.generated.resources.Res
+import myworkoutapplication.composeapp.generated.resources.ic_squat
 
 @Composable
 fun RestView(
@@ -33,7 +37,7 @@ fun RestView(
                 modifier = Modifier.fillMaxWidth().height(4.dp)
             )
             Text("RestView")
-            Text(state.title ?: "REST")
+            Text(state.title.asString())
 
             Text(
                 text = "CZAS: ${state.remainingSeconds}",
@@ -72,9 +76,12 @@ private fun RestViewPreview() {
     AppTheme {
         RestView(
             state = WorkoutExecutionUiState.Rest(
-                title = "RestView",
+                title = "RestView".asUiText(),
                 nextExercise = UiExercise(
-                    exerciseId = BuiltInExerciseId.V_HOLD.asExerciseId()
+                    exerciseId = BuiltInExerciseId.V_HOLD.asExerciseId(),
+                    title = "Super ćwiczenie".asUiText(),
+                    image = Res.drawable.ic_squat.asUiImage(),
+                    quantityLabel = "123".asUiText(),
                 ),
                 progress = 0.31f,
                 remainingSeconds = 7,

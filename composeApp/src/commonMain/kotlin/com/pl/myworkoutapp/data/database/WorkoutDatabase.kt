@@ -4,7 +4,7 @@ import androidx.room.*
 
 @Database(
     entities = [CustomExerciseEntity::class, CustomWorkoutPlanEntity::class, WorkoutSessionEntity::class,
-        CustomWorkoutEntity::class, CustomWorkoutItemEntity::class],
+        CustomWorkoutEntity::class, CustomWorkoutItemEntity::class, PerformedExerciseEntity::class],
     version = 1
 )
 @TypeConverters(

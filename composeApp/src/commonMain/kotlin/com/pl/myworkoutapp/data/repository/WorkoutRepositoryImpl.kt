@@ -1,5 +1,6 @@
 package com.pl.myworkoutapp.data.repository
 
+import com.pl.myworkoutapp.core.currentTimeMilliseconds
 import com.pl.myworkoutapp.data.database.ExerciseDao
 import com.pl.myworkoutapp.data.database.WorkoutDao
 import com.pl.myworkoutapp.data.mappers.*
@@ -14,6 +15,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlin.collections.map
+import kotlin.time.Instant
 
 //TODO - rozdzielić na 2 repo
 class WorkoutRepositoryImpl(
@@ -51,12 +53,23 @@ class WorkoutRepositoryImpl(
         TODO("Not yet implemented")
     }
 
-    override suspend fun saveSession(session: WorkoutSession) : WorkoutSession {
-        val generatedId = workoutDao.upsertSession(session.toEntity())
+    override suspend fun insertSession(session: WorkoutSession): WorkoutSession {
+        val generatedId = workoutDao.insertSession(
+            session.toEntity().copy(updatedAt = currentTimeMilliseconds())
+        )
         println("saveSession sourceId: ${session.id}, generatedId: $generatedId")
         return session.copy(
             id = generatedId.takeIf { it > 0 } ?: session.id
         )
+    }
+
+    override suspend fun updateSession(session: WorkoutSession) {
+        val updated = workoutDao.updateSession(
+            session.toEntity().copy(updatedAt = currentTimeMilliseconds())
+        )
+        require(updated > 0) {
+            "WorkoutSession not found: ${session.id}"
+        }
     }
 
     override suspend fun getHistory(): List<WorkoutSession> {
@@ -163,13 +176,55 @@ class WorkoutRepositoryImpl(
         workoutDao.deleteById(id.toLong())
     }
 
-    override suspend fun findLatestWorkoutSession(planId: PlanId?, workoutId: WorkoutId): WorkoutSession? {
+    override suspend fun findLatestWorkoutSession(
+        planId: PlanId?,
+        workoutId: WorkoutId
+    ): WorkoutSession? {
         val session = if (planId == null) {
             workoutDao.findLatestWorkoutSession(workoutId.asString())
         } else {
             workoutDao.findLatestWorkoutSession(workoutId.asString(), planId.asString())
         }
         return session?.toDomain()
+    }
+
+    override suspend fun updateSessionCurrentStep(
+        sessionId: Long,
+        currentStepIndex: Int
+    ) {
+        workoutDao.updateSessionCurrentStep(sessionId, currentStepIndex)
+    }
+
+    override suspend fun finishWorkoutSession(
+        sessionId: Long,
+        endTime: Instant
+    ) {
+        workoutDao.finishWorkoutSession(sessionId, endTime)
+    }
+
+    override suspend fun insertPerformedExercise(performedExercise: PerformedExercise) {
+        workoutDao.insertPerformedExercise(performedExercise.toEntity())
+    }
+
+    override suspend fun getPerformedExercises(sessionId: Long) : List<PerformedExercise> {
+        return workoutDao.getPerformedExercises(sessionId).map {
+            it.toDomain()
+        }
+    }
+
+    override suspend fun getWorkoutSession(sessionId: Long): WorkoutSession {
+        val sessionEntity = workoutDao.getWorkoutSessionById(sessionId)
+        require(sessionEntity != null) {
+            "WorkoutSession not found: $sessionId"
+        }
+        return sessionEntity.toDomain()
+    }
+
+    override suspend fun completeExercise(
+        performedExercise: PerformedExercise,
+        sessionUpdate: WorkoutSession
+    ) {
+        workoutDao.completeExercise(performedExercise, sessionUpdate)
     }
 }
 

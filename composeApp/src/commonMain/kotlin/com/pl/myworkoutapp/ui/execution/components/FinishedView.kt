@@ -9,6 +9,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.pl.myworkoutapp.ui.common.asUiText
 import com.pl.myworkoutapp.ui.execution.WorkoutExecutionAction
 import com.pl.myworkoutapp.ui.execution.WorkoutExecutionUiState
 import com.pl.myworkoutapp.ui.theme.AppTheme
@@ -31,7 +32,7 @@ fun FinishedView(
             Text("FinishedView")
             Text("Workout finished")
 
-            Text(state.title ?: "")
+            Text(state.title.asString())
 
             Button(
                 onClick = {
@@ -52,7 +53,7 @@ private fun FinishedViewPreview() {
     AppTheme {
         FinishedView(
             state = WorkoutExecutionUiState.Finished(
-                title = "FinishedView",
+                title = "FinishedView".asUiText(),
             ),
             onAction = { }
         )

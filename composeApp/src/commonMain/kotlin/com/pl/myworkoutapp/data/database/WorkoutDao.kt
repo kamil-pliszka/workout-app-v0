@@ -2,9 +2,13 @@ package com.pl.myworkoutapp.data.database
 
 import androidx.room.*
 import com.pl.myworkoutapp.core.currentTimeMilliseconds
+import com.pl.myworkoutapp.data.mappers.toEntity
+import com.pl.myworkoutapp.domain.model.workout.PerformedExercise
 import com.pl.myworkoutapp.domain.model.workout.WorkoutId
+import com.pl.myworkoutapp.domain.model.workout.WorkoutSession
 import com.pl.myworkoutapp.domain.model.workout.asWorkoutId
 import kotlinx.coroutines.flow.Flow
+import kotlin.time.Instant
 
 @Dao
 interface WorkoutDao {
@@ -194,14 +198,57 @@ interface WorkoutDao {
     suspend fun findLatestWorkoutSession(workoutId: String, planId: String): WorkoutSessionEntity?
 
 
-    @Upsert
-    suspend fun upsert(session: WorkoutSessionEntity): Long
+    //    @Upsert
+//    suspend fun upsert(session: WorkoutSessionEntity): Long
+    @Insert
+    suspend fun insertSession(session: WorkoutSessionEntity): Long
 
-    suspend fun upsertSession(
-        sessionEntity: WorkoutSessionEntity,
-    ): Long {
-        return upsert(sessionEntity.copy(updatedAt = currentTimeMilliseconds()))
+    @Update
+    suspend fun updateSession(session: WorkoutSessionEntity): Int
+
+    //    suspend fun upsertSession(
+//        sessionEntity: WorkoutSessionEntity,
+//    ): Long {
+//        return upsert(sessionEntity.copy(updatedAt = currentTimeMilliseconds()))
+//    }
+    @Query("UPDATE WorkoutSessionEntity SET currentStepIndex = :currentStepIndex, updatedAt = :updatedAt WHERE id = :sessionId")
+    suspend fun updateSessionCurrentStep(
+        sessionId: Long,
+        currentStepIndex: Int,
+        updatedAt: Long = currentTimeMilliseconds()
+    )
+
+    @Query("UPDATE WorkoutSessionEntity SET endTime = :endTime, completed = true, currentStepIndex = null, updatedAt = :updatedAt WHERE id = :sessionId")
+    suspend fun finishWorkoutSession(
+        sessionId: Long,
+        endTime: Instant,
+        updatedAt: Long = currentTimeMilliseconds()
+    )
+
+    @Insert
+    suspend fun insertPerformedExercise(entity: PerformedExerciseEntity): Long
+
+    @Query("SELECT * FROM WorkoutSessionEntity WHERE id = :id")
+    suspend fun getWorkoutSessionById(id: Long): WorkoutSessionEntity?
+
+    @Query(
+        """
+    SELECT *
+    FROM PerformedExerciseEntity
+    WHERE sessionId = :sessionId
+    ORDER BY startTime
+    """
+    )
+    suspend fun getPerformedExercises(
+        sessionId: Long
+    ): List<PerformedExerciseEntity>
+
+    @Transaction
+    suspend fun completeExercise(
+        performedExercise: PerformedExercise,
+        sessionUpdate: WorkoutSession
+    ) {
+        insertPerformedExercise(performedExercise.toEntity())
+        updateSession(sessionUpdate.toEntity())
     }
-
-
 }

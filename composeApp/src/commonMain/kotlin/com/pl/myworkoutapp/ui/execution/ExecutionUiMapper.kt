@@ -1,7 +1,12 @@
 package com.pl.myworkoutapp.ui.execution
 
 import com.pl.myworkoutapp.domain.model.exercise.QuantityType
+import com.pl.myworkoutapp.domain.model.workout.WorkoutExercise
+import com.pl.myworkoutapp.ui.common.asUiText
+import com.pl.myworkoutapp.ui.execution.WorkoutExecutionUiState.*
 import com.pl.myworkoutapp.ui.execution.engine.*
+import com.pl.myworkoutapp.ui.workouts.ExerciseUiItem
+import com.pl.myworkoutapp.ui.workouts.toUiBase
 
 /**
  * Adapter:
@@ -19,66 +24,95 @@ import com.pl.myworkoutapp.ui.execution.engine.*
  * wykonywać logiki workflow
  */
 
-
 fun WorkoutExecutionRuntime.toUiState(): WorkoutExecutionUiState {
-    val current = currentStep
-    val next = steps.drop(currentStepIndex + 1)
-        .filterIsInstance<ExecutionStep.ExerciseStep>()
-        .firstOrNull()
+    val current = currentExecutionStepOrNull()
+    val currentStepIndex = state.stepIndexOrNull() ?: -1
+    val next = nextExerciseOrNull(currentStepIndex + 1)
     val currentExercise = (current as? ExecutionStep.ExerciseStep)
         ?.toUiExercise()
     val nextExercise = next?.toUiExercise()
-    val progress = (currentStepIndex + 1).toFloat() / steps.size
+    val progress = calculateProgress()
 
-    return when(phase) {
-        ExecutionPhase.Intro -> WorkoutExecutionUiState.Intro(
-            title = "zaczynamy naszą przygodę, powodzenia...",
+    return when (state) {
+        is IntroState -> Intro(
+            title = "zaczynamy naszą przygodę, powodzenia...".asUiText(),
             nextExercise = nextExercise,
             progress = progress,
-            remainingSeconds = remainingSeconds ?: 0,
+            remainingSeconds = state.remainingSeconds,
             canPause = true,
             canSkip = true
         )
-        ExecutionPhase.Exercise -> {
-            val currentExercise =
-                requireNotNull(currentExercise)
-            WorkoutExecutionUiState.Exercise(
-                title = "exe",//TODO
-                currentExercise = currentExercise,
+
+        is ExerciseState -> {
+            val currentStep = requireNotNull(current as? ExecutionStep.ExerciseStep)
+            Exercise(
+                title = "exe".asUiText(),//TODO
+                currentExercise = requireNotNull(currentExercise),
                 nextExercise = nextExercise,
-                remainingSeconds = remainingSeconds,
+                target = currentStep.toUiTarget(state.targetState),
                 progress = progress,
                 canPause = true,
                 canSkip = true
             )
         }
-        ExecutionPhase.Paused -> WorkoutExecutionUiState.Paused(
-            title = "Nie dajesz rady??? Weź się w garść!!!",//TODO
-            currentExercise = currentExercise,
-            progress = progress
-        )
-        ExecutionPhase.Rest -> WorkoutExecutionUiState.Rest(
-            title = "Odpoczyszasz..., a mógłbyś ćwiczyć '), dasz radę!!!",//TODO
+
+        is RestState -> Rest(
+            title = "Odpoczyszasz..., a mógłbyś ćwiczyć '), dasz radę!!!".asUiText(),//TODO
             progress = progress,
             nextExercise = nextExercise,
-            remainingSeconds = remainingSeconds ?: 0,
+            remainingSeconds = state.remainingSeconds,
             canPause = true,
             canSkip = true,
         )
-        ExecutionPhase.Finished -> WorkoutExecutionUiState.Finished(
-            title = "Udało się ukończyć !!!, Gratulacje, spaliłeś XXX kaloriii. Dupa w troki i następnym razem zrób szybciej i dokładniej"
+
+        is FinishedState -> Finished(
+            title = "Udało się ukończyć !!!, Gratulacje, spaliłeś XXX kaloriii. Dupa w troki i następnym razem zrób szybciej i dokładniej".asUiText()
         )
 
+        is PausedState -> Paused(
+            title = "Nie dajesz rady??? Weź się w garść!!!".asUiText(),//TODO
+            currentExercise = currentExercise,
+            progress = progress
+        )
     }
 
 }
 
-fun ExecutionStep.ExerciseStep.toUiExercise() = UiExercise(
-    exerciseId = this.exercise.id
-    //TODO - reszta
-)
+//TODO - na razie tymczasowe rozwiazanie
+fun ExecutionStep.ExerciseStep.toUiExercise(): UiExercise = WorkoutExercise(
+    exercise.id, quantity
+).toUiBase(exercise).let { exeBase: ExerciseUiItem ->
+    UiExercise(
+        exerciseId = exeBase.exerciseId,
+        title = exeBase.name,
+        image = exeBase.image,
+        quantityLabel = exeBase.quantityValue.toString().asUiText(),//TODO
+    )
+}
 
-fun ExecutionStep.ExerciseStep.countdownDurationSeconds() : Int? = when(quantity.type) {
-    QuantityType.DURATION -> quantity.value
-    else -> null
+private fun ExecutionStep.ExerciseStep.toUiTarget(
+    currentExecution: ExerciseTargetState
+): UiExerciseTarget {
+    return when (quantity.type) {
+        QuantityType.DURATION -> {
+            UiExerciseTarget.Duration(
+                remainingSeconds =
+                    (currentExecution as? ExerciseTargetState.Countdown)
+                        ?.remainingSeconds
+                        ?: 0
+            )
+        }
+
+        QuantityType.REPS,
+        QuantityType.REPS_PER_SIDE -> {
+            UiExerciseTarget.Reps(
+                reps = quantity.value
+            )
+        }
+        QuantityType.DISTANCE -> {
+            UiExerciseTarget.Distance(
+                meters = quantity.value
+            )
+        }
+    }
 }

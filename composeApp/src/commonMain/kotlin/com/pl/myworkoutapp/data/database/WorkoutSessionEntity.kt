@@ -24,6 +24,7 @@ data class WorkoutSessionEntity(
     val estimatedCalories: Int,//in kcal
     val executionTime: Double, //czas samych ćwiczeń(bez przerw), aktualizowane po każdym ćwiczeniu
     val calories: Double, //spalone kalorie, aktualizowane po każdym ćwiczeniu
+    val currentStepIndex: Int?, //aktualny krok treningu, 0 - oznacza pierwszy krok(Intro)
     val updatedAt: Long = 0,
 )
 

@@ -9,8 +9,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.pl.myworkoutapp.domain.model.exercise.BuiltInExerciseId
 import com.pl.myworkoutapp.domain.model.exercise.asExerciseId
+import com.pl.myworkoutapp.ui.common.asUiImage
+import com.pl.myworkoutapp.ui.common.asUiText
 import com.pl.myworkoutapp.ui.execution.*
 import com.pl.myworkoutapp.ui.theme.AppTheme
+import myworkoutapplication.composeapp.generated.resources.Res
+import myworkoutapplication.composeapp.generated.resources.ic_squat
 
 
 @Composable
@@ -30,7 +34,7 @@ fun IntroView(
                 modifier = Modifier.fillMaxWidth().height(4.dp)
             )
             Text("IntroView")
-            Text(state.title ?: "")
+            Text(state.title.asString())
 
             Text("Start za: ${state.remainingSeconds}")
 
@@ -64,10 +68,13 @@ private fun IntroViewPreview() {
     AppTheme {
         IntroView(
             state = WorkoutExecutionUiState.Intro(
-                title = "IntroView",
+                title = "IntroView".asUiText(),
                 nextExercise = UiExercise(
-                    exerciseId = BuiltInExerciseId.V_HOLD.asExerciseId()
-                ),
+                    exerciseId = BuiltInExerciseId.V_HOLD.asExerciseId(),
+                    title = "Super ćwiczenie".asUiText(),
+                    image = Res.drawable.ic_squat.asUiImage(),
+                    quantityLabel = "123".asUiText(),
+                    ),
                 progress = 0.31f,
                 remainingSeconds = 7,
                 canPause = true,

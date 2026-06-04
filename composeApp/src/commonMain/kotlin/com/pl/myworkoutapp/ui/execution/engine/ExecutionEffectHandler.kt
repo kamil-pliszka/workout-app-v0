@@ -14,16 +14,13 @@ class ExecutionEffectHandler(
             is ExecutionEffect.Vibrate -> {
                 effects.vibrate(effect.durationMs)
             }
-
             is ExecutionEffect.PlaySound -> {
                 effects.playSound(effect.type)
             }
-
             is ExecutionEffect.KeepScreenOn -> {
                 println("ExecutionEffectHandler: ${effect.enabled}")
                 effects.keepScreenOn(effect.enabled)
             }
-
             is ExecutionEffect.Speak -> {
                 effects.speak(effect.text.resolveText())
             }

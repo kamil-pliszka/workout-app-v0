@@ -21,28 +21,45 @@ data class WorkoutExecutionRuntime(
     val workout: Workout, //to model domenowy - Engine może używać modeli domenowych
     val session: WorkoutSession, //to model domenowy - Engine może używać modeli domenowych
 
-    val steps: List<ExecutionStep>,
-
-    val currentStepIndex: Int,
-    val phase: ExecutionPhase,
-    val pausedPhase: ExecutionPhase?,
-
-    val remainingSeconds: Int?,
-    //val timerState: ExecutionTimerState?
+    val plan: ExecutionPlan,
+    val state: RuntimeState,
+    val weightKg: Double,
 ) {
-    val currentStep: ExecutionStep?
-        get() = steps.getOrNull(currentStepIndex)
+    fun currentExecutionStepOrNull(): ExecutionStep? {
+        val index = state.stepIndexOrNull() ?: return null
+        return plan.steps.getOrNull(index)
+    }
+
+    //TODO - progres do przebudowy po uwzględnieniu Circuits
+    fun calculateProgress(): Float {
+        if (state is FinishedState) {
+            return 1f
+        }
+        val exerciseSteps = plan.steps.filterIsInstance<ExecutionStep.ExerciseStep>()
+        if (exerciseSteps.isEmpty()) {
+            return 0f
+        }
+        val currentIndex = state.stepIndexOrNull() ?: return 0f
+        val completedExercises =
+            plan.steps.countIndexedBefore(currentIndex) {
+                it is ExecutionStep.ExerciseStep
+            }
+
+        return completedExercises.toFloat() / exerciseSteps.size
+    }
+
+    fun nextExerciseOrNull(fromStepIndex: Int) : ExecutionStep.ExerciseStep? =  plan.steps
+        .drop(fromStepIndex)
+        .filterIsInstance<ExecutionStep.ExerciseStep>()
+        .firstOrNull()
 }
 
-//TODO - uwzględnić któryś model w przyszłości
-sealed interface ExecutionTimerState1 {
-    data object None
-    data class Countdown(val seconds: Int)
-    data class Stopwatch(val elapsed: Int)
+inline fun <T> List<T>.countIndexedBefore(
+    index: Int,
+    predicate: (T) -> Boolean
+): Int {
+    if (index <= 0) {
+        return 0
+    }
+    return take(index).count(predicate)
 }
-
-data class ExecutionTimerState2(
-    val remainingMillis: Long,
-    val startedAt: Long?,
-    val isPaused: Boolean,
-)

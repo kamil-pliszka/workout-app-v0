@@ -36,7 +36,7 @@ sealed interface ExecutionStep {
 
     data class ExerciseStep(
         val exercise: Exercise,
-        val quantity: Quantity
+        val quantity: Quantity,
     ) : ExecutionStep
 
     data class RestStep(

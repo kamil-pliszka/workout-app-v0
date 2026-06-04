@@ -12,7 +12,11 @@ class ExecutionEffectResolver {
     ): List<ExecutionEffect> {
         return buildList {
             addAll(resolveStart(old, new))
-            addAll(resolveHalfTime(old, action, new))
+            if (isHalfTime(old, action, new)) {
+                add(
+                    ExecutionEffect.Speak(SpeechText.HalfTime)
+                )
+            }
             // inne efekty...
         }
     }
@@ -22,8 +26,8 @@ class ExecutionEffectResolver {
         new: WorkoutExecutionRuntime,
     ): List<ExecutionEffect> {
         if (
-            old.phase != ExecutionPhase.Exercise &&
-            new.phase == ExecutionPhase.Exercise
+            old.state !is ExerciseState &&
+            new.state is ExerciseState
         ) {
             return listOf(
                 ExecutionEffect.Vibrate(),
@@ -34,44 +38,42 @@ class ExecutionEffectResolver {
     }
 
 
-    private fun resolveHalfTime(
+    private fun isHalfTime(
         old: WorkoutExecutionRuntime,
         action: ExecutionAction,
         new: WorkoutExecutionRuntime,
-    ): List<ExecutionEffect> {
+    ): Boolean {
         if (action != ExecutionAction.Tick) {
-            return emptyList()
+            return false
         }
 
-        if (new.phase != ExecutionPhase.Exercise) {
-            return emptyList()
+        if (new.state !is ExerciseState) {
+            return false
+        }
+        if (old.state !is ExerciseState) {
+            return false
         }
 
-        val step = new.currentStep as? ExecutionStep.ExerciseStep
-            ?: return emptyList()
+        val step = new.currentExecutionStepOrNull() as? ExecutionStep.ExerciseStep ?: return false
 
         if (step.quantity.type != QuantityType.DURATION) {
-            return emptyList()
+            return false
         }
 
         val total = step.quantity.value
 
         if (total < 20) {
-            return emptyList()
+            return false
         }
 
-        val oldRemaining = old.remainingSeconds ?: return emptyList()
-        val newRemaining = new.remainingSeconds ?: return emptyList()
+        val oldRemaining = (old.state.targetState as? ExerciseTargetState.Countdown)?.remainingSeconds
+            ?: return false
+        val newRemaining = (new.state.targetState as? ExerciseTargetState.Countdown)?.remainingSeconds
+            ?: return false
 
         val half = total / 2
 
         @Suppress("ConvertTwoComparisonsToRangeCheck")//dla mnie bardziej czytelna wersja
-        return if (oldRemaining > half && newRemaining <= half) {
-            listOf(
-                ExecutionEffect.Speak(SpeechText.HalfTime)
-            )
-        } else {
-            emptyList()
-        }
+        return (oldRemaining > half && newRemaining <= half)
     }
 }

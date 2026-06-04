@@ -14,14 +14,25 @@ fun WorkoutExecutionScreen(
     state: WorkoutExecutionUiState,
     onAction: (WorkoutExecutionAction) -> Unit,
 ) {
-    LaunchedEffect(Unit) {
-        onAction(WorkoutExecutionAction.OnScreenEntered)
-    }
-    DisposableEffect(Unit) {
-        onDispose {
-            onAction(WorkoutExecutionAction.OnScreenExited)
+    /*val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            when (event) {
+                Lifecycle.Event.ON_START -> {
+                    onAction(WorkoutExecutionAction.OnScreenEntered)
+                }
+                Lifecycle.Event.ON_STOP -> {
+                    onAction(WorkoutExecutionAction.OnScreenExited)
+                }
+                else -> Unit
+            }
         }
-    }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }*/
+
     when(state) {
         WorkoutExecutionUiState.Loading -> {
             CircularProgressIndicator()
