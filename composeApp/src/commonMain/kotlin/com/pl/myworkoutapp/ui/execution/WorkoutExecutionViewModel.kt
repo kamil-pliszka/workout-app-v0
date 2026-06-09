@@ -45,11 +45,11 @@ class WorkoutExecutionViewModel(
     private val appNavigator: AppNavigator,
     private val appStateHolder: AppStateHolder,
     private val appSettingRepository: AppSettingRepository,
-    private val prepareWorkoutExecutionUC: PrepareWorkoutExecutionUseCase,
     private val engine: WorkoutExecutionEngine,//engine jest stanowy, nie jest singletonem
-    private val planBuilder: ExecutionPlanBuilder,
     private val executionEffectHandler: ExecutionEffectHandler,
     private val persistenceHandler: ExecutionEventHandler,
+    private val prepareWorkoutExecutionUC: PrepareWorkoutExecutionUseCase,
+    private val executionRuntimeFactory: WorkoutExecutionRuntimeFactory
 ) : ViewModel() {
 
     @Suppress("PrivatePropertyName")
@@ -165,26 +165,15 @@ class WorkoutExecutionViewModel(
     private suspend fun loadWorkoutById(planId: PlanId?, workoutId: WorkoutId) {
         try {
             val weightKg = appSettingRepository.weightFlow.first()
-            val result = prepareWorkoutExecutionUC.execute(
+            val preparation = prepareWorkoutExecutionUC.execute(
                 planId, workoutId, weightKg
             )
-
-            val executionPlan = planBuilder.build(
-                result.workout,
-                result.exercises
+            val runtime = executionRuntimeFactory.create(
+                preparation.workout,
+                preparation.exercises,
+                preparation.session,
+                weightKg
             )
-
-            val runtime = WorkoutExecutionRuntime(
-                workout = result.workout,
-                session = result.session,
-                //currentStepIndex = 0,//TODO - kontynuacja workout
-                plan = executionPlan,
-                state = IntroState(
-                    remainingSeconds = 10 //TODO - ustawienia usera/konfiguracja
-                ),
-                weightKg = weightKg
-            )
-
             engine.start(
                 initial = runtime,
                 scope = viewModelScope

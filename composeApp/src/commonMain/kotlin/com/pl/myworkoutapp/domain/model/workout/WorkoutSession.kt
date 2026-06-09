@@ -18,7 +18,7 @@ data class WorkoutSession(
     val estimatedCalories: Int,//total, in kcal
     val executionTime: Double, //czas samych ćwiczeń(bez przerw), aktualizowane po każdym ćwiczeniu
     val calories: Double, //spalone kalorie, aktualizowane po każdym ćwiczeniu
-    val currentStepIndex: Int?, //aktualny krok treningu, 0 - oznacza pierwszy krok(Intro)
+    val currentStepIndex: Int?, //aktualny krok treningu, 0 - oznacza pierwszy krok
     val performedExercises: List<PerformedExercise>
 ) {
     init {

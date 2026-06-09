@@ -27,15 +27,26 @@ import com.pl.myworkoutapp.ui.workouts.toUiBase
 fun WorkoutExecutionRuntime.toUiState(): WorkoutExecutionUiState {
     val current = currentExecutionStepOrNull()
     val currentStepIndex = state.stepIndexOrNull() ?: -1
-    val next = nextExerciseOrNull(currentStepIndex + 1)
+    //val next = nextExerciseOrNull(currentStepIndex + 1)
+    val next = when (state) {
+        is EntryState -> {
+            nextExerciseOrNull(state.startStepIndex)
+        }
+        else -> {
+            nextExerciseOrNull(currentStepIndex + 1)
+        }
+    }
     val currentExercise = (current as? ExecutionStep.ExerciseStep)
         ?.toUiExercise()
     val nextExercise = next?.toUiExercise()
     val progress = calculateProgress()
 
     return when (state) {
-        is IntroState -> Intro(
-            title = "zaczynamy naszą przygodę, powodzenia...".asUiText(),
+        is EntryState -> Entry(
+            title = if (state.startStepIndex == 0)
+                "zaczynamy naszą przygodę, powodzenia...".asUiText()
+            else
+                "wznawiamy trening...".asUiText(),
             nextExercise = nextExercise,
             progress = progress,
             remainingSeconds = state.remainingSeconds,
@@ -109,6 +120,7 @@ private fun ExecutionStep.ExerciseStep.toUiTarget(
                 reps = quantity.value
             )
         }
+
         QuantityType.DISTANCE -> {
             UiExerciseTarget.Distance(
                 meters = quantity.value

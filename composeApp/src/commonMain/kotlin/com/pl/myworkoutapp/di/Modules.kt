@@ -35,6 +35,7 @@ import com.pl.myworkoutapp.ui.execution.engine.ExecutionReducer
 import com.pl.myworkoutapp.ui.execution.engine.ExecutionTimer
 import com.pl.myworkoutapp.ui.execution.engine.WorkoutExecutionEngine
 import com.pl.myworkoutapp.ui.execution.engine.ExecutionEventHandler
+import com.pl.myworkoutapp.ui.execution.engine.WorkoutExecutionRuntimeFactory
 import com.pl.myworkoutapp.ui.exercises.ExerciseEditorCoordinator
 import com.pl.myworkoutapp.ui.exercises.ExerciseEditorViewModel
 import com.pl.myworkoutapp.ui.exercises.ExercisePickerViewModel
@@ -126,6 +127,7 @@ val sharedModule = module {
     singleOf(::ExecutionEventResolver)
     singleOf(::ExecutionEffectHandler)
     singleOf(::ExecutionEventHandler)
+    singleOf(::WorkoutExecutionRuntimeFactory)
 
     //VM
     viewModelOf(::LanguageViewModel)

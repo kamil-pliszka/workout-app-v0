@@ -18,8 +18,8 @@ import myworkoutapplication.composeapp.generated.resources.ic_squat
 
 
 @Composable
-fun IntroView(
-    state: WorkoutExecutionUiState.Intro,
+fun EntryView(
+    state: WorkoutExecutionUiState.Entry,
     onAction: (WorkoutExecutionAction) -> Unit,
 ) {
     Box(
@@ -64,11 +64,11 @@ fun IntroView(
 
 @Preview
 @Composable
-private fun IntroViewPreview() {
+private fun EntryViewPreview() {
     AppTheme {
-        IntroView(
-            state = WorkoutExecutionUiState.Intro(
-                title = "IntroView".asUiText(),
+        EntryView(
+            state = WorkoutExecutionUiState.Entry(
+                title = "EntryView".asUiText(),
                 nextExercise = UiExercise(
                     exerciseId = BuiltInExerciseId.V_HOLD.asExerciseId(),
                     title = "Super ćwiczenie".asUiText(),

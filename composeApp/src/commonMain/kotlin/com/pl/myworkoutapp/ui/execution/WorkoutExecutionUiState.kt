@@ -14,7 +14,7 @@ import com.pl.myworkoutapp.ui.common.UiText
 sealed interface WorkoutExecutionUiState {
     data object Loading : WorkoutExecutionUiState
 
-    data class Intro(
+    data class Entry(
         val title: UiText,
         val nextExercise: UiExercise?,
         val progress: Float,

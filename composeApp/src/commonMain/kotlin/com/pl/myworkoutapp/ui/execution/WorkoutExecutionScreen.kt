@@ -37,8 +37,8 @@ fun WorkoutExecutionScreen(
         WorkoutExecutionUiState.Loading -> {
             CircularProgressIndicator()
         }
-        is WorkoutExecutionUiState.Intro -> {
-            IntroView(
+        is WorkoutExecutionUiState.Entry -> {
+            EntryView(
                 state = state,
                 onAction = onAction,
             )

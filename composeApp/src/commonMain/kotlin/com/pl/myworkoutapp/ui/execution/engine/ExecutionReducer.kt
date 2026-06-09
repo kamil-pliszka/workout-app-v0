@@ -49,10 +49,9 @@ class ExecutionReducer {
             // INTRO
             // =====================================================
 
-            is IntroState -> {
-
+            is EntryState -> {
                 if (state.remainingSeconds <= 1) {
-                    startFirstStep(runtime)
+                    startWorkout(runtime, state.startStepIndex)
                 } else {
                     runtime.copy(
                         state = state.copy(
@@ -140,8 +139,8 @@ class ExecutionReducer {
         runtime: WorkoutExecutionRuntime
     ): WorkoutExecutionRuntime {
         return when (runtime.state) {
-            is IntroState -> {
-                startFirstStep(runtime)
+            is EntryState -> {
+                startWorkout(runtime)
             }
             is ExerciseState -> {
                 moveNext(runtime)
@@ -180,19 +179,21 @@ class ExecutionReducer {
     // Navigation
     // =========================================================
 
-    private fun startFirstStep(
-        runtime: WorkoutExecutionRuntime
+    private fun startWorkout(
+        runtime: WorkoutExecutionRuntime,
+        startIndex: Int = 0
     ): WorkoutExecutionRuntime {
-        val firstStep = runtime.plan.steps.firstOrNull()
-        return if (firstStep == null) {
+        val safeStartIndex = startIndex.takeIf { it in runtime.plan.steps.indices } ?: 0
+        val step = runtime.plan.steps.getOrNull(safeStartIndex)
+        return if (step == null) {
             runtime.copy(
                 state = FinishedState
             )
         } else {
             runtime.copy(
                 state = createStateForStep(
-                    stepIndex = 0,
-                    step = firstStep
+                    stepIndex = startIndex,
+                    step = step
                 )
             )
         }
@@ -211,10 +212,10 @@ class ExecutionReducer {
                 when (val previous = currentState.previous) {
                     is ExerciseState -> previous.stepIndex
                     is RestState -> previous.stepIndex
-                    is IntroState -> -1
+                    is EntryState -> -1
                 }
             }
-            is IntroState -> -1
+            is EntryState -> -1
             FinishedState -> {
                 return runtime
             }

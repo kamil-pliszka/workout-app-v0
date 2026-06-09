@@ -5,8 +5,9 @@ import kotlin.time.Instant
 sealed interface RuntimeState
 sealed interface RunningState : RuntimeState
 
-data class IntroState(
-    val remainingSeconds: Int
+data class EntryState(
+    val remainingSeconds: Int,
+    val startStepIndex: Int,
 ) : RunningState
 
 data class ExerciseState(
@@ -38,7 +39,7 @@ fun RuntimeState.stepIndexOrNull(): Int? {
     return when(val active = activeStateOrNull()) {
         is ExerciseState -> active.stepIndex
         is RestState -> active.stepIndex
-        is IntroState -> null
+        is EntryState -> null
         null -> null
     }
 }
